@@ -149,7 +149,21 @@
     function createParticles() { const c = document.getElementById('particles'); for (let i = 0; i < 30; i++) { const p = document.createElement('div'); p.className = 'particle'; p.style.left = Math.random() * 100 + '%'; p.style.animationDelay = Math.random() * 15 + 's'; p.style.animationDuration = (Math.random() * 10 + 10) + 's'; c.appendChild(p); } } createParticles();
     function createConfetti() { const colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444']; for (let i = 0; i < 100; i++) { setTimeout(() => { const c = document.createElement('div'); c.className = 'confetti'; c.style.left = Math.random() * 100 + '%'; c.style.background = colors[Math.floor(Math.random() * colors.length)]; c.style.animationDelay = Math.random() * 2 + 's'; document.body.appendChild(c); setTimeout(() => c.remove(), 5000); }, i * 30); } }
     auth.onAuthStateChanged(async (user) => { document.getElementById('loadingScreen').classList.add('hidden'); if (user) { currentUser = user; document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('nameInputSection').classList.remove('hidden'); } else { document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('nameInputSection').classList.add('hidden'); } });
-    function signInWithGoogle() { const provider = new firebase.auth.GoogleAuthProvider(); auth.signInWithPopup(provider).catch((error) => { document.getElementById('loginError').innerText = error.message; }); }
+    function signInWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    // استخدام التوجيه بدلاً من النافذة المنبثقة لتجنب الأخطاء
+    auth.signInWithRedirect(provider);
+}
+// التعامل مع نتيجة تسجيل الدخول بعد العودة من جوجل
+auth.getRedirectResult().then((result) => {
+    if (result.user) {
+        console.log("تم تسجيل الدخول بنجاح:", result.user.email);
+        // سيتم التعامل مع الحالة تلقائياً عبر onAuthStateChanged
+    }
+}).catch((error) => {
+    console.error("خطأ في تسجيل الدخول:", error);
+    document.getElementById('loginError').innerText = "حدث خطأ: " + error.message;
+});
     async function verifyAndStart() { const name = document.getElementById('studentName').value.trim(); if (name.length < 5) { alert('⚠️ أدخل الاسم الثلاثي بشكل صحيح'); return; } const rec = await db.collection('students').doc(currentUser.email).get(); if (rec.exists) { alert('⛔ لقد أديت هذا الامتحان من قبل'); showResult(rec.data()); return; } localStorage.setItem('studentName', name); document.getElementById('loginScreen').classList.add('hidden'); await checkExamStatus(currentUser); }
     async function checkExamStatus(user) { try { const ec = await db.collection('examConfig').doc('current').get(); if (ec.exists) { examName = ec.data().name; document.getElementById('examNameDisplay').innerText = examName; document.getElementById('examTitleDisplay').innerText = examName; } const qs = await db.collection('questions').get(); questions = []; qs.forEach(doc => questions.push(doc.data())); document.getElementById('totalQuestionsCount').innerText = questions.length; const rec = await db.collection('students').doc(user.email).get(); if (rec.exists) { showResult(rec.data()); } else { document.getElementById('examInfoScreen').classList.remove('hidden'); } } catch (e) { alert("خطأ: " + e.message); } }
     function startExam() { document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('examScreen').classList.remove('hidden'); renderQuestions(); }
