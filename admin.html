@@ -19,8 +19,7 @@
         .card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 30px 60px rgba(99,102,241,0.3); }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .card-title { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
-        .stat-number { font-size: 48px; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: countUp 2s ease; }
-        @keyframes countUp { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .stat-number { font-size: 48px; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .stat-label { color: rgba(255,255,255,0.7); font-size: 15px; margin-top: 8px; font-weight: 600; }
         input, select, textarea { width: 100%; padding: 16px; margin: 12px 0; border: 2px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(255,255,255,0.05); color: #fff; font-family: 'Cairo'; font-size: 16px; transition: all 0.3s; }
         input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.4); }
@@ -31,10 +30,9 @@
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; box-shadow: 0 10px 30px rgba(99,102,241,0.4); }
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(99,102,241,0.6); }
         .btn-success { background: linear-gradient(135deg, var(--success), #059669); color: white; box-shadow: 0 10px 30px rgba(16,185,129,0.4); }
-        .btn-success:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(16,185,129,0.6); }
-        .btn-danger { background: linear-gradient(135deg, var(--error), #dc2626); color: white; box-shadow: 0 10px 30px rgba(239,68,68,0.4); }
-        .btn-warning { background: linear-gradient(135deg, var(--warning), #d97706); color: white; box-shadow: 0 10px 30px rgba(245,158,11,0.4); }
-        .btn-info { background: linear-gradient(135deg, var(--info), #0891b2); color: white; box-shadow: 0 10px 30px rgba(6,182,212,0.4); }
+        .btn-danger { background: linear-gradient(135deg, var(--error), #dc2626); color: white; }
+        .btn-warning { background: linear-gradient(135deg, var(--warning), #d97706); color: white; }
+        .btn-info { background: linear-gradient(135deg, var(--info), #0891b2); color: white; }
         .btn-small { padding: 10px 20px; font-size: 13px; }
         .tabs { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 20px; }
         .tab { padding: 14px 28px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 16px; cursor: pointer; transition: all 0.3s; font-weight: 600; flex: 1; text-align: center; min-width: 150px; }
@@ -47,9 +45,9 @@
         th, td { padding: 18px; text-align: right; border-bottom: 1px solid rgba(255,255,255,0.1); }
         th { background: rgba(99,102,241,0.2); font-weight: 700; color: #fff; font-size: 15px; }
         tr:hover { background: rgba(255,255,255,0.08); transform: scale(1.01); transition: all 0.3s; }
-        .badge { padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin: 3px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }        .badge-success { background: rgba(16,185,129,0.2); color: var(--success); }
-        .badge-warning { background: rgba(245,158,11,0.2); color: var(--warning); }
-        .badge-error { background: rgba(239,68,68,0.2); color: var(--error); }
+        .badge { padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin: 3px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .badge-success { background: rgba(16,185,129,0.2); color: var(--success); }
+        .badge-warning { background: rgba(245,158,11,0.2); color: var(--warning); }        .badge-error { background: rgba(239,68,68,0.2); color: var(--error); }
         .badge-info { background: rgba(6,182,212,0.2); color: var(--info); }
         .badge-primary { background: rgba(99,102,241,0.2); color: var(--primary); }
         .login-box { max-width: 500px; margin: 100px auto; background: rgba(255,255,255,0.05); backdrop-filter: blur(30px); padding: 50px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.3); }
@@ -59,8 +57,6 @@
         .close-modal { background: none; border: none; color: #fff; font-size: 32px; cursor: pointer; width: auto; padding: 5px; transition: all 0.3s; }
         .close-modal:hover { transform: rotate(90deg); color: var(--error); }
         .exam-card { background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); padding: 28px; border-radius: 20px; margin: 15px 0; border: 2px solid rgba(99,102,241,0.3); transition: all 0.3s; position: relative; overflow: hidden; }
-        .exam-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); transition: left 0.5s; }
-        .exam-card:hover::before { left: 100%; }
         .exam-card:hover { border-color: var(--primary); background: rgba(99,102,241,0.15); transform: translateX(8px); box-shadow: 0 15px 40px rgba(99,102,241,0.3); }
         .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .exam-title { font-size: 18px; font-weight: 700; color: #fff; }
@@ -72,7 +68,7 @@
         .text-center { text-align: center; }
         .filter-bar { display: flex; gap: 18px; margin-bottom: 25px; flex-wrap: wrap; align-items: center; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; }
         .filter-bar select, .filter-bar input { width: auto; min-width: 220px; margin: 0; flex: 1; }
-        .code-display { background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2)); padding: 8px 16px; border-radius: 12px; font-family: monospace; font-weight: 700; color: var(--primary); border: 1px solid rgba(99,102,241,0.3); display: inline-block; }
+        .csv-section { background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(6,182,212,0.1)); padding: 25px; border-radius: 20px; margin: 20px 0; border: 2px solid rgba(16,185,129,0.3); }
         @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } table { font-size: 13px; } th, td { padding: 12px; } .exam-header { flex-direction: column; gap: 15px; } .exam-actions { flex-direction: column; } .header h1 { font-size: 28px; } .stat-number { font-size: 36px; } }
     </style>
 </head>
@@ -85,14 +81,12 @@
         <button class="btn-primary" onclick="teacherSignIn()" style="width:100%;">دخول</button>
         <p id="loginError" style="color:var(--error);text-align:center;margin-top:15px;"></p>
     </div>
-
     <div id="adminPanel" class="hidden">
         <div class="header">
             <h1>🎓 نظام إدارة الامتحانات الاحترافي</h1>
             <h3 style="opacity:0.8;">الأستاذ / هاني محمد الداودي</h3>
             <div class="teacher-info">
-                <span>👨‍🏫 </span>
-                <strong id="teacherNameDisplay"></strong>
+                <span>👨‍🏫 </span><strong id="teacherNameDisplay"></strong>
                 <span style="opacity:0.7;margin-right:10px;">|</span>
                 <span id="teacherEmailDisplay" style="font-size:14px;"></span>
             </div>
@@ -102,22 +96,18 @@
             <div class="card"><div class="card-header"><div class="card-title">❓ إجمالي الأسئلة</div></div><div class="stat-number" id="statQuestions">0</div><div class="stat-label">سؤال في جميع الامتحانات</div></div>
             <div class="card"><div class="card-header"><div class="card-title">👨‍🎓 إجمالي الطلاب</div></div><div class="stat-number" id="statStudents">0</div><div class="stat-label">طالب أدى امتحاناً</div></div>
             <div class="card"><div class="card-header"><div class="card-title">🔄 أكواد الإعادة المستخدمة</div></div><div class="stat-number" id="statResets">0</div><div class="stat-label">مرة</div></div>
-        </div>
-
-        <div class="tabs">
+        </div>        <div class="tabs">
             <div class="tab active" onclick="switchTab('exams')">📝 إدارة الامتحانات</div>
             <div class="tab" onclick="switchTab('students')">👨‍🎓 نتائج الطلاب</div>
             <div class="tab" onclick="switchTab('resets')">🔄 سجل أكواد الإعادة</div>
             <div class="tab" onclick="switchTab('questions')">❓ الأسئلة</div>
         </div>
-
         <div id="tab-exams" class="tab-content active">
             <div class="card">
                 <div class="card-header"><div class="card-title">➕ إنشاء امتحان جديد</div><button class="btn-success btn-small" onclick="showCreateExam()">إنشاء</button></div>
                 <div id="examsList"></div>
             </div>
         </div>
-
         <div id="tab-students" class="tab-content">
             <div class="card">
                 <div class="card-header"><div class="card-title">📊 نتائج الطلاب التفصيلية</div><div style="display:flex;gap:10px;"><button class="btn-success btn-small" onclick="loadStudentsResults()">🔄 تحديث</button><button class="btn-primary btn-small" onclick="exportStudentsCSV()">📥 تصدير Excel</button></div></div>
@@ -129,24 +119,29 @@
                 <div style="overflow-x:auto;"><table id="studentsTable"><thead><tr><th>الطالب</th><th>البريد</th><th>الامتحان</th><th>الصف</th><th>الدرجة</th><th>النسبة</th><th>كود إعادة</th><th>التاريخ</th><th>إجراءات</th></tr></thead><tbody></tbody></table></div>
             </div>
         </div>
-
         <div id="tab-resets" class="tab-content">
             <div class="card">
                 <div class="card-header"><div class="card-title">📋 سجل استخدام أكواد الإعادة</div><button class="btn-success btn-small" onclick="loadResetLogs()">🔄 تحديث</button></div>
                 <div style="overflow-x:auto;"><table id="resetsTable"><thead><tr><th>الامتحان</th><th>الطالب</th><th>البريد</th><th>كود الإعادة</th><th>بواسطة</th><th>التاريخ والوقت</th></tr></thead><tbody></tbody></table></div>
             </div>
         </div>
-
         <div id="tab-questions" class="tab-content">
             <div class="card">
                 <div class="card-header"><div class="card-title">❓ إدارة الأسئلة</div></div>
+                <div class="csv-section">
+                    <h3>📥 رفع أسئلة من ملف CSV/Excel</h3>
+                    <p style="font-size:13px;opacity:0.7;margin:10px 0;">حمّل ملف CSV يحتوي على: السؤال,الخيار1,الخيار2,الخيار3,الخيار4,الإجابة (0-3),التصنيف,الشرح</p>
+                    <input type="file" id="csvFile" accept=".csv" style="margin:10px 0;">
+                    <button class="btn-success" onclick="uploadQuestionsFromCSV()">📥 رفع الأسئلة</button>
+                    <p id="uploadStatus" style="margin-top:10px;"></p>
+                </div>
                 <div class="filter-bar">
                     <select id="filterExamQuestions" onchange="loadQuestionsForExam()"><option value="">اختر الامتحان</option></select>
                     <button class="btn-success btn-small" onclick="showAddQuestion()">➕ إضافة سؤال</button>
                 </div>
                 <div id="questionsList"></div>
-            </div>        </div>
-
+            </div>
+        </div>
         <button onclick="teacherSignOut()" class="btn-danger" style="margin-top:30px;width:100%;">🚪 تسجيل الخروج</button>
     </div>
 </div>
@@ -185,7 +180,7 @@
         <input type="text" id="opt1" placeholder="الخيار الأول"><input type="text" id="opt2" placeholder="الخيار الثاني">
         <input type="text" id="opt3" placeholder="الخيار الثالث"><input type="text" id="opt4" placeholder="الخيار الرابع">
         <select id="qCorrect"><option value="0">الإجابة الصحيحة هي الخيار الأول</option><option value="1">الإجابة الصحيحة هي الخيار الثاني</option><option value="2">الإجابة الصحيحة هي الخيار الثالث</option><option value="3">الإجابة الصحيحة هي الخيار الرابع</option></select>
-        <input type="text" id="qCat" placeholder="تصنيف السؤال (نحو، بلاغة، نصوص...)">
+        <input type="text" id="qCat" placeholder="تصنيف السؤال">
         <textarea id="qExp" placeholder="شرح الإجابة للطالب" rows="3"></textarea>
         <button class="btn-primary" onclick="addQuestion()" style="width:100%;">✅ إضافة السؤال</button>
     </div>
@@ -200,23 +195,27 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script>
-    // ⚠️ ضع مفاتيح Firebase هنا (نفس مفاتيح ملف الطالب)
-    const firebaseConfig = {
-        apiKey: "AIzaSyBRQ5Ilq-k_pVdhJM37kk26jrITtugrnSY",
-        authDomain: "mr-hany-exams-platform.firebaseapp.com",
-        projectId: "mr-hany-exams-platform",
-        storageBucket: "mr-hany-exams-platform.firebasestorage.app",
-        messagingSenderId: "589138230514",
-        appId: "1:589138230514:web:253332140577b4a3bce46b"
-    };
+    const firebaseConfig = { apiKey: "AIzaSyBRQ5Ilq-k_pVdhJM37kk26jrITtugrnSY",
+  authDomain: "mr-hany-exams-platform.firebaseapp.com",
+  projectId: "mr-hany-exams-platform",
+  storageBucket: "mr-hany-exams-platform.firebasestorage.app",
+  messagingSenderId: "589138230514",
+  appId: "1:589138230514:web:253332140577b4a3bce46b" };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
     let currentUser = null, currentExamForReset = null;
+    const TEACHER_EMAIL = 'hwaked62@gmail.com';
 
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(async (user) => {
         if (user) {
+            if (user.email !== TEACHER_EMAIL) {
+                document.getElementById('loginError').innerText = '⛔ هذا الحساب ليس حساب الأستاذ المصرح له.';
+                await auth.signOut();
+                return;
+            }
             currentUser = user;
             document.getElementById('loginPanel').classList.add('hidden');
             document.getElementById('adminPanel').classList.remove('hidden');
@@ -231,8 +230,14 @@
 
     async function teacherSignIn() {
         try {
-            await auth.signInWithEmailAndPassword(document.getElementById('teacherEmail').value, document.getElementById('teacherPass').value);
-        } catch (error) { document.getElementById('loginError').innerText = error.message; }
+            const email = document.getElementById('teacherEmail').value;
+            const password = document.getElementById('teacherPass').value;
+            if (email !== TEACHER_EMAIL) {
+                document.getElementById('loginError').innerText = '⛔ هذا الحساب ليس حساب الأستاذ المصرح له.';
+                return;
+            }
+            await auth.signInWithEmailAndPassword(email, password);
+        } catch (error) { document.getElementById('loginError').innerText = 'خطأ: ' + error.message; }
     }
 
     async function teacherSignOut() { await auth.signOut(); location.reload(); }
@@ -241,14 +246,14 @@
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         event.target.classList.add('active');
-        document.getElementById('tab-' + tabName).classList.add('active');
-        if (tabName === 'exams') loadExams();
+        document.getElementById('tab-' + tabName).classList.add('active');        if (tabName === 'exams') loadExams();
         if (tabName === 'students') loadStudentsResults();
         if (tabName === 'resets') loadResetLogs();
         if (tabName === 'questions') loadExamsForQuestionsFilter();
     }
+
     async function loadDashboard() {
-        const exams = await db.collection('exams').where('is_active', '==', true).where('teacher_email', '==', currentUser.email).get();
+        const exams = await db.collection('exams').where('teacher_email', '==', currentUser.email).where('is_active', '==', true).get();
         const questions = await db.collection('questions').where('teacher_email', '==', currentUser.email).get();
         const students = await db.collection('students').get();
         const resets = await db.collection('examResets').get();
@@ -291,11 +296,11 @@
         loadExams();
         loadDashboard();
     }
-
     async function loadExams() {
         const container = document.getElementById('examsList');
         container.innerHTML = '<p style="text-align:center;padding:20px;">جاري التحميل...</p>';
-        const snapshot = await db.collection('exams').where('teacher_email', '==', currentUser.email).orderBy('created_at', 'desc').get();        if (snapshot.empty) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">📭 لا توجد امتحانات</p>'; return; }
+        const snapshot = await db.collection('exams').where('teacher_email', '==', currentUser.email).orderBy('created_at', 'desc').get();
+        if (snapshot.empty) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">📭 لا توجد امتحانات</p>'; return; }
         let html = '';
         snapshot.forEach(doc => {
             const exam = doc.data();
@@ -316,14 +321,13 @@
     function copyResetCode() { const code = document.getElementById('resetCodeDisplay').innerText; navigator.clipboard.writeText(code).then(() => alert('✅ تم نسخ الكود: ' + code)); }
     
     async function regenerateResetCode() { if (!currentExamForReset) return; if (!confirm('⚠️ الكود القديم لن يعمل!')) return; const newCode = generateRandomCode(); await db.collection('exams').doc(currentExamForReset).update({ reset_code: newCode, updated_at: new Date().toISOString() }); document.getElementById('resetCodeDisplay').innerText = newCode; alert('✅ تم توليد كود جديد'); loadExams(); }
-async function loadStudentsResults() {
+    async function loadStudentsResults() {
         const tbody = document.querySelector('#studentsTable tbody');
         tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">جاري التحميل...</td></tr>';
         const filterExam = document.getElementById('filterExam').value;
         const filterGrade = document.getElementById('filterGrade').value;
         const search = document.getElementById('searchStudent').value.toLowerCase();
-        let query = db.collection('students').orderBy('created_at', 'desc');
-        const snapshot = await query.get();
+        const snapshot = await db.collection('students').orderBy('created_at', 'desc').get();
         loadExamsForFilter(snapshot);
         let filtered = [];
         snapshot.forEach(doc => filtered.push({ id: doc.id, ...doc.data() }));
@@ -408,13 +412,55 @@ async function loadStudentsResults() {
         loadDashboard();
     }
 
+    async function uploadQuestionsFromCSV() {
+        const fileInput = document.getElementById('csvFile');
+        const statusEl = document.getElementById('uploadStatus');
+        const examId = document.getElementById('filterExamQuestions').value;
+        if (!examId) { alert('⚠️ اختر امتحاناً أولاً'); return; }
+        if (!fileInput.files[0]) { alert('⚠️ اختر ملفاً'); return; }
+        statusEl.innerText = '🔄 جاري قراءة الملف...';
+        statusEl.style.color = 'var(--warning)';        Papa.parse(fileInput.files[0], {
+            header: true, skipEmptyLines: true,
+            complete: async function(results) {
+                const questions = results.data;
+                let successCount = 0, errorCount = 0;
+                statusEl.innerText = `📊 جاري إضافة ${questions.length} سؤال...`;
+                for (let i = 0; i < questions.length; i++) {
+                    try {
+                        const q = questions[i];
+                        const questionData = {
+                            exam_id: examId,
+                            text: q['السؤال'] || q['question'],
+                            options: [q['الخيار1'] || q['option1'], q['الخيار2'] || q['option2'], q['الخيار3'] || q['option3'], q['الخيار4'] || q['option4']],
+                            correct_index: parseInt(q['الإجابة'] || q['correct']) || 0,
+                            category: q['التصنيف'] || q['category'] || 'عام',
+                            explanation: q['الشرح'] || q['explanation'] || '',
+                            teacher_email: currentUser.email,
+                            order_num: Date.now() + i
+                        };
+                        if (questionData.text && questionData.options[0]) {
+                            await db.collection('questions').add(questionData);
+                            successCount++;
+                        } else { errorCount++; }
+                    } catch (error) { console.error('خطأ في السؤال', i, error); errorCount++; }
+                }
+                statusEl.innerText = `✅ تم إضافة ${successCount} سؤال بنجاح | ❌ ${errorCount} خطأ`;
+                statusEl.style.color = 'var(--success)';
+                loadQuestionsForExam();
+                loadDashboard();
+            },
+            error: function(error) { statusEl.innerText = '❌ خطأ في قراءة الملف: ' + error.message; statusEl.style.color = 'var(--error)'; }
+        });
+    }
+
     async function loadQuestionsForExam() {
         const examId = document.getElementById('filterExamQuestions').value;
         const container = document.getElementById('questionsList');
         if (!examId) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">اختر امتحاناً لعرض أسئلته</p>'; return; }
         container.innerHTML = '<p style="text-align:center;padding:20px;">جاري التحميل...</p>';
         const snapshot = await db.collection('questions').where('exam_id', '==', examId).orderBy('order_num').get();
-        if (snapshot.empty) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">لا توجد أسئلة</p>'; return; }        let html = '';
+        if (snapshot.empty) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">لا توجد أسئلة</p>'; return; }
+        let html = '';
         let i = 0;
         snapshot.forEach(doc => { const q = doc.data(); html += `<div class="exam-card"><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span class="badge badge-primary">سؤال ${i+1}</span><span class="badge badge-info">${q.category}</span></div><div style="font-weight:700;margin-bottom:15px;">${q.text}</div><div style="font-size:14px;opacity:0.8;">${q.options.map((o,j) => `<div style="padding:5px 0;color:${j===q.correct_index?'var(--success)':''}">${j+1}. ${o} ${j===q.correct_index?'✅':''}</div>`).join('')}</div>${q.explanation ? `<div style="margin-top:15px;padding:10px;background:rgba(99,102,241,0.2);border-radius:8px;font-size:13px;">💡 ${q.explanation}</div>` : ''}<div style="margin-top:15px;display:flex;gap:10px;"><button class="btn-danger btn-small" onclick="deleteQuestion('${doc.id}')">🗑️ حذف</button></div></div>`; i++; });
         container.innerHTML = html;
@@ -422,7 +468,6 @@ async function loadStudentsResults() {
 
     async function deleteQuestion(qId) { if (!confirm('⚠️ حذف هذا السؤال؟')) return; await db.collection('questions').doc(qId).delete(); alert('✅ تم الحذف'); loadQuestionsForExam(); loadDashboard(); }
     
-    function selectExamForQuestions(examId) { document.getElementById('filterExamQuestions').value = examId; switchTab('questions'); loadQuestionsForExam(); }
-</script>
+    function selectExamForQuestions(examId) { document.getElementById('filterExamQuestions').value = examId; switchTab('questions'); loadQuestionsForExam(); }</script>
 </body>
 </html>

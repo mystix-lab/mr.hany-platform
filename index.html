@@ -77,9 +77,7 @@
         <h3>الأستاذ / هاني محمد الداودي</h3>
         <div id="examNameDisplay" class="exam-badge">جاري التحميل...</div>
     </div>
-    
     <div id="loadingScreen" class="glass-card text-center"><div class="loader"></div><p>جاري تهيئة المنصة...</p></div>
-    
     <div id="loginScreen" class="glass-card hidden">
         <h2 class="text-center" style="margin-bottom:20px;">تسجيل الدخول</h2>
         <button class="btn btn-google" onclick="signInWithGoogle()">
@@ -92,33 +90,28 @@
         </div>
         <p id="loginError" style="color:var(--error);text-align:center;margin-top:15px;font-size:14px;"></p>
     </div>
-
     <div id="examSelectScreen" class="glass-card hidden">
         <h2 class="text-center" style="margin-bottom:20px;">📋 اختر الامتحان</h2>
         <div id="examsList" style="display:grid;gap:15px;"></div>
     </div>
     <div id="resetCodeScreen" class="glass-card hidden">
         <h2 class="text-center" style="margin-bottom:20px;">🔑 إعادة الامتحان</h2>
-        <p style="text-align:center;color:rgba(255,255,255,0.7);margin-bottom:25px;">لقد أديت هذا الامتحان من قبل.<br>إذا خرجت بالخطأ، أدخل كود الإعادة من الأستاذ</p>
-        <input type="text" id="resetCodeInput" class="input-3d" placeholder="أدخل كود الإعادة (8 أحرف)" style="text-align:center;font-size:20px;letter-spacing:3px;text-transform:uppercase;">
+        <p style="text-align:center;color:rgba(255,255,255,0.7);margin-bottom:25px;">لقد أديت هذا الامتحان من قبل.<br>إذا خرجت بالخطأ، أدخل كود الإعادة من الأستاذ</p>        <input type="text" id="resetCodeInput" class="input-3d" placeholder="أدخل كود الإعادة (8 أحرف)" style="text-align:center;font-size:20px;letter-spacing:3px;text-transform:uppercase;">
         <button class="btn btn-primary" onclick="verifyResetCode()">تحقق من الكود</button>
         <button class="btn btn-google" onclick="backToExams()" style="margin-top:10px;">↩️ العودة للائحة الامتحانات</button>
         <p id="resetError" style="color:var(--error);text-align:center;margin-top:15px;"></p>
     </div>
-    
     <div id="examInfoScreen" class="glass-card hidden">
         <h2 id="examTitleDisplay" class="text-center" style="margin-bottom:15px;"></h2>
         <p class="text-center" style="color:rgba(255,255,255,0.7);margin-bottom:25px;">عدد الأسئلة: <span id="totalQuestionsCount" style="color:var(--primary);font-weight:700;"></span></p>
         <div style="background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.5);padding:18px;border-radius:12px;margin-bottom:25px;font-size:14px;">⚠️ <strong>تنبيه هام:</strong> لديك محاولة واحدة فقط.</div>
         <button class="btn btn-primary" onclick="startExam()">🚀 بدء الاختبار</button>
     </div>
-    
     <div id="examScreen" class="hidden">
         <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
         <div id="questionsContainer"></div>
         <button id="finishBtn" class="btn btn-primary hidden" onclick="finishExam()">✅ تسليم الإجابة</button>
     </div>
-    
     <div id="resultScreen" class="glass-card hidden">
         <div class="text-center">
             <h2 id="resultTitle" style="margin-bottom:20px;">النتيجة النهائية</h2>
@@ -133,202 +126,43 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script>
-    // ⚠️ ضع مفاتيح Firebase هنا
-    const firebaseConfig = {
-        apiKey: "AIzaSyBRQ5Ilq-k_pVdhJM37kk26jrITtugrnSY",
-        authDomain: "mr-hany-exams-platform.firebaseapp.com",
-        projectId: "mr-hany-exams-platform",
-       storageBucket: "mr-hany-exams-platform.firebasestorage.app",
-       messagingSenderId: "589138230514",
-       appId: "1:589138230514:web:253332140577b4a3bce46b"
-    };
+    const firebaseConfig = { apiKey: "AIzaSyBRQ5Ilq-k_pVdhJM37kk26jrITtugrnSY",
+  authDomain: "mr-hany-exams-platform.firebaseapp.com",
+  projectId: "mr-hany-exams-platform",
+  storageBucket: "mr-hany-exams-platform.firebasestorage.app",
+  messagingSenderId: "589138230514",
+  appId: "1:589138230514:web:253332140577b4a3bce46b" };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-    
     let currentUser = null, questions = [], examName = "", studentAnswers = {}, score = 0;
     let currentExamId = null, selectedExamId = null, selectedExamData = null;
 
-    async function signInWithGoogle() {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        try { await auth.signInWithRedirect(provider); } 
-        catch (error) { document.getElementById('loginError').innerText = 'خطأ: ' + error.message; }
-    }
+    async function signInWithGoogle() { const provider = new firebase.auth.GoogleAuthProvider(); try { await auth.signInWithRedirect(provider); } catch (error) { document.getElementById('loginError').innerText = 'خطأ: ' + error.message; } }
+    
+    auth.onAuthStateChanged(async (user) => { document.getElementById('loadingScreen').classList.add('hidden'); if (user) { currentUser = user; document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('nameInputSection').classList.remove('hidden'); } else { document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('nameInputSection').classList.add('hidden'); } });
+    
+    auth.getRedirectResult().then((result) => { if (result.user) { currentUser = result.user; document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('nameInputSection').classList.remove('hidden'); } }).catch((error) => { document.getElementById('loginError').innerText = 'خطأ: ' + error.message; });
 
-    auth.onAuthStateChanged(async (user) => {
-        document.getElementById('loadingScreen').classList.add('hidden');
-        if (user) {
-            currentUser = user;
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('nameInputSection').classList.remove('hidden');
-        } else {
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('nameInputSection').classList.add('hidden');
-        }
-    });
+    async function verifyAndStart() { const name = document.getElementById('studentName').value.trim(); if (name.length < 5) { alert('⚠️ أدخل الاسم الثلاثي بشكل صحيح'); return; } localStorage.setItem('studentName', name); document.getElementById('loginScreen').classList.add('hidden'); await loadExamsList(); }
 
-    auth.getRedirectResult().then((result) => {
-        if (result.user) {
-            currentUser = result.user;
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('nameInputSection').classList.remove('hidden');
-        }
-    }).catch((error) => {
-        document.getElementById('loginError').innerText = 'خطأ: ' + error.message;
-    });
+    async function loadExamsList() { try { document.getElementById('examSelectScreen').classList.remove('hidden'); const snapshot = await db.collection('exams').where('is_active', '==', true).get(); const container = document.getElementById('examsList'); container.innerHTML = ''; if (snapshot.empty) { container.innerHTML = '<p style="text-align:center;color:#f59e0b;padding:30px;">⚠️ لا توجد امتحانات نشطة حالياً</p>'; return; } snapshot.forEach(doc => { const exam = doc.data(); const card = document.createElement('div'); card.className = 'exam-card'; card.style.cursor = 'pointer'; card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:8px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p><span class="badge badge-primary">${exam.grade_level}</span></div><span style="font-size:24px;">➡️</span></div>`; container.appendChild(card); card.addEventListener('click', function() { console.log('🔔 نقر على الامتحان:', exam.name); selectExam(doc.id, exam); }); }); } catch (error) { console.error('خطأ في loadExamsList:', error); alert('خطأ: ' + error.message); } }
 
-    async function verifyAndStart() {
-        const name = document.getElementById('studentName').value.trim();        if (name.length < 5) { alert('⚠️ أدخل الاسم الثلاثي بشكل صحيح'); return; }
-        localStorage.setItem('studentName', name);
-        document.getElementById('loginScreen').classList.add('hidden');
-        await loadExamsList();
-    }
+    async function selectExam(examId, exam) { try { console.log('📋 selectExam - البدء'); console.log('examId:', examId); selectedExamId = examId; const studentDocId = currentUser.email + '_' + examId; const doc = await db.collection('students').doc(studentDocId).get(); if (doc.exists) { console.log('✅ الطالب أدى الامتحان من قبل'); selectedExamData = doc.data(); document.getElementById('examSelectScreen').classList.add('hidden'); document.getElementById('resetCodeScreen').classList.remove('hidden'); return; } console.log('✅ لم يؤدِ الامتحان - متابعة'); currentExamId = examId; examName = exam.name; document.getElementById('examSelectScreen').classList.add('hidden'); await loadExamData(examId); } catch (error) { console.error('❌ خطأ في selectExam:', error); alert('خطأ في فتح الامتحان: ' + error.message); } }
 
-    async function loadExamsList() {
-    try {
-        document.getElementById('examSelectScreen').classList.remove('hidden');
-        const snapshot = await db.collection('exams').where('is_active', '==', true).get();
-        const container = document.getElementById('examsList');
-        container.innerHTML = '';
-        
-        if (snapshot.empty) { 
-            container.innerHTML = '<p style="text-align:center;color:#f59e0b;padding:30px;">⚠️ لا توجد امتحانات نشطة حالياً</p>'; 
-            return; 
-        }
-        
-        snapshot.forEach(doc => {
-            const exam = doc.data();
-            const card = document.createElement('div');
-            card.className = 'exam-card';
-            // ✅ تم إزالة كود الإعادة - يظهر فقط للأستاذ
-            card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;">
-                <div>
-                    <h3 style="margin-bottom:8px;">${exam.name}</h3>
-                    <p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p>
-                    <span class="badge badge-primary">${exam.grade_level}</span>
-                </div>
-                <span style="font-size:24px;">➡️</span>
-            </div>`;
-            container.appendChild(card);
-        });
-    } catch (error) {
-        console.error('خطأ في loadExamsList:', error);
-        alert('خطأ: ' + error.message);
-    }
-}
+    async function verifyResetCode() { const code = document.getElementById('resetCodeInput').value.trim().toUpperCase(); const errorEl = document.getElementById('resetError'); if (code.length !== 8) { errorEl.innerText = '⚠️ الكود يجب أن يكون 8 أحرف'; return; } try { const examDoc = await db.collection('exams').doc(selectedExamId).get(); const exam = examDoc.data(); if (!exam || exam.reset_code !== code) { errorEl.innerText = '❌ كود الإعادة غير صحيح'; return; } await db.collection('students').doc(currentUser.email + '_' + selectedExamId).delete(); await db.collection('examResets').add({ exam_id: selectedExamId, exam_name: exam.name, student_email: currentUser.email, reset_code: code, used_at: new Date().toISOString() }); alert('✅ تم التحقق! يمكنك الآن أداء الامتحان'); document.getElementById('resetCodeScreen').classList.add('hidden'); document.getElementById('resetCodeInput').value = ''; errorEl.innerText = ''; currentExamId = selectedExamId; await loadExamData(selectedExamId); } catch (error) { errorEl.innerText = 'خطأ: ' + error.message; } }
 
-    async function selectExam(examId, exam) {
-    try {
-        console.log('📋 جاري اختيار الامتحان:', exam.name);
-        console.log('examId:', examId);
-        
-        selectedExamId = examId;
-        
-        const studentDocId = currentUser.email + '_' + examId;
-        const doc = await db.collection('students').doc(studentDocId).get();
-        
-        if (doc.exists) {
-            console.log('✅ الطالب أدى الامتحان من قبل');
-            selectedExamData = doc.data();
-            document.getElementById('examSelectScreen').classList.add('hidden');
-            document.getElementById('resetCodeScreen').classList.remove('hidden');
-            return;
-        }
-        
-        console.log('✅ لم يؤدِ الامتحان - متابعة');
-        currentExamId = examId;
-        examName = exam.name;
-        document.getElementById('examSelectScreen').classList.add('hidden');
-        await loadExamData(examId);
-        
-    } catch (error) {
-        console.error('❌ خطأ في selectExam:', error);
-        alert('خطأ في فتح الامتحان: ' + error.message);
-    }
-}
+    function backToExams() { document.getElementById('resetCodeScreen').classList.add('hidden'); document.getElementById('examSelectScreen').classList.remove('hidden'); document.getElementById('resetCodeInput').value = ''; document.getElementById('resetError').innerText = ''; }
 
-    async function verifyResetCode() {
-        const code = document.getElementById('resetCodeInput').value.trim().toUpperCase();
-        const errorEl = document.getElementById('resetError');
-        if (code.length !== 8) { errorEl.innerText = '⚠️ الكود يجب أن يكون 8 أحرف'; return; }
-        try {
-            const examDoc = await db.collection('exams').doc(selectedExamId).get();
-            const exam = examDoc.data();
-            if (!exam || exam.reset_code !== code) { errorEl.innerText = '❌ كود الإعادة غير صحيح'; return; }
-            await db.collection('students').doc(currentUser.email + '_' + selectedExamId).delete();
-            await db.collection('examResets').add({ exam_id: selectedExamId, exam_name: exam.name, student_email: currentUser.email, reset_code: code, used_at: new Date().toISOString() });
-            alert('✅ تم التحقق! يمكنك الآن أداء الامتحان');
-            document.getElementById('resetCodeScreen').classList.add('hidden');
-            document.getElementById('resetCodeInput').value = '';            errorEl.innerText = '';
-            currentExamId = selectedExamId;
-            await loadExamData(selectedExamId);
-        } catch (error) { errorEl.innerText = 'خطأ: ' + error.message; }
-    }
-
-    function backToExams() {
-        document.getElementById('resetCodeScreen').classList.add('hidden');
-        document.getElementById('examSelectScreen').classList.remove('hidden');
-        document.getElementById('resetCodeInput').value = '';
-        document.getElementById('resetError').innerText = '';
-    }
-
-    async function loadExamData(examId) {
-        try {
-            const examDoc = await db.collection('exams').doc(examId).get();
-            examName = examDoc.data().name;
-            document.getElementById('examNameDisplay').innerText = examName;
-            document.getElementById('examTitleDisplay').innerText = examName;
-            const snapshot = await db.collection('questions').where('exam_id', '==', examId).orderBy('order_num').get();
-            questions = []; snapshot.forEach(doc => questions.push(doc.data()));
-            document.getElementById('totalQuestionsCount').innerText = questions.length;
-            const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get();
-            if (doc.exists) { showResult(doc.data()); } else { document.getElementById('examInfoScreen').classList.remove('hidden'); }
-        } catch (e) { alert("خطأ في التحميل: " + e.message); }
-    }
+    async function loadExamData(examId) { try { const examDoc = await db.collection('exams').doc(examId).get(); examName = examDoc.data().name; document.getElementById('examNameDisplay').innerText = examName; document.getElementById('examTitleDisplay').innerText = examName; const snapshot = await db.collection('questions').where('exam_id', '==', examId).orderBy('order_num').get(); questions = []; snapshot.forEach(doc => questions.push(doc.data())); document.getElementById('totalQuestionsCount').innerText = questions.length; const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get(); if (doc.exists) { showResult(doc.data()); } else { document.getElementById('examInfoScreen').classList.remove('hidden'); } } catch (e) { alert("خطأ في التحميل: " + e.message); } }
 
     function startExam() { document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('examScreen').classList.remove('hidden'); renderQuestions(); }
+    function renderQuestions() { const c = document.getElementById('questionsContainer'); c.innerHTML = ''; questions.forEach((q, i) => { const card = document.createElement('div'); card.className = 'question-card'; card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:18px;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" data-index="${String.fromCharCode(65+j)}" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div>`; c.appendChild(card); }); }
 
-    function renderQuestions() {
-        const c = document.getElementById('questionsContainer'); c.innerHTML = '';
-        questions.forEach((q, i) => {
-            const card = document.createElement('div'); card.className = 'question-card';
-            card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:18px;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" data-index="${String.fromCharCode(65+j)}" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div>`;
-            c.appendChild(card);
-        });
-    }
+    function selectOption(qi, oi, el) { const p = document.getElementById(`opt-${qi}`); const all = p.querySelectorAll('.option-3d'); all.forEach(o => o.style.pointerEvents = 'none'); all.forEach(o => o.classList.remove('selected')); el.classList.add('selected'); studentAnswers[qi] = oi; document.getElementById('progressBar').style.width = ((Object.keys(studentAnswers).length / questions.length) * 100) + '%'; if (Object.keys(studentAnswers).length === questions.length) { document.getElementById('finishBtn').classList.remove('hidden'); document.getElementById('finishBtn').scrollIntoView({behavior: "smooth"}); } }
+    async function finishExam() { if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return; try { const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email; let correctCount = 0; let cats = {}; questions.forEach((q, i) => { const ok = (studentAnswers[i] === q.correct_index); if (ok) correctCount++; const cat = q.category || 'عام'; if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; cats[cat].total++; if (ok) cats[cat].correct++; }); const data = { email: currentUser.email, name: nm, display_name: currentUser.displayName, exam_id: currentExamId, exam_name: examName, score: correctCount, total_questions: questions.length, answers: studentAnswers, categories: cats, used_reset_code: false, created_at: new Date().toISOString() }; await db.collection('students').doc(currentUser.email + '_' + currentExamId).set(data); showResult(data); } catch (error) { alert('خطأ في التسليم: ' + error.message); } }
 
-    function selectOption(qi, oi, el) {
-        const p = document.getElementById(`opt-${qi}`); const all = p.querySelectorAll('.option-3d');
-        all.forEach(o => o.style.pointerEvents = 'none'); all.forEach(o => o.classList.remove('selected'));
-        el.classList.add('selected'); studentAnswers[qi] = oi;
-        document.getElementById('progressBar').style.width = ((Object.keys(studentAnswers).length / questions.length) * 100) + '%';
-        if (Object.keys(studentAnswers).length === questions.length) { document.getElementById('finishBtn').classList.remove('hidden'); document.getElementById('finishBtn').scrollIntoView({behavior: "smooth"}); }
-    }
-async function finishExam() {
-        if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return;
-        try {
-            const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email;
-            let correctCount = 0; let cats = {};
-            questions.forEach((q, i) => { const ok = (studentAnswers[i] === q.correct_index); if (ok) correctCount++; const cat = q.category || 'عام'; if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; cats[cat].total++; if (ok) cats[cat].correct++; });
-            const data = { email: currentUser.email, name: nm, display_name: currentUser.displayName, exam_id: currentExamId, exam_name: examName, score: correctCount, total_questions: questions.length, answers: studentAnswers, categories: cats, used_reset_code: false, created_at: new Date().toISOString() };
-            await db.collection('students').doc(currentUser.email + '_' + currentExamId).set(data);
-            showResult(data);
-        } catch (error) { alert('خطأ في التسليم: ' + error.message); }
-    }
-
-    function showResult(data) {
-        document.getElementById('examScreen').classList.add('hidden');
-        document.getElementById('examInfoScreen').classList.add('hidden');
-        document.getElementById('resultScreen').classList.remove('hidden');
-        const p = Math.round((data.score / data.total_questions) * 100);
-        document.getElementById('finalScore').innerText = '%' + p;
-        document.getElementById('scoreProgress').style.strokeDashoffset = 440 - (440 * p / 100);
-        document.getElementById('resultTitle').innerText = p >= 70 ? '🎉 أداء ممتاز!' : (p >= 50 ? '👍 أداء جيد' : '📚 يحتاج مراجعة');
-        let reviewHTML = '<h3 style="margin:20px 0 10px;text-align:right;">📋 مراجعة الإجابات</h3>';
-        questions.forEach((q, i) => { const userAns = data.answers ? data.answers[i] : 0; const ok = (userAns === q.correct_index); reviewHTML += `<div class="analysis-item"><div style="font-weight:700;">س${i+1}</div><div style="color:${ok?'var(--success)':'var(--error)'}">${ok?'✅':'❌'}</div></div>`; });
-        document.getElementById('reviewContainer').innerHTML = reviewHTML;
-        if (data.categories) { let h = '<h3 style="margin:20px 0 10px;text-align:right;">📊 التحليل التفصيلي</h3>'; for (const [c, s] of Object.entries(data.categories)) { const x = Math.round((s.correct / s.total) * 100); const col = x >= 70 ? 'var(--success)' : (x >= 50 ? 'var(--warning)' : 'var(--error)'); h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`; } document.getElementById('analysisContainer').innerHTML = h; }
-    }
+    function showResult(data) { document.getElementById('examScreen').classList.add('hidden'); document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('resultScreen').classList.remove('hidden'); const p = Math.round((data.score / data.total_questions) * 100); document.getElementById('finalScore').innerText = '%' + p; document.getElementById('scoreProgress').style.strokeDashoffset = 440 - (440 * p / 100); document.getElementById('resultTitle').innerText = p >= 70 ? '🎉 أداء ممتاز!' : (p >= 50 ? '👍 أداء جيد' : '📚 يحتاج مراجعة'); let reviewHTML = '<h3 style="margin:20px 0 10px;text-align:right;">📋 مراجعة الإجابات</h3>'; questions.forEach((q, i) => { const userAns = data.answers ? data.answers[i] : 0; const ok = (userAns === q.correct_index); reviewHTML += `<div class="analysis-item"><div style="font-weight:700;">س${i+1}</div><div style="color:${ok?'var(--success)':'var(--error)'}">${ok?'✅':'❌'}</div></div>`; }); document.getElementById('reviewContainer').innerHTML = reviewHTML; if (data.categories) { let h = '<h3 style="margin:20px 0 10px;text-align:right;">📊 التحليل التفصيلي</h3>'; for (const [c, s] of Object.entries(data.categories)) { const x = Math.round((s.correct / s.total) * 100); const col = x >= 70 ? 'var(--success)' : (x >= 50 ? 'var(--warning)' : 'var(--error)'); h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`; } document.getElementById('analysisContainer').innerHTML = h; } }
 </script>
 </body>
 </html>
