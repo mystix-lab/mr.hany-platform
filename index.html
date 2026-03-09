@@ -111,11 +111,11 @@
     // ⚠️ ضع مفاتيح Firebase هنا (من Project Settings)
     const firebaseConfig = {
         apiKey: "AIzaSyBRQ5Ilq-k_pVdhJM37kk26jrITtugrnSY",
-        authDomain: "mr-hany-exams-platform.firebaseapp.com",
-        projectId: "mr-hany-exams-platform",
-        storageBucket: "mr-hany-exams-platform.firebasestorage.app",
-        messagingSenderId: "589138230514",
-        appId: "1:589138230514:web:253332140577b4a3bce46b"
+  authDomain: "mr-hany-exams-platform.firebaseapp.com",
+  projectId: "mr-hany-exams-platform",
+  storageBucket: "mr-hany-exams-platform.firebasestorage.app",
+  messagingSenderId: "589138230514",
+  appId: "1:589138230514:web:253332140577b4a3bce46b"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -125,25 +125,33 @@
     let currentExamId = null, selectedExamId = null, selectedExamData = null;
 
     async function checkAuth() {
-        document.getElementById('loadingScreen').classList.add('hidden');
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('loginScreen').classList.remove('hidden');
-                document.getElementById('nameInputSection').classList.remove('hidden');
-            } else {
-                document.getElementById('loginScreen').classList.remove('hidden');
-            }
-        });
-    }
-    checkAuth();
+    document.getElementById('loadingScreen').classList.add('hidden');
+    
+    // التحقق من نتيجة إعادة التوجيه
+    auth.getRedirectResult().then((result) => {
+        if (result.user) {
+            currentUser = result.user;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('nameInputSection').classList.remove('hidden');
+        } else {
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+    }).catch((error) => {
+        console.error('خطأ:', error);
+        document.getElementById('loginError').innerText = error.message;
+        document.getElementById('loginScreen').classList.remove('hidden');
+    });
+}
+checkAuth();
 
-    async function signInWithGoogle() {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider).catch((error) => {
-            document.getElementById('loginError').innerText = error.message;
-        });
+async function signInWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+        await auth.signInWithRedirect(provider);
+    } catch (error) {
+        document.getElementById('loginError').innerText = error.message;
     }
+}
 
     async function verifyAndStart() {
         const name = document.getElementById('studentName').value.trim();
@@ -238,7 +246,7 @@
         document.getElementById('progressBar').style.width = ((Object.keys(studentAnswers).length / questions.length) * 100) + '%';
         if (Object.keys(studentAnswers).length === questions.length) { document.getElementById('finishBtn').classList.remove('hidden'); document.getElementById('finishBtn').scrollIntoView({behavior: "smooth"}); }
     }
-    async function finishExam() {
+async function finishExam() {
         if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return;
         const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email;
         let correctCount = 0; let cats = {};
