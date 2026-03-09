@@ -188,38 +188,45 @@
         <div id="studentDetailContent"></div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script>
-    const SUPABASE_URL = 'https://rsduwabhlalvbuhcwzlc.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_3obgpB71fWSjTrCi7Os7wA_jbIOAW7d';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ⚠️ ضع مفاتيح Firebase هنا (نفس مفاتيح ملف الطالب)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBRQ5Ilq-k_pVdhJM37kk26jrITtugrnSY",
+        authDomain: "mr-hany-exams-platform.firebaseapp.com",
+        projectId: "mr-hany-exams-platform",
+        storageBucket: "mr-hany-exams-platform.firebasestorage.app",
+        messagingSenderId: "589138230514",
+        appId: "1:589138230514:web:253332140577b4a3bce46b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
     let currentUser = null, currentExamForReset = null;
 
-    async function checkAuth() {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-            currentUser = session.user;
-            const { data: teacher } = await supabase.from('teachers').select('*').eq('email', session.user.email).single();
-            if (teacher) {
-                document.getElementById('loginPanel').classList.add('hidden');
-                document.getElementById('adminPanel').classList.remove('hidden');
-                document.getElementById('teacherNameDisplay').innerText = teacher.name || session.user.email;
-                document.getElementById('teacherEmailDisplay').innerText = session.user.email;
-                loadDashboard();
-            } else {
-                document.getElementById('loginError').innerText = '⚠️ هذا الحساب ليس حساب أستاذ';
-                supabase.auth.signOut();
-            }
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('loginPanel').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            document.getElementById('teacherNameDisplay').innerText = user.displayName || user.email;
+            document.getElementById('teacherEmailDisplay').innerText = user.email;
+            loadDashboard();
+        } else {
+            document.getElementById('loginPanel').classList.remove('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
         }
-    }
-    checkAuth();
+    });
 
     async function teacherSignIn() {
-        const { error } = await supabase.auth.signInWithPassword({ email: document.getElementById('teacherEmail').value, password: document.getElementById('teacherPass').value });
-        if (error) document.getElementById('loginError').innerText = error.message;
+        try {
+            await auth.signInWithEmailAndPassword(document.getElementById('teacherEmail').value, document.getElementById('teacherPass').value);
+        } catch (error) { document.getElementById('loginError').innerText = error.message; }
     }
 
-    async function teacherSignOut() { await supabase.auth.signOut(); location.reload(); }
+    async function teacherSignOut() { await auth.signOut(); location.reload(); }
 
     function switchTab(tabName) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -231,15 +238,15 @@
         if (tabName === 'resets') loadResetLogs();
         if (tabName === 'questions') loadExamsForQuestionsFilter();
     }
-
     async function loadDashboard() {
-        const { count: examsCount } = await supabase.from('exams').select('*', { count: 'exact', head: true }).eq('teacher_email', currentUser.email).eq('is_active', true);
-        const { count: questionsCount } = await supabase.from('questions').select('*', { count: 'exact', head: true }).eq('teacher_email', currentUser.email);
-        const { count: studentsCount } = await supabase.from('students').select('*', { count: 'exact', head: true });
-        const { count: resetsCount } = await supabase.from('exam_resets').select('*', { count: 'exact', head: true });
-        document.getElementById('statExams').innerText = examsCount || 0;        document.getElementById('statQuestions').innerText = questionsCount || 0;
-        document.getElementById('statStudents').innerText = studentsCount || 0;
-        document.getElementById('statResets').innerText = resetsCount || 0;
+        const exams = await db.collection('exams').where('is_active', '==', true).where('teacher_email', '==', currentUser.email).get();
+        const questions = await db.collection('questions').where('teacher_email', '==', currentUser.email).get();
+        const students = await db.collection('students').get();
+        const resets = await db.collection('examResets').get();
+        document.getElementById('statExams').innerText = exams.size;
+        document.getElementById('statQuestions').innerText = questions.size;
+        document.getElementById('statStudents').innerText = students.size;
+        document.getElementById('statResets').innerText = resets.size;
         loadExams();
     }
 
@@ -255,6 +262,8 @@
 
     function closeExamModal() { document.getElementById('examModal').classList.add('hidden'); }
 
+    function generateRandomCode() { const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let result = ''; for (let i = 0; i < 8; i++) { result += chars.charAt(Math.floor(Math.random() * chars.length)); } return result; }
+
     async function saveExam() {
         const id = document.getElementById('editExamId').value;
         const name = document.getElementById('examName').value.trim();
@@ -266,10 +275,8 @@
         if (!name) { alert('⚠️ أدخل اسم الامتحان'); return; }
         const resetCode = generateRandomCode();
         const examData = { name, grade_level: grade, subject, description: desc, passing_score: passing, time_limit_minutes: timeLimit, teacher_email: currentUser.email, reset_code: resetCode, updated_at: new Date().toISOString() };
-        let error;
-        if (id) { const { error: e } = await supabase.from('exams').update(examData).eq('id', id); error = e; }
-        else { examData.is_active = true; examData.created_at = new Date().toISOString(); const { error: e } = await supabase.from('exams').insert([examData]); error = e; }
-        if (error) { alert('❌ خطأ: ' + error.message); return; }
+        if (id) { await db.collection('exams').doc(id).update(examData); }
+        else { examData.is_active = true; examData.created_at = new Date().toISOString(); await db.collection('exams').add(examData); }
         alert('✅ تم حفظ الامتحان\nكود الإعادة: ' + resetCode);
         closeExamModal();
         loadExams();
@@ -279,60 +286,60 @@
     async function loadExams() {
         const container = document.getElementById('examsList');
         container.innerHTML = '<p style="text-align:center;padding:20px;">جاري التحميل...</p>';
-        const { data, error } = await supabase.from('exams').select('*').eq('teacher_email', currentUser.email).order('created_at', { ascending: false });
-        if (error) { container.innerHTML = '<p style="text-align:center;color:var(--error);">خطأ: ' + error.message + '</p>'; return; }
-        if (!data || data.length === 0) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">📭 لا توجد امتحانات. أنشئ امتحاناً جديداً للبدء.</p>'; return; }
+        const snapshot = await db.collection('exams').where('teacher_email', '==', currentUser.email).orderBy('created_at', 'desc').get();        if (snapshot.empty) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">📭 لا توجد امتحانات</p>'; return; }
         let html = '';
-        data.forEach(exam => {
+        snapshot.forEach(doc => {
+            const exam = doc.data();
             const statusBadge = exam.is_active ? '<span class="badge badge-success">نشط</span>' : '<span class="badge badge-error">موقف</span>';
-            html += `<div class="exam-card"><div class="exam-header"><div><div class="exam-title">${exam.name}</div><div style="font-size:13px;opacity:0.7;margin-top:5px;">${exam.subject} | ${exam.grade_level}</div></div>${statusBadge}</div><div class="exam-meta"><span class="badge badge-primary">🔑 ${exam.reset_code || 'بدون كود'}</span><span class="badge badge-info">📊 درجة النجاح: ${exam.passing_score}%</span>${exam.time_limit_minutes ? `<span class="badge badge-warning">⏱️ ${exam.time_limit_minutes} دقيقة</span>` : ''}<span class="badge badge-info">📅 ${new Date(exam.created_at).toLocaleDateString('ar-EG')}</span></div><p style="font-size:14px;opacity:0.8;margin-bottom:15px;">${exam.description || 'لا يوجد وصف'}</p><div class="exam-actions"><button class="btn-primary btn-small" onclick="selectExamForQuestions('${exam.id}')">📝 إضافة أسئلة</button><button class="btn-warning btn-small" onclick="showResetCode('${exam.id}', '${exam.reset_code}')">🔑 كود الإعادة</button><button class="btn-info btn-small" onclick="toggleExam('${exam.id}', ${!exam.is_active})">${exam.is_active ? '⏸️ إيقاف' : '▶️ تفعيل'}</button><button class="btn-danger btn-small" onclick="deleteExam('${exam.id}')">🗑️ حذف</button></div></div>`;
-        });        container.innerHTML = html;
+            html += `<div class="exam-card"><div class="exam-header"><div><div class="exam-title">${exam.name}</div><div style="font-size:13px;opacity:0.7;margin-top:5px;">${exam.subject} | ${exam.grade_level}</div></div>${statusBadge}</div><div class="exam-meta"><span class="badge badge-primary">🔑 ${exam.reset_code || 'بدون كود'}</span><span class="badge badge-info">📊 درجة النجاح: ${exam.passing_score}%</span>${exam.time_limit_minutes ? `<span class="badge badge-warning">⏱️ ${exam.time_limit_minutes} دقيقة</span>` : ''}<span class="badge badge-info">📅 ${new Date(exam.created_at.toDate()).toLocaleDateString('ar-EG')}</span></div><p style="font-size:14px;opacity:0.8;margin-bottom:15px;">${exam.description || 'لا يوجد وصف'}</p><div class="exam-actions"><button class="btn-primary btn-small" onclick="selectExamForQuestions('${doc.id}')">📝 إضافة أسئلة</button><button class="btn-warning btn-small" onclick="showResetCode('${doc.id}', '${exam.reset_code}')">🔑 كود الإعادة</button><button class="btn-info btn-small" onclick="toggleExam('${doc.id}', ${!exam.is_active})">${exam.is_active ? '⏸️ إيقاف' : '▶️ تفعيل'}</button><button class="btn-danger btn-small" onclick="deleteExam('${doc.id}')">🗑️ حذف</button></div></div>`;
+        });
+        container.innerHTML = html;
     }
 
-    async function toggleExam(examId, isActive) { await supabase.from('exams').update({ is_active: isActive, updated_at: new Date().toISOString() }).eq('id', examId); loadExams(); loadDashboard(); }
-    async function deleteExam(examId) { if (!confirm('⚠️ هل أنت متأكد من حذف هذا الامتحان؟\nسيتم حذف جميع الأسئلة والنتائج المرتبطة به!')) return; await supabase.from('questions').delete().eq('exam_id', examId); await supabase.from('students').delete().eq('exam_id', examId); await supabase.from('exams').delete().eq('id', examId); alert('✅ تم حذف الامتحان'); loadExams(); loadDashboard(); }
+    async function toggleExam(examId, isActive) { await db.collection('exams').doc(examId).update({ is_active: isActive, updated_at: new Date().toISOString() }); loadExams(); loadDashboard(); }
+    async function deleteExam(examId) { if (!confirm('⚠️ هل أنت متأكد؟')) return; await db.collection('questions').where('exam_id', '==', examId).get().then(s => s.forEach(d => d.ref.delete())); await db.collection('students').where('exam_id', '==', examId).get().then(s => s.forEach(d => d.ref.delete())); await db.collection('exams').doc(examId).delete(); alert('✅ تم الحذف'); loadExams(); loadDashboard(); }
     function showResetCode(examId, resetCode) { currentExamForReset = examId; document.getElementById('resetCodeDisplay').innerText = resetCode || 'جاري التوليد...'; document.getElementById('resetCodeModal').classList.remove('hidden'); }
     function closeResetModal() { document.getElementById('resetCodeModal').classList.add('hidden'); currentExamForReset = null; }
     function copyResetCode() { const code = document.getElementById('resetCodeDisplay').innerText; navigator.clipboard.writeText(code).then(() => alert('✅ تم نسخ الكود: ' + code)); }
-    async function regenerateResetCode() { if (!currentExamForReset) return; if (!confirm('⚠️ هل أنت متأكد؟ الكود القديم لن يعمل بعد الآن!')) return; const newCode = generateRandomCode(); await supabase.from('exams').update({ reset_code: newCode, updated_at: new Date().toISOString() }).eq('id', currentExamForReset); document.getElementById('resetCodeDisplay').innerText = newCode; alert('✅ تم توليد كود جديد'); loadExams(); }
-    function generateRandomCode() { const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let result = ''; for (let i = 0; i < 8; i++) { result += chars.charAt(Math.floor(Math.random() * chars.length)); } return result; }
+    async function regenerateResetCode() { if (!currentExamForReset) return; if (!confirm('⚠️ الكود القديم لن يعمل!')) return; const newCode = generateRandomCode(); await db.collection('exams').doc(currentExamForReset).update({ reset_code: newCode, updated_at: new Date().toISOString() }); document.getElementById('resetCodeDisplay').innerText = newCode; alert('✅ تم توليد كود جديد'); loadExams(); }
 async function loadStudentsResults() {
         const tbody = document.querySelector('#studentsTable tbody');
         tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">جاري التحميل...</td></tr>';
         const filterExam = document.getElementById('filterExam').value;
         const filterGrade = document.getElementById('filterGrade').value;
         const search = document.getElementById('searchStudent').value.toLowerCase();
-        let query = supabase.from('students').select(`*, exams (name, grade_level, subject)`).order('created_at', { ascending: false });
-        if (filterExam) query = query.eq('exam_id', filterExam);
-        const { data, error } = await query;
-        if (error) { tbody.innerHTML = '<tr><td colspan="9">خطأ: ' + error.message + '</td></tr>'; return; }
-        loadExamsForFilter(data);
-        let filtered = data || [];
-        if (filterGrade) filtered = filtered.filter(s => s.exams?.grade_level === filterGrade);
+        let query = db.collection('students').orderBy('created_at', 'desc');
+        const snapshot = await query.get();
+        loadExamsForFilter(snapshot);
+        let filtered = [];
+        snapshot.forEach(doc => filtered.push({ id: doc.id, ...doc.data() }));
+        if (filterExam) filtered = filtered.filter(s => s.exam_id === filterExam);
+        if (filterGrade) filtered = filtered.filter(s => s.grade_level === filterGrade);
         if (search) filtered = filtered.filter(s => s.name.toLowerCase().includes(search) || s.email.toLowerCase().includes(search));
         if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;opacity:0.5;">لا توجد نتائج</td></tr>'; return; }
         tbody.innerHTML = '';
         filtered.forEach(s => {
-            const percentage = s.percentage || Math.round((s.score / s.total_questions) * 100);
+            const percentage = Math.round((s.score / s.total_questions) * 100);
             const percentageColor = percentage >= 70 ? 'var(--success)' : (percentage >= 50 ? 'var(--warning)' : 'var(--error)');
             const resetBadge = s.used_reset_code ? '<span class="badge badge-warning">✅ استخدم</span>' : '<span class="badge badge-info">❌ لم يستخدم</span>';
-            tbody.innerHTML += `<tr><td style="font-weight:700;color:var(--success);">${s.name}</td><td style="font-size:13px;opacity:0.7;">${s.email}</td><td>${s.exam_name || s.exams?.name || 'غير محدد'}</td><td><span class="badge badge-primary">${s.exams?.grade_level || 'غير محدد'}</span></td><td>${s.score}/${s.total_questions}</td><td><span style="color:${percentageColor};font-weight:700;">${percentage}%</span></td><td>${resetBadge}</td><td>${new Date(s.created_at).toLocaleDateString('ar-EG')}</td><td><button class="btn-info btn-small" onclick="viewStudentDetail('${s.email}', '${s.exam_id}')">👁️ عرض</button></td></tr>`;
+            tbody.innerHTML += `<tr><td style="font-weight:700;color:var(--success);">${s.name}</td><td style="font-size:13px;opacity:0.7;">${s.email}</td><td>${s.exam_name || 'غير محدد'}</td><td><span class="badge badge-primary">${s.grade_level || 'غير محدد'}</span></td><td>${s.score}/${s.total_questions}</td><td><span style="color:${percentageColor};font-weight:700;">${percentage}%</span></td><td>${resetBadge}</td><td>${s.created_at ? new Date(s.created_at.toDate()).toLocaleDateString('ar-EG') : '-'}</td><td><button class="btn-info btn-small" onclick="viewStudentDetail('${s.id}')">👁️ عرض</button></td></tr>`;
         });
     }
 
-    async function loadExamsForFilter(students) {
+    async function loadExamsForFilter() {
         const select = document.getElementById('filterExam');
         if (select.options.length > 1) return;
-        const { data } = await supabase.from('exams').select('id, name').eq('teacher_email', currentUser.email);
-        data?.forEach(exam => { const opt = document.createElement('option'); opt.value = exam.id; opt.innerText = exam.name; select.appendChild(opt); });
+        const snapshot = await db.collection('exams').where('teacher_email', '==', currentUser.email).get();
+        snapshot.forEach(doc => { const exam = doc.data(); const opt = document.createElement('option'); opt.value = doc.id; opt.innerText = exam.name; select.appendChild(opt); });
     }
 
-    async function viewStudentDetail(email, examId) {
-        const { data: student } = await supabase.from('students').select(`*, exams (name, grade_level, subject)`).eq('email', email).eq('exam_id', examId).single();
-        if (!student) return;
+    async function viewStudentDetail(id) {
+        const doc = await db.collection('students').doc(id).get();
+        if (!doc.exists) return;
+        const s = doc.data();
+        const percentage = Math.round((s.score / s.total_questions) * 100);
         const content = document.getElementById('studentDetailContent');
-        const percentage = student.percentage || Math.round((student.score / student.total_questions) * 100);
-        content.innerHTML = `<div style="text-align:center;margin-bottom:20px;"><h3 style="margin-bottom:10px;">${student.name}</h3><p style="opacity:0.7;">${student.email}</p></div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:20px;"><div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-size:13px;opacity:0.7;">الامتحان</div><div style="font-weight:700;">${student.exam_name || student.exams?.name}</div></div><div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-size:13px;opacity:0.7;">الصف</div><div style="font-weight:700;">${student.exams?.grade_level}</div></div><div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-size:13px;opacity:0.7;">الدرجة</div><div style="font-weight:700;color:var(--success);">${student.score}/${student.total_questions}</div></div><div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-size:13px;opacity:0.7;">النسبة</div><div style="font-weight:700;color:${percentage >= 70 ? 'var(--success)' : 'var(--error)'};">${percentage}%</div></div><div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-size:13px;opacity:0.7;">كود الإعادة</div><div style="font-weight:700;">${student.used_reset_code ? '✅ استخدم' : '❌ لم يستخدم'}</div></div><div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-size:13px;opacity:0.7;">التاريخ</div><div style="font-weight:700;">${new Date(student.created_at).toLocaleDateString('ar-EG')}</div></div></div>${student.categories ? `<div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-weight:700;margin-bottom:10px;">📊 التحليل حسب الموضوع</div>${Object.entries(student.categories).map(([cat, stats]) => { const p = Math.round((stats.correct / stats.total) * 100); return `<div style="display:flex;justify-content:space-between;margin:8px 0;font-size:14px;"><span>${cat}</span><span style="color:${p >= 70 ? 'var(--success)' : 'var(--error)'}">${p}% (${stats.correct}/${stats.total})</span></div>`; }).join('')}</div>` : ''}`;
+        content.innerHTML = `<div style="text-align:center;margin-bottom:20px;"><h3 style="margin-bottom:10px;">${s.name}</h3><p style="opacity:0.7;">${s.email}</p></div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:20px;"><div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-size:13px;opacity:0.7;">الامتحان</div><div style="font-weight:700;">${s.exam_name}</div></div><div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-size:13px;opacity:0.7;">الدرجة</div><div style="font-weight:700;color:var(--success);">${s.score}/${s.total_questions}</div></div><div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-size:13px;opacity:0.7;">النسبة</div><div style="font-weight:700;color:${percentage >= 70 ? 'var(--success)' : 'var(--error)'};">${percentage}%</div></div><div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;"><div style="font-size:13px;opacity:0.7;">كود الإعادة</div><div style="font-weight:700;">${s.used_reset_code ? '✅ استخدم' : '❌ لم يستخدم'}</div></div></div>`;
         document.getElementById('studentDetailModal').classList.remove('hidden');
     }
 
@@ -343,26 +350,22 @@ async function loadStudentsResults() {
         document.querySelectorAll('#studentsTable tbody tr').forEach(r => { const cells = r.querySelectorAll('td'); if (cells.length > 1) { csv += `${cells[0].innerText},${cells[1].innerText},${cells[2].innerText},${cells[3].innerText},${cells[4].innerText},${cells[5].innerText},${cells[6].innerText},${cells[7].innerText}\n`; } });
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'نتائج_الطلاب_' + new Date().toISOString().split('T')[0] + '.csv';        a.click();
+        const a = document.createElement('a'); a.href = url; a.download = 'نتائج_الطلاب_' + new Date().toISOString().split('T')[0] + '.csv'; a.click();
     }
-
     async function loadResetLogs() {
         const tbody = document.querySelector('#resetsTable tbody');
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">جاري التحميل...</td></tr>';
-        const { data, error } = await supabase.from('exam_resets').select(`*, exams (name)`).order('used_at', { ascending: false }).limit(100);
-        if (error) { tbody.innerHTML = '<tr><td colspan="6">خطأ</td></tr>'; return; }
+        const snapshot = await db.collection('examResets').orderBy('used_at', 'desc').limit(100).get();
         tbody.innerHTML = '';
-        if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;opacity:0.5;">لا توجد سجلات</td></tr>'; return; }
-        data.forEach(log => { tbody.innerHTML += `<tr><td>${log.exams?.name || 'غير معروف'}</td><td style="font-weight:700;">${log.student_name || log.student_email}</td><td style="font-size:13px;opacity:0.7;">${log.student_email}</td><td style="font-family:monospace;color:var(--warning);">${log.reset_code}</td><td><span class="badge badge-info">${log.used_by || 'طالب'}</span></td><td>${new Date(log.used_at).toLocaleString('ar-EG')}</td></tr>`; });
+        if (snapshot.empty) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;opacity:0.5;">لا توجد سجلات</td></tr>'; return; }
+        snapshot.forEach(doc => { const log = doc.data(); tbody.innerHTML += `<tr><td>${log.exam_name || 'غير معروف'}</td><td style="font-weight:700;">${log.student_name || log.student_email}</td><td style="font-size:13px;opacity:0.7;">${log.student_email}</td><td style="font-family:monospace;color:var(--warning);">${log.reset_code}</td><td><span class="badge badge-info">${log.used_by || 'طالب'}</span></td><td>${log.used_at ? new Date(log.used_at.toDate()).toLocaleString('ar-EG') : '-'}</td></tr>`; });
     }
 
     async function loadExamsForQuestionsFilter() {
         const select = document.getElementById('filterExamQuestions');
         if (select.options.length > 1) return;
-        const { data } = await supabase.from('exams').select('id, name').eq('teacher_email', currentUser.email);
-        data?.forEach(exam => { const opt = document.createElement('option'); opt.value = exam.id; opt.innerText = exam.name; select.appendChild(opt); });
+        const snapshot = await db.collection('exams').where('teacher_email', '==', currentUser.email).get();
+        snapshot.forEach(doc => { const opt = document.createElement('option'); opt.value = doc.id; opt.innerText = doc.data().name; select.appendChild(opt); });
     }
 
     function showAddQuestion() {
@@ -384,26 +387,26 @@ async function loadStudentsResults() {
         const examId = document.getElementById('questionExamId').value;
         const q = { exam_id: examId, text: document.getElementById('qText').value.trim(), options: [document.getElementById('opt1').value.trim(), document.getElementById('opt2').value.trim(), document.getElementById('opt3').value.trim(), document.getElementById('opt4').value.trim()], correct_index: parseInt(document.getElementById('qCorrect').value), category: document.getElementById('qCat').value.trim() || 'عام', explanation: document.getElementById('qExp').value.trim(), teacher_email: currentUser.email, order_num: Date.now() };
         if (!q.text || !q.options[0]) { alert('⚠️ املأ السؤال والخيار الأول'); return; }
-        const { error } = await supabase.from('questions').insert([q]);
-        if (error) { alert('❌ خطأ: ' + error.message); return; }
+        await db.collection('questions').add(q);
         alert('✅ تم إضافة السؤال');
         closeQuestionModal();
         loadQuestionsForExam();
+        loadDashboard();
     }
 
     async function loadQuestionsForExam() {
         const examId = document.getElementById('filterExamQuestions').value;
         const container = document.getElementById('questionsList');
-        if (!examId) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">اختر امتحاناً لعرض أسئلته</p>'; return; }        container.innerHTML = '<p style="text-align:center;padding:20px;">جاري التحميل...</p>';
-        const { data, error } = await supabase.from('questions').select('*').eq('exam_id', examId).order('order_num');
-        if (error) { container.innerHTML = '<p style="text-align:center;color:var(--error);">خطأ</p>'; return; }
-        if (!data || data.length === 0) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">لا توجد أسئلة في هذا الامتحان</p>'; return; }
-        let html = '';
-        data.forEach((q, i) => { html += `<div class="exam-card"><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span class="badge badge-primary">سؤال ${i+1}</span><span class="badge badge-info">${q.category}</span></div><div style="font-weight:700;margin-bottom:15px;">${q.text}</div><div style="font-size:14px;opacity:0.8;">${q.options.map((o,j) => `<div style="padding:5px 0;color:${j===q.correct_index?'var(--success)':''}">${j+1}. ${o} ${j===q.correct_index?'✅':''}</div>`).join('')}</div>${q.explanation ? `<div style="margin-top:15px;padding:10px;background:rgba(99,102,241,0.2);border-radius:8px;font-size:13px;">💡 ${q.explanation}</div>` : ''}<div style="margin-top:15px;display:flex;gap:10px;"><button class="btn-warning btn-small" onclick="editQuestion('${q.id}')">✏️ تعديل</button><button class="btn-danger btn-small" onclick="deleteQuestion('${q.id}')">🗑️ حذف</button></div></div>`; });
+        if (!examId) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">اختر امتحاناً لعرض أسئلته</p>'; return; }
+        container.innerHTML = '<p style="text-align:center;padding:20px;">جاري التحميل...</p>';
+        const snapshot = await db.collection('questions').where('exam_id', '==', examId).orderBy('order_num').get();
+        if (snapshot.empty) { container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">لا توجد أسئلة</p>'; return; }        let html = '';
+        let i = 0;
+        snapshot.forEach(doc => { const q = doc.data(); html += `<div class="exam-card"><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span class="badge badge-primary">سؤال ${i+1}</span><span class="badge badge-info">${q.category}</span></div><div style="font-weight:700;margin-bottom:15px;">${q.text}</div><div style="font-size:14px;opacity:0.8;">${q.options.map((o,j) => `<div style="padding:5px 0;color:${j===q.correct_index?'var(--success)':''}">${j+1}. ${o} ${j===q.correct_index?'✅':''}</div>`).join('')}</div>${q.explanation ? `<div style="margin-top:15px;padding:10px;background:rgba(99,102,241,0.2);border-radius:8px;font-size:13px;">💡 ${q.explanation}</div>` : ''}<div style="margin-top:15px;display:flex;gap:10px;"><button class="btn-danger btn-small" onclick="deleteQuestion('${doc.id}')">🗑️ حذف</button></div></div>`; i++; });
         container.innerHTML = html;
     }
 
-    async function deleteQuestion(qId) { if (!confirm('⚠️ حذف هذا السؤال؟')) return; await supabase.from('questions').delete().eq('id', qId); alert('✅ تم الحذف'); loadQuestionsForExam(); }
+    async function deleteQuestion(qId) { if (!confirm('⚠️ حذف هذا السؤال؟')) return; await db.collection('questions').doc(qId).delete(); alert('✅ تم الحذف'); loadQuestionsForExam(); loadDashboard(); }
     function selectExamForQuestions(examId) { document.getElementById('filterExamQuestions').value = examId; switchTab('questions'); loadQuestionsForExam(); }
 </script>
 </body>

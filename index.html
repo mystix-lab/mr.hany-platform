@@ -104,35 +104,45 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script>
-    // ⚠️ ضع مفاتيح Supabase هنا
-    const SUPABASE_URL = 'https://rsduwabhlalvbuhcwzlc.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_3obgpB71fWSjTrCi7Os7wA_jbIOAW7d';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ⚠️ ضع مفاتيح Firebase هنا (من Project Settings)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBRQ5Ilq-k_pVdhJM37kk26jrITtugrnSY",
+        authDomain: "mr-hany-exams-platform.firebaseapp.com",
+        projectId: "mr-hany-exams-platform",
+        storageBucket: "mr-hany-exams-platform.firebasestorage.app",
+        messagingSenderId: "589138230514",
+        appId: "1:589138230514:web:253332140577b4a3bce46b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
     
     let currentUser = null, questions = [], examName = "", studentAnswers = {}, score = 0;
     let currentExamId = null, selectedExamId = null, selectedExamData = null;
 
     async function checkAuth() {
         document.getElementById('loadingScreen').classList.add('hidden');
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-            currentUser = session.user;
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('nameInputSection').classList.remove('hidden');
-        } else {
-            document.getElementById('loginScreen').classList.remove('hidden');
-        }
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('nameInputSection').classList.remove('hidden');
+            } else {
+                document.getElementById('loginScreen').classList.remove('hidden');
+            }
+        });
     }
     checkAuth();
 
     async function signInWithGoogle() {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: { redirectTo: window.location.origin }
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider).catch((error) => {
+            document.getElementById('loginError').innerText = error.message;
         });
-        if (error) document.getElementById('loginError').innerText = error.message;
     }
 
     async function verifyAndStart() {
@@ -143,32 +153,33 @@
         await loadExamsList();
     }
 
-    async function loadExamsList() {
-        document.getElementById('examSelectScreen').classList.remove('hidden');
-        const { data: exams, error } = await supabase.from('exams').select('*').eq('is_active', true).order('created_at', { ascending: false });
-        if (error) { alert('خطأ: ' + error.message); return; }
+    async function loadExamsList() {        document.getElementById('examSelectScreen').classList.remove('hidden');
+        const snapshot = await db.collection('exams').where('is_active', '==', true).get();
         const container = document.getElementById('examsList');
         container.innerHTML = '';
-        exams.forEach(exam => {
+        if (snapshot.empty) { container.innerHTML = '<p style="text-align:center;">لا توجد امتحانات نشطة</p>'; return; }
+        snapshot.forEach(doc => {
+            const exam = doc.data();
             const card = document.createElement('div');
             card.className = 'glass-card';
             card.style.cssText = 'cursor:pointer;transition:all 0.3s;';
-            card.onclick = () => selectExam(exam.id);            card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:5px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;">${exam.description || ''}</p><span style="background:var(--primary);padding:3px 10px;border-radius:10px;font-size:12px;">${exam.grade_level}</span></div><span style="font-size:24px;">➡️</span></div>`;
+            card.onclick = () => selectExam(doc.id, exam);
+            card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:5px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;">${exam.description || ''}</p><span style="background:var(--primary);padding:3px 10px;border-radius:10px;font-size:12px;">${exam.grade_level}</span></div><span style="font-size:24px;">➡️</span></div>`;
             container.appendChild(card);
         });
     }
 
-    async function selectExam(examId) {
+    async function selectExam(examId, exam) {
         selectedExamId = examId;
-        const { data: existing, error } = await supabase.from('students').select('*').eq('email', currentUser.email).eq('exam_id', examId).single();
-        if (existing) {
-            selectedExamData = existing;
+        const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get();
+        if (doc.exists) {
+            selectedExamData = doc.data();
             document.getElementById('examSelectScreen').classList.add('hidden');
             document.getElementById('resetCodeScreen').classList.remove('hidden');
             return;
         }
-        if (error && error.code !== 'PGRST116') { alert('خطأ: ' + error.message); return; }
         currentExamId = examId;
+        examName = exam.name;
         document.getElementById('examSelectScreen').classList.add('hidden');
         await loadExamData(examId);
     }
@@ -177,11 +188,11 @@
         const code = document.getElementById('resetCodeInput').value.trim().toUpperCase();
         const errorEl = document.getElementById('resetError');
         if (code.length !== 8) { errorEl.innerText = '⚠️ الكود يجب أن يكون 8 أحرف'; return; }
-        const { data: exam } = await supabase.from('exams').select('reset_code, id').eq('id', selectedExamId).single();
+        const examDoc = await db.collection('exams').doc(selectedExamId).get();
+        const exam = examDoc.data();
         if (!exam || exam.reset_code !== code) { errorEl.innerText = '❌ كود الإعادة غير صحيح'; return; }
-        const { error: deleteError } = await supabase.from('students').delete().eq('email', currentUser.email).eq('exam_id', selectedExamId);
-        if (deleteError) { errorEl.innerText = '❌ خطأ في الإعادة: ' + deleteError.message; return; }
-        await supabase.from('exam_resets').insert([{ exam_id: selectedExamId, student_email: currentUser.email, reset_code: code, used_by: 'student_self' }]);
+        await db.collection('students').doc(currentUser.email + '_' + selectedExamId).delete();
+        await db.collection('examResets').add({ exam_id: selectedExamId, exam_name: exam.name, student_email: currentUser.email, reset_code: code, used_at: new Date().toISOString() });
         alert('✅ تم التحقق! يمكنك الآن أداء الامتحان');
         document.getElementById('resetCodeScreen').classList.add('hidden');
         document.getElementById('resetCodeInput').value = '';
@@ -191,21 +202,21 @@
     }
 
     function backToExams() {
-        document.getElementById('resetCodeScreen').classList.add('hidden');
-        document.getElementById('examSelectScreen').classList.remove('hidden');
+        document.getElementById('resetCodeScreen').classList.add('hidden');        document.getElementById('examSelectScreen').classList.remove('hidden');
         document.getElementById('resetCodeInput').value = '';
         document.getElementById('resetError').innerText = '';
     }
 
     async function loadExamData(examId) {
         try {
-            const { data: exam } = await supabase.from('exams').select('name').eq('id', examId).single();
-            if (exam) { examName = exam.name; document.getElementById('examNameDisplay').innerText = examName; document.getElementById('examTitleDisplay').innerText = examName; }
-            const { data: qs, error } = await supabase.from('questions').select('*').eq('exam_id', examId).order('order_num');
-            if (error) throw error;            questions = qs || [];
+            examName = (await db.collection('exams').doc(examId).get()).data().name;
+            document.getElementById('examNameDisplay').innerText = examName;
+            document.getElementById('examTitleDisplay').innerText = examName;
+            const snapshot = await db.collection('questions').where('exam_id', '==', examId).orderBy('order_num').get();
+            questions = []; snapshot.forEach(doc => questions.push(doc.data()));
             document.getElementById('totalQuestionsCount').innerText = questions.length;
-            const { data: existing } = await supabase.from('students').select('*').eq('email', currentUser.email).eq('exam_id', examId).single();
-            if (existing) { showResult(existing); } else { document.getElementById('examInfoScreen').classList.remove('hidden'); }
+            const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get();
+            if (doc.exists) { showResult(doc.data()); } else { document.getElementById('examInfoScreen').classList.remove('hidden'); }
         } catch (e) { alert("خطأ في التحميل: " + e.message); }
     }
 
@@ -214,9 +225,8 @@
     function renderQuestions() {
         const c = document.getElementById('questionsContainer'); c.innerHTML = '';
         questions.forEach((q, i) => {
-            let imageHtml = q.image_url ? `<img src="${q.image_url}" style="max-width:100%;max-height:200px;border-radius:12px;margin:15px 0;cursor:pointer;" onclick="showFullImage('${q.image_url}')" title="اضغط للتكبير">` : '';
             const card = document.createElement('div'); card.className = 'question-card';
-            card.innerHTML = `${imageHtml}<div style="margin-bottom:15px;font-weight:700;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div>`;
+            card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div>`;
             c.appendChild(card);
         });
     }
@@ -230,12 +240,11 @@
     }
     async function finishExam() {
         if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return;
-        const nm = localStorage.getItem('studentName') || currentUser.user_metadata.full_name || currentUser.email;
+        const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email;
         let correctCount = 0; let cats = {};
         questions.forEach((q, i) => { const ok = (studentAnswers[i] === q.correct_index); if (ok) correctCount++; const cat = q.category || 'عام'; if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; cats[cat].total++; if (ok) cats[cat].correct++; });
-        const data = { email: currentUser.email, name: nm, display_name: currentUser.user_metadata.full_name, exam_id: currentExamId, exam_name: examName, score: correctCount, total_questions: questions.length, answers: studentAnswers, categories: cats };
-        const { error } = await supabase.from('students').insert([data]);
-        if (error) { alert('❌ خطأ في الحفظ: ' + error.message); return; }
+        const data = { email: currentUser.email, name: nm, display_name: currentUser.displayName, exam_id: currentExamId, exam_name: examName, score: correctCount, total_questions: questions.length, answers: studentAnswers, categories: cats, used_reset_code: false, created_at: new Date().toISOString() };
+        await db.collection('students').doc(currentUser.email + '_' + currentExamId).set(data);
         showResult(data);
     }
 
@@ -252,20 +261,6 @@
         document.getElementById('reviewContainer').innerHTML = reviewHTML;
         if (data.categories) { let h = '<h3 style="margin:20px 0 10px;text-align:right;">📊 التحليل التفصيلي</h3>'; for (const [c, s] of Object.entries(data.categories)) { const x = Math.round((s.correct / s.total) * 100); const col = x >= 70 ? 'var(--success)' : (x >= 50 ? 'var(--warning)' : 'var(--error)'); h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`; } document.getElementById('analysisContainer').innerHTML = h; }
     }
-
-    function showFullImage(url) {
-        const modal = document.createElement('div');
-        modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:flex;justify-content:center;align-items:center;z-index:2000;';
-        modal.onclick = () => modal.remove();
-        const img = document.createElement('img'); img.src = url; img.style.cssText = 'max-width:90%;max-height:90%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);';
-        const btn = document.createElement('button'); btn.innerHTML = '×'; btn.style.cssText = 'position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.2);border:none;color:#fff;width:50px;height:50px;border-radius:50%;font-size:24px;cursor:pointer;';
-        btn.onclick = (e) => { e.stopPropagation(); modal.remove(); };
-        modal.appendChild(btn); modal.appendChild(img); document.body.appendChild(modal);
-    }
-
-    supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN') { currentUser = session.user; document.getElementById('nameInputSection').classList.remove('hidden'); }
-    });
 </script>
 </body>
 </html>
