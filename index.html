@@ -6,17 +6,9 @@
     <title>منصة الاختبارات الإلكترونية | أ. هاني محمد الداودي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #8b5cf6;
-            --accent: #06b6d4; --success: #10b981; --error: #ef4444;
-            --warning: #f59e0b; --text-main: #1e293b; --text-light: #64748b;
-        }
+        :root { --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #8b5cf6; --accent: #06b6d4; --success: #10b981; --error: #ef4444; --warning: #f59e0b; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a8a 100%);
-            min-height: 100vh; color: #ffffff; overflow-x: hidden; position: relative;
-        }
+        body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a8a 100%); min-height: 100vh; color: #ffffff; overflow-x: hidden; position: relative; }
         .bg-shapes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none; }
         .shape { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5; animation: float 20s infinite ease-in-out; }
         .shape-1 { width: 400px; height: 400px; background: linear-gradient(135deg, #6366f1, #8b5cf6); top: -100px; right: -100px; }
@@ -27,18 +19,8 @@
         .particle { position: absolute; width: 4px; height: 4px; background: rgba(255,255,255,0.5); border-radius: 50%; animation: particleFloat 15s infinite linear; }
         @keyframes particleFloat { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 100% { transform: translateY(-100vh) scale(1); opacity: 0; } }
         .app-container { max-width: 700px; margin: 0 auto; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-        .glass-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border-radius: 24px; border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3), inset 0 0 30px rgba(255,255,255,0.1);
-            padding: 35px; margin-bottom: 20px; position: relative; overflow: hidden;
-        }
-        .glass-card::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg); animation: shimmer 3s infinite; pointer-events: none;
-        }
+        .glass-card { background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 25px 50px rgba(0,0,0,0.3), inset 0 0 30px rgba(255,255,255,0.1); padding: 35px; margin-bottom: 20px; position: relative; overflow: hidden; }
+        .glass-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent); transform: rotate(45deg); animation: shimmer 3s infinite; pointer-events: none; }
         @keyframes shimmer { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
         .header { text-align: center; margin-bottom: 30px; padding: 25px; }
         .logo-3d { font-size: 60px; display: inline-block; margin-bottom: 15px; filter: drop-shadow(0 10px 20px rgba(99,102,241,0.5)); animation: logoBounce 2s infinite ease-in-out; }
@@ -56,17 +38,16 @@
         .input-3d { width: 100%; padding: 18px; border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; background: rgba(255,255,255,0.1); color: #ffffff; font-family: 'Cairo', sans-serif; font-size: 16px; backdrop-filter: blur(10px); transition: all 0.3s ease; box-shadow: inset 0 2px 10px rgba(0,0,0,0.2); }
         .input-3d::placeholder { color: rgba(255,255,255,0.5); }
         .input-3d:focus { outline: none; background: rgba(255,255,255,0.15); border-color: #6366f1; box-shadow: inset 0 2px 10px rgba(0,0,0,0.2), 0 0 20px rgba(99,102,241,0.3); }
-  .question-card { background: rgba(255,255,255,0.08); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: cardSlideIn 0.5s ease-out; }
+.question-card { background: rgba(255,255,255,0.08); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: cardSlideIn 0.5s ease-out; }
         @keyframes cardSlideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .q-header { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: rgba(255,255,255,0.7); font-weight: 600; }
         .q-text { font-size: 18px; font-weight: 700; margin-bottom: 20px; line-height: 1.5; }
         .options-3d { display: grid; gap: 12px; }
         .option-3d { padding: 16px 20px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; font-weight: 600; text-align: right; position: relative; overflow: hidden; }
         .option-3d:hover { border-color: #6366f1; background: rgba(99,102,241,0.2); transform: translateX(-5px); }
+        .option-3d.selected { border-color: #6366f1; background: rgba(99,102,241,0.3); }
         .option-3d.correct { background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(16,185,129,0.1)); border-color: #10b981; box-shadow: 0 5px 20px rgba(16,185,129,0.4); }
         .option-3d.wrong { background: linear-gradient(135deg, rgba(239,68,68,0.3), rgba(239,68,68,0.1)); border-color: #ef4444; box-shadow: 0 5px 20px rgba(239,68,68,0.4); }
-        .feedback-3d { margin-top: 18px; padding: 18px; background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.1)); border-right: 4px solid #6366f1; border-radius: 12px; font-size: 14px; line-height: 1.6; display: none; animation: feedbackSlide 0.4s ease-out; }
-        @keyframes feedbackSlide { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
         .progress-3d { height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 25px; overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.3); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4); border-radius: 10px; width: 0%; transition: width 0.5s ease; box-shadow: 0 0 20px rgba(99,102,241,0.6); }
         .result-container { text-align: center; padding: 20px; }
@@ -129,6 +110,7 @@
         <div class="result-container">
             <div class="result-title" id="resultTitle">🎉 النتيجة النهائية</div>
             <div class="score-ring"><svg><defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#6366f1"/><stop offset="50%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs><circle class="bg" cx="90" cy="90" r="70"/><circle class="progress" cx="90" cy="90" r="70" style="--offset: 440"/></svg><div class="score-value" id="finalScore">0%</div></div>
+            <div id="reviewContainer"></div>
             <div id="analysisContainer" class="analysis-3d"></div>
             <p style="margin-top: 25px; color: rgba(255,255,255,0.6); font-size: 14px;">🔒 تم حفظ نتيجتك تلقائياً</p>
         </div>
@@ -146,31 +128,32 @@
   appId: "1:589138230514:web:253332140577b4a3bce46b" };
     firebase.initializeApp(firebaseConfig); const auth = firebase.auth(); const db = firebase.firestore();
     let currentUser = null, questions = [], examName = "", studentAnswers = {}, score = 0, categoriesStats = {};
+    
     function createParticles() { const c = document.getElementById('particles'); for (let i = 0; i < 30; i++) { const p = document.createElement('div'); p.className = 'particle'; p.style.left = Math.random() * 100 + '%'; p.style.animationDelay = Math.random() * 15 + 's'; p.style.animationDuration = (Math.random() * 10 + 10) + 's'; c.appendChild(p); } } createParticles();
     function createConfetti() { const colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444']; for (let i = 0; i < 100; i++) { setTimeout(() => { const c = document.createElement('div'); c.className = 'confetti'; c.style.left = Math.random() * 100 + '%'; c.style.background = colors[Math.floor(Math.random() * colors.length)]; c.style.animationDelay = Math.random() * 2 + 's'; document.body.appendChild(c); setTimeout(() => c.remove(), 5000); }, i * 30); } }
+    
+    auth.getRedirectResult().then((result) => { if (result.user) { console.log("تم تسجيل الدخول:", result.user.email); } }).catch((error) => { console.error("خطأ:", error); document.getElementById('loginError').innerText = "خطأ: " + error.message; });
     auth.onAuthStateChanged(async (user) => { document.getElementById('loadingScreen').classList.add('hidden'); if (user) { currentUser = user; document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('nameInputSection').classList.remove('hidden'); } else { document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('nameInputSection').classList.add('hidden'); } });
-    function signInWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    // استخدام التوجيه بدلاً من النافذة المنبثقة لتجنب الأخطاء
-    auth.signInWithRedirect(provider);
-}
-// التعامل مع نتيجة تسجيل الدخول بعد العودة من جوجل
-auth.getRedirectResult().then((result) => {
-    if (result.user) {
-        console.log("تم تسجيل الدخول بنجاح:", result.user.email);
-        // سيتم التعامل مع الحالة تلقائياً عبر onAuthStateChanged
-    }
-}).catch((error) => {
-    console.error("خطأ في تسجيل الدخول:", error);
-    document.getElementById('loginError').innerText = "حدث خطأ: " + error.message;
-});
+    function signInWithGoogle() { const provider = new firebase.auth.GoogleAuthProvider(); auth.signInWithRedirect(provider); }
+    
     async function verifyAndStart() { const name = document.getElementById('studentName').value.trim(); if (name.length < 5) { alert('⚠️ أدخل الاسم الثلاثي بشكل صحيح'); return; } const rec = await db.collection('students').doc(currentUser.email).get(); if (rec.exists) { alert('⛔ لقد أديت هذا الامتحان من قبل'); showResult(rec.data()); return; } localStorage.setItem('studentName', name); document.getElementById('loginScreen').classList.add('hidden'); await checkExamStatus(currentUser); }
     async function checkExamStatus(user) { try { const ec = await db.collection('examConfig').doc('current').get(); if (ec.exists) { examName = ec.data().name; document.getElementById('examNameDisplay').innerText = examName; document.getElementById('examTitleDisplay').innerText = examName; } const qs = await db.collection('questions').get(); questions = []; qs.forEach(doc => questions.push(doc.data())); document.getElementById('totalQuestionsCount').innerText = questions.length; const rec = await db.collection('students').doc(user.email).get(); if (rec.exists) { showResult(rec.data()); } else { document.getElementById('examInfoScreen').classList.remove('hidden'); } } catch (e) { alert("خطأ: " + e.message); } }
     function startExam() { document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('examScreen').classList.remove('hidden'); renderQuestions(); }
-    function renderQuestions() { const c = document.getElementById('questionsContainer'); c.innerHTML = ''; questions.forEach((q, i) => { const card = document.createElement('div'); card.className = 'question-card'; card.innerHTML = `<div class="q-header"><span>السؤال ${i+1} من ${questions.length}</span><span style="background:rgba(99,102,241,0.3);padding:4px 12px;border-radius:20px;">${q.category||'عام'}</span></div><div class="q-text">${q.text}</div><div class="options-3d" id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div><div class="feedback-3d" id="feed-${i}"><strong>💡 الشرح:</strong> ${q.explanation}</div>`; c.appendChild(card); }); }
-    function selectOption(qi, oi, el) { const q = questions[qi]; const p = document.getElementById(`opt-${qi}`); const fb = document.getElementById(`feed-${qi}`); const all = p.querySelectorAll('.option-3d'); all.forEach(o => o.style.pointerEvents = 'none'); const ok = (oi === q.correctIndex); if (ok) { el.classList.add('correct'); score++; } else { el.classList.add('wrong'); all[q.correctIndex].classList.add('correct'); } studentAnswers[qi] = ok; fb.style.display = 'block'; document.getElementById('progressBar').style.width = ((Object.keys(studentAnswers).length / questions.length) * 100) + '%'; if (Object.keys(studentAnswers).length === questions.length) { document.getElementById('finishBtn').classList.remove('hidden'); } }
-    async function finishExam() { if (!confirm("هل أنت متأكد؟")) return; const nm = localStorage.getItem('studentName') || currentUser.displayName; const data = { name: nm, email: currentUser.email, displayName: currentUser.displayName, score: score, totalQuestions: questions.length, examName: examName, date: new Date().toISOString(), details: studentAnswers, categories: categoriesStats }; await db.collection('students').doc(currentUser.email).set(data); showResult(data); }
-    function showResult(data) { document.getElementById('examScreen').classList.add('hidden'); document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('resultScreen').classList.remove('hidden'); const p = Math.round((data.score / data.totalQuestions) * 100); document.getElementById('finalScore').innerText = '%' + p; document.querySelector('.progress').style.setProperty('--offset', 440 - (440 * p / 100)); const r = document.querySelector('.progress'); if (p >= 70) { r.style.stroke = '#10b981'; document.getElementById('resultTitle').innerText = '🎉 أداء ممتاز!'; createConfetti(); } else if (p >= 50) { r.style.stroke = '#f59e0b'; document.getElementById('resultTitle').innerText = '👍 أداء جيد'; } else { r.style.stroke = '#ef4444'; document.getElementById('resultTitle').innerText = '📚 يحتاج مراجعة'; } if (data.categories && Object.keys(data.categories).length > 0) { let h = '<h3 style="margin-bottom:20px;text-align:right;">📊 التحليل</h3>'; for (const [c, s] of Object.entries(data.categories)) { const x = Math.round((s.correct / s.total) * 100); const col = x >= 70 ? '#10b981' : (x >= 50 ? '#f59e0b' : '#ef4444'); h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div style="display:flex;align-items:center;gap:12px;"><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col};"></div></div><span style="color:${col};font-weight:700;min-width:40px;">${x}%</span></div></div>`; } document.getElementById('analysisContainer').innerHTML = h; } }
+    
+    function renderQuestions() { const c = document.getElementById('questionsContainer'); c.innerHTML = ''; questions.forEach((q, i) => { const card = document.createElement('div'); card.className = 'question-card'; card.innerHTML = `<div class="q-header"><span>السؤال ${i+1} من ${questions.length}</span><span style="background:rgba(99,102,241,0.3);padding:4px 12px;border-radius:20px;">${q.category||'عام'}</span></div><div class="q-text">${q.text}</div><div class="options-3d" id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div>`; c.appendChild(card); }); }
+    
+    function selectOption(qi, oi, el) { const p = document.getElementById(`opt-${qi}`); const all = p.querySelectorAll('.option-3d'); all.forEach(o => o.style.pointerEvents = 'none'); all.forEach(o => o.classList.remove('selected')); el.classList.add('selected'); studentAnswers[qi] = oi; document.getElementById('progressBar').style.width = ((Object.keys(studentAnswers).length / questions.length) * 100) + '%'; if (Object.keys(studentAnswers).length === questions.length) { document.getElementById('finishBtn').classList.remove('hidden'); document.getElementById('finishBtn').scrollIntoView({behavior: "smooth"}); } }
+    
+    async function finishExam() { if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return; const nm = localStorage.getItem('studentName') || currentUser.displayName; let correctCount = 0; let cats = {}; questions.forEach((q, i) => { const isCorrect = (studentAnswers[i] === q.correctIndex); if (isCorrect) correctCount++; const cat = q.category || 'عام'; if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; cats[cat].total++; if (isCorrect) cats[cat].correct++; }); const data = { name: nm, email: currentUser.email, displayName: currentUser.displayName, score: correctCount, totalQuestions: questions.length, examName: examName, date: new Date().toISOString(), answers: studentAnswers, categories: cats }; await db.collection('students').doc(currentUser.email).set(data); showResult(data); }
+    
+    function showResult(data) { document.getElementById('examScreen').classList.add('hidden'); document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('resultScreen').classList.remove('hidden'); const p = Math.round((data.score / data.totalQuestions) * 100); document.getElementById('finalScore').innerText = '%' + p; document.querySelector('.progress').style.setProperty('--offset', 440 - (440 * p / 100)); const r = document.querySelector('.progress'); if (p >= 70) { r.style.stroke = '#10b981'; document.getElementById('resultTitle').innerText = '🎉 أداء ممتاز!'; createConfetti(); } else if (p >= 50) { r.style.stroke = '#f59e0b'; document.getElementById('resultTitle').innerText = '👍 أداء جيد'; } else { r.style.stroke = '#ef4444'; document.getElementById('resultTitle').innerText = '📚 يحتاج مراجعة'; }
+    
+    // مراجعة الإجابات (تظهر بعد التسليم)
+    let reviewHTML = '<h3 style="margin-bottom:20px;text-align:right;">📋 مراجعة الإجابات</h3>';
+    questions.forEach((q, i) => { const userAns = data.answers[i]; const isCorrect = (userAns === q.correctIndex); reviewHTML += `<div class="analysis-item" style="flex-direction:column;align-items:flex-start;gap:10px;"><div style="font-weight:700;">س${i+1}: ${q.text}</div><div style="font-size:13px;opacity:0.8;">إجابتك: <span style="color:${isCorrect?'#10b981':'#ef4444'}">${q.options[userAns]}</span> ${isCorrect?'✅':'❌'}</div>${!isCorrect?`<div style="font-size:13px;color:#10b981;">الصحيحة: ${q.options[q.correctIndex]}</div>`:''}</div>`; });
+    document.getElementById('reviewContainer').innerHTML = reviewHTML;
+    
+    if (data.categories && Object.keys(data.categories).length > 0) { let h = '<h3 style="margin-bottom:20px;text-align:right;margin-top:30px;">📊 التحليل</h3>'; for (const [c, s] of Object.entries(data.categories)) { const x = Math.round((s.correct / s.total) * 100); const col = x >= 70 ? '#10b981' : (x >= 50 ? '#f59e0b' : '#ef4444'); h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div style="display:flex;align-items:center;gap:12px;"><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col};"></div></div><span style="color:${col};font-weight:700;min-width:40px;">${x}%</span></div></div>`; } document.getElementById('analysisContainer').innerHTML = h; } }
 </script>
 </body>
 </html>
