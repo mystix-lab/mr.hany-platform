@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | أ. هاني محمد الداودي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --error: #ef4444;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #ffffff;
+            --border: rgba(255,255,255,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e1b4b);
+            min-height: 100vh; color: var(--text); padding: 20px;
+        }
+        .container {
+            max-width: 1000px; margin: 0 auto;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(30px);
+            padding: 30px; border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        h1, h2 { margin-bottom: 20px; text-align: center; }
+        h1 { font-size: 28px; font-weight: 900; }
+        h2 { font-size: 22px; font-weight: 700; }
+        input, select, textarea {
+            width: 100%; padding: 15px; margin: 10px 0;
+            border: 1px solid var(--border); border-radius: 12px;
+            background: rgba(255,255,255,0.1); color: #fff;
+            font-family: 'Cairo'; font-size: 16px;
+        }
+        input::placeholder { color: rgba(255,255,255,0.5); }
+        button {
+            padding: 15px 25px; border: none; border-radius: 12px;
+            cursor: pointer; font-family: 'Cairo'; font-weight: 700;
+            margin: 5px 0; transition: all 0.3s; width: 100%;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(99,102,241,0.4);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        table {
+            width: 100%; border-collapse: collapse; margin-top: 20px;
+            background: rgba(255,255,255,0.05); border-radius: 12px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 15px; text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+        th { background: rgba(255,255,255,0.1); font-weight: 700; }
+        tr:hover { background: rgba(255,255,255,0.05); }
+        .hidden { display: none; }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; margin-bottom: 30px;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.08);
+            padding: 25px; border-radius: 16px; text-align: center;
+            border: 1px solid var(--border);
+        }
+        .stat-num {
+            font-size: 36px; font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .stat-label { color: rgba(255,255,255,0.7); margin-top: 5px; }
+        .login-box {
+            max-width: 400px; margin: 50px auto; text-align: center;
+            background: rgba(255,255,255,0.05);
+            padding: 40px; border-radius: 24px;
+            border: 1px solid var(--border);
+        }
+        .section {
+            background: rgba(255,255,255,0.05);
+            padding: 25px; border-radius: 16px;
+            margin-bottom: 30px; border: 1px solid var(--border);        }
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            table { font-size: 14px; }
+            th, td { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎓 لوحة تحكم الأستاذ هاني محمد الداودي</h1>
+    
+    <div id="loginPanel" class="login-box">
+        <h2 style="margin-bottom: 20px;">🔐 تسجيل الدخول</h2>
+        <input type="password" id="adminPass" placeholder="كلمة المرور">
+        <button class="btn-primary" onclick="checkAdmin()">دخول</button>
+    </div>
+
+    <div id="adminPanel" class="hidden">
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-num" id="statStudents">0</div>
+                <div class="stat-label">طالب</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" id="statQuestions">0</div>
+                <div class="stat-label">سؤال</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" id="statAvg">0%</div>
+                <div class="stat-label">متوسط الدرجات</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>⚙️ إعدادات الامتحان</h2>
+            <input type="text" id="examNameInput" placeholder="اسم الامتحان (مثال: اختبار النحو - الفصل الأول)">
+            <button class="btn-success" onclick="saveConfig()">💾 حفظ اسم الامتحان</button>
+            <p id="currentExamName" style="color: #10b981; text-align: center; margin-top: 10px;"></p>
+        </div>
+
+        <div class="section">
+            <h2>➕ إضافة سؤال جديد</h2>
+            <input type="text" id="qText" placeholder="نص السؤال">
+            <input type="text" id="opt1" placeholder="الخيار الأول">
+            <input type="text" id="opt2" placeholder="الخيار الثاني">
+            <input type="text" id="opt3" placeholder="الخيار الثالث">
+            <input type="text" id="opt4" placeholder="الخيار الرابع">
+            <select id="qCorrect">                <option value="0">الإجابة الصحيحة هي الخيار الأول</option>
+                <option value="1">الإجابة الصحيحة هي الخيار الثاني</option>
+                <option value="2">الإجابة الصحيحة هي الخيار الثالث</option>
+                <option value="3">الإجابة الصحيحة هي الخيار الرابع</option>
+            </select>
+            <input type="text" id="qCat" placeholder="تصنيف السؤال (مثال: نحو، بلاغة، نصوص)">
+            <textarea id="qExp" placeholder="شرح الإجابة للطالب" rows="3"></textarea>
+            <button class="btn-primary" onclick="addQuestion()">✅ إضافة السؤال</button>
+        </div>
+
+        <div class="section">
+            <h2>📋 نتائج الطلاب</h2>
+            <button class="btn-success" onclick="loadResults()">🔄 تحديث النتائج</button>
+            <button class="btn-primary" onclick="exportCSV()">📥 تصدير Excel</button>
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>البريد الإلكتروني</th>
+                        <th>الدرجة</th>
+                        <th>التاريخ</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>⚠️ إدارة البيانات</h2>
+            <button class="btn-danger" onclick="clearQuestions()">🗑️ حذف جميع الأسئلة</button>
+            <button class="btn-danger" onclick="clearStudents()" style="margin-top: 10px;">🗑️ حذف جميع نتائج الطلاب</button>
+            <button class="btn-danger" onclick="clearAll()" style="margin-top: 10px;">🔥 حذف كل البيانات</button>
+        </div>
+
+        <button onclick="location.reload()" style="background: rgba(255,255,255,0.2); margin-top: 20px;">🚪 تسجيل الخروج</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+    // ⚠️⚠️⚠️ ضع مفاتيح Firebase هنا ⚠️⚠️⚠️
+    const firebaseConfig = {
+        apiKey: "AIzaSyBRQ5Ilq-k_pVdhJM37kk26jrITtugrnSY",
+        authDomain: "mr-hany-exams-platform.firebaseapp.com",
+        projectId: "mr-hany-exams-platform",
+        storageBucket: "mr-hany-exams-platform.firebasestorage.app",
+        messagingSenderId: "589138230514",
+        appId: "1:589138230514:web:253332140577b4a3bce46b"
+    };    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function checkAdmin() {
+        if (document.getElementById('adminPass').value === "123456") {
+            document.getElementById('loginPanel').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            loadStats();
+            loadExamConfig();
+        } else {
+            alert('⚠️ كلمة المرور خطأ');
+        }
+    }
+
+    async function saveConfig() {
+        const name = document.getElementById('examNameInput').value.trim();
+        if (!name) { alert('⚠️ الرجاء إدخال اسم الامتحان'); return; }
+        await db.collection('examConfig').doc('current').set({
+            name: name,
+            updatedAt: new Date().toISOString()
+        });
+        alert('✅ تم حفظ اسم الامتحان بنجاح');
+        loadExamConfig();
+    }
+
+    async function loadExamConfig() {
+        const doc = await db.collection('examConfig').doc('current').get();
+        if (doc.exists) {
+            document.getElementById('currentExamName').innerText = 'الامتحان الحالي: ' + doc.data().name;
+            document.getElementById('examNameInput').value = doc.data().name;
+        }
+    }
+
+    async function addQuestion() {
+        const q = {
+            text: document.getElementById('qText').value.trim(),
+            options: [
+                document.getElementById('opt1').value.trim(),
+                document.getElementById('opt2').value.trim(),
+                document.getElementById('opt3').value.trim(),
+                document.getElementById('opt4').value.trim()
+            ],
+            correctIndex: parseInt(document.getElementById('qCorrect').value),
+            category: document.getElementById('qCat').value.trim() || 'عام',
+            explanation: document.getElementById('qExp').value.trim()
+        };
+        if (!q.text || !q.options[0]) {
+            alert('⚠️ الرجاء ملء نص السؤال والخيار الأول على الأقل');
+            return;
+        }        await db.collection('questions').add(q);
+        alert('✅ تم إضافة السؤال بنجاح');
+        document.getElementById('qText').value = '';
+        document.getElementById('opt1').value = '';
+        document.getElementById('opt2').value = '';
+        document.getElementById('opt3').value = '';
+        document.getElementById('opt4').value = '';
+        document.getElementById('qExp').value = '';
+        loadStats();
+    }
+
+    async function loadStats() {
+        const q = await db.collection('questions').get();
+        document.getElementById('statQuestions').innerText = q.size;
+        const s = await db.collection('students').get();
+        document.getElementById('statStudents').innerText = s.size;
+        loadResults();
+    }
+
+    async function loadResults() {
+        const tbody = document.querySelector('#resultsTable tbody');
+        tbody.innerHTML = '';
+        let total = 0;
+        const s = await db.collection('students').get();
+        s.forEach(doc => {
+            const d = doc.data();
+            total += (d.score / d.totalQuestions) * 100;
+            tbody.innerHTML += `
+                <tr>
+                    <td style="font-weight: 700; color: #10b981;">${d.name}</td>
+                    <td style="font-size: 12px; opacity: 0.7;">${d.email}</td>
+                    <td>${d.score} / ${d.totalQuestions}</td>
+                    <td>${new Date(d.date).toLocaleDateString('ar-EG')}</td>
+                </tr>
+            `;
+        });
+        document.getElementById('statAvg').innerText = s.size ? Math.round(total / s.size) + '%' : '0%';
+    }
+
+    function exportCSV() {
+        let csv = "الاسم,البريد الإلكتروني,الدرجة,التاريخ\n";
+        document.querySelectorAll('#resultsTable tbody tr').forEach(r => {
+            const cells = r.querySelectorAll('td');
+            csv += `${cells[0].innerText},${cells[1].innerText},${cells[2].innerText},${cells[3].innerText}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'نتائج_الامتحان.csv';        a.click();
+    }
+
+    async function clearQuestions() {
+        if (confirm('⚠️ هل أنت متأكد من حذف جميع الأسئلة؟')) {
+            const q = await db.collection('questions').get();
+            q.forEach(doc => doc.ref.delete());
+            alert('✅ تم حذف الأسئلة');
+            loadStats();
+        }
+    }
+
+    async function clearStudents() {
+        if (confirm('⚠️ هل أنت متأكد من حذف جميع نتائج الطلاب؟')) {
+            const s = await db.collection('students').get();
+            s.forEach(doc => doc.ref.delete());
+            alert('✅ تم حذف نتائج الطلاب');
+            loadStats();
+        }
+    }
+
+    async function clearAll() {
+        if (confirm('🔥 تحذير: سيتم حذف كل البيانات نهائياً!')) {
+            const q = await db.collection('questions').get();
+            q.forEach(doc => doc.ref.delete());
+            const s = await db.collection('students').get();
+            s.forEach(doc => doc.ref.delete());
+            alert('✅ تم حذف جميع البيانات');
+            loadStats();
+        }
+    }
+</script>
+</body>
+</html>
