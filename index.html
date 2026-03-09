@@ -185,35 +185,67 @@
     }
 
     async function loadExamsList() {
+    try {
         document.getElementById('examSelectScreen').classList.remove('hidden');
         const snapshot = await db.collection('exams').where('is_active', '==', true).get();
         const container = document.getElementById('examsList');
         container.innerHTML = '';
-        if (snapshot.empty) { container.innerHTML = '<p style="text-align:center;color:#f59e0b;">⚠️ لا توجد امتحانات نشطة حالياً</p>'; return; }
+        
+        if (snapshot.empty) { 
+            container.innerHTML = '<p style="text-align:center;color:#f59e0b;padding:30px;">⚠️ لا توجد امتحانات نشطة حالياً</p>'; 
+            return; 
+        }
+        
         snapshot.forEach(doc => {
             const exam = doc.data();
             const card = document.createElement('div');
             card.className = 'exam-card';
-            card.onclick = () => selectExam(doc.id, exam);
-            card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:8px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p><span class="badge badge-primary">${exam.grade_level}</span><span class="badge badge-warning">🔑 ${exam.reset_code || 'N/A'}</span></div><span style="font-size:24px;">➡️</span></div>`;
+            // ✅ تم إزالة كود الإعادة - يظهر فقط للأستاذ
+            card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <h3 style="margin-bottom:8px;">${exam.name}</h3>
+                    <p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p>
+                    <span class="badge badge-primary">${exam.grade_level}</span>
+                </div>
+                <span style="font-size:24px;">➡️</span>
+            </div>`;
             container.appendChild(card);
         });
+    } catch (error) {
+        console.error('خطأ في loadExamsList:', error);
+        alert('خطأ: ' + error.message);
     }
+}
 
     async function selectExam(examId, exam) {
+    try {
+        console.log('📋 جاري اختيار الامتحان:', exam.name);
+        console.log('examId:', examId);
+        
         selectedExamId = examId;
-        const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get();
+        
+        const studentDocId = currentUser.email + '_' + examId;
+        const doc = await db.collection('students').doc(studentDocId).get();
+        
         if (doc.exists) {
+            console.log('✅ الطالب أدى الامتحان من قبل');
             selectedExamData = doc.data();
             document.getElementById('examSelectScreen').classList.add('hidden');
             document.getElementById('resetCodeScreen').classList.remove('hidden');
             return;
         }
+        
+        console.log('✅ لم يؤدِ الامتحان - متابعة');
         currentExamId = examId;
         examName = exam.name;
         document.getElementById('examSelectScreen').classList.add('hidden');
         await loadExamData(examId);
+        
+    } catch (error) {
+        console.error('❌ خطأ في selectExam:', error);
+        alert('خطأ في فتح الامتحان: ' + error.message);
     }
+}
 
     async function verifyResetCode() {
         const code = document.getElementById('resetCodeInput').value.trim().toUpperCase();
