@@ -378,26 +378,42 @@
     }
 
     async function loadExamsList() { 
-        try {             document.getElementById('examSelectScreen').classList.remove('hidden'); 
-            const studentGrade = localStorage.getItem('studentGrade');
-            let query = db.collection('exams').where('is_active', '==', true);
-            if (studentGrade) query = query.where('grade_level', '==', studentGrade);
-            const snapshot = await query.get(); 
-            const container = document.getElementById('examsList'); 
-            container.innerHTML = ''; 
-            if (snapshot.empty) { container.innerHTML = `<p style="text-align:center;color:#f59e0b;padding:30px;">⚠️ لا توجد امتحانات نشطة لصف ${studentGrade}</p>`; return; }
-            showToast(`تم تحميل ${snapshot.size} امتحان`, 'success');
-            snapshot.forEach(doc => { 
-                const exam = doc.data(); 
-                const card = document.createElement('div'); 
-                card.className = 'exam-card'; 
-                card.style.cursor = 'pointer'; 
-                card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:8px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p><div style="display:flex;gap:8px;"><span class="badge badge-primary">${exam.grade_level}</span><span class="badge badge-info">${exam.subject}</span></div></div><span style="font-size:24px;">➡️</span></div>`; 
-                container.appendChild(card); 
-                card.addEventListener('click', function() { selectExam(doc.id, exam); }); 
-            }); 
-        } catch (error) { showToast('خطأ في تحميل الامتحانات: ' + error.message, 'error'); } 
-    }
+    try { 
+        // ✅ مسح الحالة القديمة دائماً
+        clearState();
+        
+        document.getElementById('examSelectScreen').classList.remove('hidden'); 
+        const studentGrade = localStorage.getItem('studentGrade');
+        
+        // ✅ إضافة source: 'server' لمنع الكاش
+        let query = db.collection('exams')
+            .where('is_active', '==', true)
+            .where('grade_level', '==', studentGrade || 'غير محدد');
+        
+        const snapshot = await query.get({ source: 'server' });  // ✅ مهم جداً - قراءة من السيرفر مباشرة
+        const container = document.getElementById('examsList'); 
+        container.innerHTML = ''; 
+        
+        if (snapshot.empty) { 
+            container.innerHTML = `<p style="text-align:center;color:#f59e0b;padding:30px;">⚠️ لا توجد امتحانات نشطة لصف ${studentGrade || 'غير محدد'}</p>`; 
+            return; 
+        }
+        
+        showToast(`تم تحميل ${snapshot.size} امتحان`, 'success');
+        snapshot.forEach(doc => { 
+            const exam = doc.data(); 
+            const card = document.createElement('div'); 
+            card.className = 'exam-card'; 
+            card.style.cursor = 'pointer'; 
+            card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:8px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p><div style="display:flex;gap:8px;"><span class="badge badge-primary">${exam.grade_level}</span><span class="badge badge-info">${exam.subject}</span></div></div><span style="font-size:24px;">➡️</span></div>`; 
+            container.appendChild(card); 
+            card.addEventListener('click', function() { selectExam(doc.id, exam); }); 
+        }); 
+    } catch (error) { 
+        console.error('Error loading exams:', error);
+        showToast('خطأ في تحميل الامتحانات: ' + error.message, 'error'); 
+    } 
+}
 
     async function selectExam(examId, exam) { 
         try { 
@@ -440,22 +456,41 @@
     }
 
     async function loadExamData(examId) { 
-        try { 
-            const examDoc = await db.collection('exams').doc(examId).get(); 
-            examName = examDoc.data().name; 
-            document.getElementById('examNameDisplay').innerText = examName; 
-            document.getElementById('examTitleDisplay').innerText = examName; 
-            const snapshot = await db.collection('questions').where('exam_id', '==', examId).get(); 
-            questions = []; 
-            snapshot.forEach(doc => questions.push(doc.data())); 
-            questions.sort((a, b) => a.order_num - b.order_num);
-            document.getElementById('totalQuestionsCount').innerText = questions.length; 
-            const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get(); 
-            if (doc.exists) { showResult(doc.data()); } 
-            else { document.getElementById('examInfoScreen').classList.remove('hidden'); } 
-            showToast(`تم تحميل ${questions.length} سؤال`, 'success');
-        } catch (e) { showToast("خطأ في التحميل: " + e.message, 'error'); } 
-    }
+    try { 
+        // ✅ قراءة الامتحان من السيرفر مباشرة
+        const examDoc = await db.collection('exams').doc(examId).get({ source: 'server' });
+        if (!examDoc.exists) {
+            showToast('❌ الامتحان غير موجود', 'error');
+            return;
+        }
+        
+        examName = examDoc.data().name; 
+        document.getElementById('examNameDisplay').innerText = examName; 
+        document.getElementById('examTitleDisplay').innerText = examName; 
+        
+        // ✅ قراءة الأسئلة من السيرفر مباشرة
+        const snapshot = await db.collection('questions')
+            .where('exam_id', '==', examId)
+            .get({ source: 'server' });  // ✅ مهم جداً
+        
+        questions = []; 
+        snapshot.forEach(doc => questions.push(doc.data())); 
+        questions.sort((a, b) => a.order_num - b.order_num);
+        
+        document.getElementById('totalQuestionsCount').innerText = questions.length; 
+        
+        const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get(); 
+        if (doc.exists) { 
+            showResult(doc.data()); 
+        } else { 
+            document.getElementById('examInfoScreen').classList.remove('hidden'); 
+        } 
+        showToast(`تم تحميل ${questions.length} سؤال`, 'success');
+    } catch (e) { 
+        console.error('Error loading exam:', e);
+        showToast("خطأ في التحميل: " + e.message, 'error'); 
+    } 
+}
 
     function startExam() { 
         document.getElementById('examInfoScreen').classList.add('hidden'); 

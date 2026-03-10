@@ -438,7 +438,21 @@
         container.innerHTML = html;
     }
 
-    async function toggleExam(examId, isActive) { await db.collection('exams').doc(examId).update({ is_active: isActive, updated_at: new Date().toISOString() }); loadExams(); loadDashboard(); }
+    async function toggleExam(examId, isActive) { 
+    try {
+        // ✅ إضافة timestamp لتحديث البيانات
+        await db.collection('exams').doc(examId).update({ 
+            is_active: isActive, 
+            updated_at: new Date().toISOString(),
+            last_toggled: firebase.firestore.FieldValue.serverTimestamp()  // ✅ مهم جداً
+        }); 
+        showToast(`✅ تم ${isActive ? 'تنشيط' : 'إيقاف'} الامتحان`, 'success');
+        loadExams(); 
+        loadDashboard(); 
+    } catch (error) {
+        showToast('خطأ: ' + error.message, 'error');
+    }
+}
     async function deleteExam(examId) { if (!confirm('⚠️ هل أنت متأكد؟')) return; await db.collection('questions').where('exam_id', '==', examId).get().then(s => s.forEach(d => d.ref.delete())); await db.collection('exams').doc(examId).delete(); showToast('✅ تم الحذف', 'success'); loadExams(); loadDashboard(); }
     function showResetCode(examId, resetCode) { currentExamForReset = examId; document.getElementById('resetCodeDisplay').innerText = resetCode || 'جاري التوليد...'; document.getElementById('resetCodeModal').classList.remove('hidden'); }
     function closeResetModal() { document.getElementById('resetCodeModal').classList.add('hidden'); currentExamForReset = null; }
