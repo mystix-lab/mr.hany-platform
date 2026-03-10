@@ -6,67 +6,110 @@
     <title>منصة الاختبارات | أ. هاني محمد الداودي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #8b5cf6; --success: #10b981; --error: #ef4444; --warning: #f59e0b; --info: #06b6d4; --dark: #1e1b4b; --darker: #0f172a; }
+        :root { --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #8b5cf6; --success: #10b981; --error: #ef4444; --warning: #f59e0b; --info: #06b6d4; --dark: #1e1b4b; --darker: #0f172a; --accent: #ec4899; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 50%, #1e3a8a 100%); min-height: 100vh; color: #fff; padding: 20px; position: relative; overflow-x: hidden; }
-        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 50%, rgba(99,102,241,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139,92,246,0.1) 0%, transparent 50%); pointer-events: none; z-index: 0; }
-        .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 1; }
-        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); border-radius: 24px; padding: 35px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px rgba(0,0,0,0.3); transition: all 0.3s ease; }
-        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 35px 60px rgba(0,0,0,0.4); border-color: rgba(99,102,241,0.3); }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 16px; font-family: 'Cairo'; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: all 0.3s; position: relative; overflow: hidden; }
+        body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 30%, #312e81 70%, #1e3a8a 100%); min-height: 100vh; color: #fff; padding: 20px; position: relative; overflow-x: hidden; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 50%, rgba(99,102,241,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139,92,246,0.15) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+        .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+        .glass-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(30px); border-radius: 28px; padding: 40px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 25px 50px rgba(0,0,0,0.4); transition: all 0.4s; }
+        .glass-card:hover { transform: translateY(-8px); box-shadow: 0 35px 70px rgba(0,0,0,0.5); border-color: rgba(99,102,241,0.4); }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 18px; font-family: 'Cairo'; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 18px; transition: all 0.3s; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(255,255,255,0.3); transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s; }
-        .btn:hover::before { width: 300px; height: 300px; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; box-shadow: 0 10px 30px rgba(99,102,241,0.4); }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(99,102,241,0.6); }
-        .btn-google { background: white; color: #1e293b; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
-        .btn-google:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(255,255,255,0.3); }
-        .input-3d { width: 100%; padding: 16px; border: 2px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(255,255,255,0.05); color: #fff; font-family: 'Cairo'; margin-top: 15px; transition: all 0.3s; font-size: 16px; }
+        .btn:hover::before { width: 400px; height: 400px; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; box-shadow: 0 10px 40px rgba(99,102,241,0.5); }
+        .btn-primary:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(99,102,241,0.7); }
+        .btn-google { background: linear-gradient(135deg, #fff, #f8fafc); color: #1e293b; box-shadow: 0 10px 40px rgba(255,255,255,0.3); }
+        .btn-success { background: linear-gradient(135deg, var(--success), #059669); color: white; box-shadow: 0 10px 40px rgba(16,185,129,0.5); }
+        .btn-nav { width: auto; padding: 14px 30px; margin: 10px; flex: 1; }
+        .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+        .input-3d { width: 100%; padding: 18px; border: 2px solid rgba(255,255,255,0.15); border-radius: 18px; background: rgba(255,255,255,0.08); color: #fff; font-family: 'Cairo'; margin-top: 18px; transition: all 0.3s; font-size: 16px; }
         .input-3d::placeholder { color: rgba(255,255,255,0.4); }
-        .input-3d:focus { outline: none; border-color: var(--primary); background: rgba(255,255,255,0.1); box-shadow: 0 0 20px rgba(99,102,241,0.3); }
+        .input-3d:focus { outline: none; border-color: var(--primary); background: rgba(255,255,255,0.12); box-shadow: 0 0 30px rgba(99,102,241,0.4); }
         .hidden { display: none !important; }
-        .question-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 30px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; animation: slideIn 0.5s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .question-card:hover { border-color: var(--primary); box-shadow: 0 10px 30px rgba(99,102,241,0.2); transform: translateX(5px); }
-        .option-3d { padding: 18px 20px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 16px; margin: 12px 0; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 15px; }
-        .option-3d::before { content: attr(data-index); width: 35px; height: 35px; background: rgba(99,102,241,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
-        .option-3d:hover { border-color: var(--primary); background: rgba(99,102,241,0.15); transform: translateX(10px); }
-        .option-3d.selected { border-color: var(--primary); background: rgba(99,102,241,0.3); box-shadow: 0 5px 20px rgba(99,102,241,0.4); }
-        .score-ring { width: 180px; height: 180px; margin: 30px auto; position: relative; animation: scaleIn 0.8s ease; }
+        .question-card { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-radius: 24px; padding: 35px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.15); transition: all 0.4s; animation: slideIn 0.5s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        .question-card:hover { border-color: rgba(99,102,241,0.4); box-shadow: 0 15px 40px rgba(99,102,241,0.2); }
+        .option-3d { padding: 20px 24px; background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border: 2px solid rgba(255,255,255,0.15); border-radius: 18px; margin: 14px 0; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 18px; position: relative; overflow: hidden; }
+        .option-3d::before { content: attr(data-index); width: 40px; height: 40px; background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.3)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; transition: all 0.3s; }
+        .option-3d:hover { border-color: var(--primary); background: rgba(99,102,241,0.2); transform: translateX(12px); }
+        .option-3d.selected { border-color: var(--primary); background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2)); box-shadow: 0 8px 30px rgba(99,102,241,0.5); transform: translateX(8px); }
+        .option-3d.selected::before { background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 4px 15px rgba(99,102,241,0.5); }
+        .option-3d.correct { border-color: var(--success); background: rgba(16,185,129,0.2); }
+        .option-3d.correct::before { background: linear-gradient(135deg, var(--success), #059669); }
+        .option-3d.incorrect { border-color: var(--error); background: rgba(239,68,68,0.2); }
+        .option-3d.incorrect::before { background: linear-gradient(135deg, var(--error), #dc2626); }
+        .score-ring { width: 200px; height: 200px; margin: 40px auto; position: relative; animation: scaleIn 0.8s ease; }
         @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-        .score-ring circle { fill: none; stroke-width: 12; stroke-linecap: round; }
+        .score-ring circle { fill: none; stroke-width: 14; stroke-linecap: round; }
         .score-ring .bg { stroke: rgba(255,255,255,0.1); }
-        .score-ring .progress { stroke: url(#gradient); stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 2s ease-out; filter: drop-shadow(0 0 10px rgba(99,102,241,0.5)); }
-        .score-value { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 42px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.1); } }
-        .header { text-align: center; margin-bottom: 40px; animation: fadeInDown 1s ease; }
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-        .logo { font-size: 70px; display: block; margin-bottom: 20px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 10px 20px rgba(99,102,241,0.4)); }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        h1 { font-size: 32px; margin: 15px 0; background: linear-gradient(135deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
-        h3 { font-size: 16px; opacity: 0.8; font-weight: 600; }
-        .exam-badge { display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 12px 30px; border-radius: 50px; font-size: 15px; margin-top: 15px; box-shadow: 0 10px 30px rgba(99,102,241,0.4); animation: glow 2s infinite; }
-        @keyframes glow { 0%, 100% { box-shadow: 0 10px 30px rgba(99,102,241,0.4); } 50% { box-shadow: 0 10px 50px rgba(99,102,241,0.6); } }
-        .progress-bar { height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 30px; overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.3); }        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary), var(--info)); width: 0%; transition: width 0.5s ease; box-shadow: 0 0 20px rgba(99,102,241,0.6); position: relative; }
-        .progress-fill::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 2s infinite; }
-        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-        .loader { width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 40px auto; box-shadow: 0 0 30px rgba(99,102,241,0.5); }
+        .score-ring .progress { stroke: url(#gradient); stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 2.5s; filter: drop-shadow(0 0 20px rgba(99,102,241,0.6)); }
+        .score-value { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.08); } }
+        .header { text-align: center; margin-bottom: 50px; animation: fadeInDown 1s ease; }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }        .logo { font-size: 80px; display: block; margin-bottom: 25px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 15px 30px rgba(99,102,241,0.5)); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        h1 { font-size: 36px; margin: 20px 0; background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
+        h3 { font-size: 18px; opacity: 0.85; font-weight: 600; }
+        .exam-badge { display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 14px 35px; border-radius: 50px; font-size: 16px; margin-top: 20px; box-shadow: 0 10px 40px rgba(99,102,241,0.5); animation: glow 2s infinite; border: 1px solid rgba(255,255,255,0.2); }
+        @keyframes glow { 0%, 100% { box-shadow: 0 10px 40px rgba(99,102,241,0.5); } 50% { box-shadow: 0 10px 60px rgba(99,102,241,0.7); } }
+        .progress-bar { height: 12px; background: rgba(255,255,255,0.1); border-radius: 15px; margin-bottom: 35px; overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.4); }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent)); width: 0%; transition: width 0.6s; box-shadow: 0 0 30px rgba(99,102,241,0.7); }
+        .loader { width: 70px; height: 70px; border: 5px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 50px auto; box-shadow: 0 0 40px rgba(99,102,241,0.6); }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .analysis-item { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 20px; margin: 12px 0; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1); }
-        .analysis-item:hover { background: rgba(255,255,255,0.08); transform: translateX(5px); border-color: rgba(99,102,241,0.3); }
-        .mini-progress { width: 120px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 5px rgba(0,0,0,0.3); }
-        .mini-fill { height: 100%; border-radius: 10px; transition: width 1s ease-out; box-shadow: 0 0 10px currentColor; }
+        .analysis-item { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-radius: 18px; padding: 22px; margin: 14px 0; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.15); }
+        .analysis-item:hover { background: rgba(255,255,255,0.12); transform: translateX(8px); border-color: rgba(99,102,241,0.4); }
+        .mini-progress { width: 140px; height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .mini-fill { height: 100%; border-radius: 10px; transition: width 1.2s; box-shadow: 0 0 15px currentColor; }
         .text-center { text-align: center; }
-        .exam-card { background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); border: 2px solid rgba(99,102,241,0.3); border-radius: 20px; padding: 25px; margin: 15px 0; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
-        .exam-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); transition: left 0.5s; }
-        .exam-card:hover::before { left: 100%; }
-        .exam-card:hover { transform: translateY(-5px) scale(1.02); border-color: var(--primary); box-shadow: 0 20px 40px rgba(99,102,241,0.4); }
-        .badge { padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin: 5px; }
-        .badge-primary { background: rgba(99,102,241,0.2); color: var(--primary); }
-        .badge-success { background: rgba(16,185,129,0.2); color: var(--success); }
-        .badge-warning { background: rgba(245,158,11,0.2); color: var(--warning); }
-        .badge-error { background: rgba(239,68,68,0.2); color: var(--error); }
-        @media (max-width: 600px) { .glass-card { padding: 25px; } h1 { font-size: 24px; } .logo { font-size: 50px; } .score-ring { width: 150px; height: 150px; } .score-value { font-size: 32px; } .question-card { padding: 20px; } }
+        .exam-card { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1)); border: 2px solid rgba(99,102,241,0.4); border-radius: 24px; padding: 30px; margin: 18px 0; cursor: pointer; transition: all 0.4s; position: relative; overflow: hidden; }
+        .exam-card:hover { transform: translateY(-8px) scale(1.02); border-color: var(--primary); box-shadow: 0 25px 50px rgba(99,102,241,0.5); }
+        .badge { padding: 8px 18px; border-radius: 25px; font-size: 13px; font-weight: 700; display: inline-block; margin: 6px; }
+        .badge-primary { background: rgba(99,102,241,0.2); color: var(--primary); border: 1px solid rgba(99,102,241,0.4); }
+        .badge-success { background: rgba(16,185,129,0.2); color: var(--success); border: 1px solid rgba(16,185,129,0.4); }
+        .badge-warning { background: rgba(245,158,11,0.2); color: var(--warning); border: 1px solid rgba(245,158,11,0.4); }
+        .badge-error { background: rgba(239,68,68,0.2); color: var(--error); border: 1px solid rgba(239,68,68,0.4); }
+        
+        /* Progress Stepper */
+        .progress-stepper { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; position: relative; padding: 20px 0; }
+        .progress-stepper::before { content: ''; position: absolute; top: 50%; left: 50px; right: 50px; height: 4px; background: rgba(255,255,255,0.1); transform: translateY(-50%); z-index: 0; }
+        .step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; z-index: 1; cursor: pointer; transition: all 0.3s; }
+        .step-circle { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 3px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; transition: all 0.3s; }
+        .step-label { font-size: 13px; opacity: 0.7; text-align: center; max-width: 100px; transition: all 0.3s; }
+        .step.active .step-circle { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-color: var(--primary); box-shadow: 0 5px 25px rgba(99,102,241,0.5); transform: scale(1.1); }
+        .step.active .step-label { opacity: 1; color: var(--primary); font-weight: 700; }
+        .step.completed .step-circle { background: linear-gradient(135deg, var(--success), #059669); border-color: var(--success); }
+        .step.completed .step-label { opacity: 1; color: var(--success); }
+        .step:hover .step-circle { transform: scale(1.15); box-shadow: 0 5px 25px rgba(99,102,241,0.4); }
+        
+        /* Question Navigator */
+        .question-navigator { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding: 25px; background: rgba(255,255,255,0.08); border-radius: 20px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.15); }
+        .nav-circle { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); }
+        .nav-circle:hover { transform: scale(1.15); border-color: var(--primary); box-shadow: 0 5px 20px rgba(99,102,241,0.4); }
+        .nav-circle.current { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-color: var(--primary); color: white; box-shadow: 0 5px 25px rgba(99,102,241,0.6); transform: scale(1.2); }
+        .nav-circle.answered { background: rgba(16,185,129,0.3); border-color: var(--success); color: var(--success); }
+        .nav-buttons { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.15); }
+        
+        /* Toast Notifications */
+        .toast-container { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 10000; pointer-events: none; }
+        .toast { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 18px 40px; border-radius: 20px; margin-bottom: 15px; font-weight: 700; box-shadow: 0 15px 50px rgba(0,0,0,0.5); animation: slideInDown 0.5s, fadeOut 0.5s 2.5s; display: flex; align-items: center; gap: 15px; pointer-events: auto; backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.25); font-size: 16px; }
+        .toast.success { background: linear-gradient(135deg, var(--success), #059669); }
+        .toast.error { background: linear-gradient(135deg, var(--error), #dc2626); }
+        .toast.warning { background: linear-gradient(135deg, var(--warning), #d97706); }
+        .toast.info { background: linear-gradient(135deg, var(--info), #0891b2); }        @keyframes slideInDown { from { transform: translateY(-150px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-30px); } }
+        
+        /* Review Mode Styles */
+        .review-header { background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.1)); padding: 20px; border-radius: 16px; margin-bottom: 25px; border: 2px solid rgba(16,185,129,0.4); }
+        .review-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+        .review-stat { background: rgba(255,255,255,0.08); padding: 20px; border-radius: 16px; text-align: center; }
+        .review-stat.correct { border: 2px solid var(--success); }
+        .review-stat.incorrect { border: 2px solid var(--error); }
+        .review-stat .number { font-size: 36px; font-weight: 900; margin-bottom: 5px; }
+        .review-stat.correct .number { color: var(--success); }
+        .review-stat.incorrect .number { color: var(--error); }
+        
+        @media (max-width: 600px) { .glass-card { padding: 28px; } h1 { font-size: 26px; } .logo { font-size: 60px; } .score-ring { width: 160px; height: 160px; } .score-value { font-size: 36px; } .question-card { padding: 24px; } .nav-circle { width: 38px; height: 38px; font-size: 13px; } .nav-buttons { flex-direction: column; gap: 15px; } .btn-nav { width: 100%; } .progress-stepper { flex-wrap: wrap; gap: 15px; } .step-label { font-size: 11px; } .step-circle { width: 40px; height: 40px; font-size: 14px; } }
     </style>
 </head>
 <body>
@@ -77,51 +120,112 @@
         <h3>الأستاذ / هاني محمد الداودي</h3>
         <div id="examNameDisplay" class="exam-badge">جاري التحميل...</div>
     </div>
-    <div id="loadingScreen" class="glass-card text-center"><div class="loader"></div><p>جاري تهيئة المنصة...</p></div>
-    <div id="loginScreen" class="glass-card hidden">
-        <h2 class="text-center" style="margin-bottom:20px;">تسجيل الدخول</h2>
-        <button class="btn btn-google" onclick="signInWithGoogle()">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"> المتابعة باستخدام Google
-        </button>
-        <div id="nameInputSection" class="hidden" style="margin-top:25px;">
-            <p style="color:var(--success);text-align:center;margin-bottom:15px;">✅ تم تسجيل الدخول</p>
-            <input type="text" id="studentName" class="input-3d" placeholder="👤 الاسم الثلاثي (كما في الشهادة)">
-            <button class="btn btn-primary" onclick="verifyAndStart()">التحقق والمتابعة</button>
+    
+    <!-- Progress Stepper -->
+    <div class="progress-stepper" id="progressStepper">
+        <div class="step active" data-step="1" onclick="handleStepClick(1)">
+            <div class="step-circle">1</div>
+            <div class="step-label">التسجيل</div>
         </div>
-        <p id="loginError" style="color:var(--error);text-align:center;margin-top:15px;font-size:14px;"></p>
+        <div class="step" data-step="2" onclick="handleStepClick(2)">
+            <div class="step-circle">2</div>
+            <div class="step-label">اختيار الامتحان</div>
+        </div>
+        <div class="step" data-step="3" onclick="handleStepClick(3)">
+            <div class="step-circle">3</div>
+            <div class="step-label">دخول الامتحان</div>
+        </div>
+        <div class="step" data-step="4" onclick="handleStepClick(4)">
+            <div class="step-circle">4</div>
+            <div class="step-label">الانتهاء</div>
+        </div>
     </div>
+    
+    <div id="loadingScreen" class="glass-card text-center"><div class="loader"></div><p style="font-size:18px;margin-top:20px;">جاري تهيئة المنصة...</p></div>
+    
+    <div id="loginScreen" class="glass-card hidden">
+        <h2 class="text-center" style="margin-bottom:25px;font-size:28px;">🔐 تسجيل الدخول</h2>
+        <button class="btn btn-google" onclick="signInWithGoogle()"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="24"> المتابعة باستخدام Google</button>        <div id="nameInputSection" class="hidden" style="margin-top:30px;">
+            <p style="color:var(--success);text-align:center;margin-bottom:20px;">✅ تم تسجيل الدخول</p>
+            <input type="text" id="studentName" class="input-3d" placeholder="👤 الاسم الثلاثي">
+            <select id="studentGrade" class="input-3d" style="margin-top:18px;">
+                <option value="">اختر صفك الدراسي</option>
+                <option value="اولى ثانوي">أولى ثانوي</option>
+                <option value="ثانية ثانوي">ثانية ثانوي</option>
+                <option value="ثالثة ثانوي">ثالثة ثانوي</option>
+            </select>
+            <button class="btn btn-primary" onclick="verifyAndStart()">التحقق والمتابعة 🚀</button>
+        </div>
+        <p id="loginError" style="color:var(--error);text-align:center;margin-top:20px;"></p>
+    </div>
+    
     <div id="examSelectScreen" class="glass-card hidden">
-        <h2 class="text-center" style="margin-bottom:20px;">📋 اختر الامتحان</h2>
-        <div id="examsList" style="display:grid;gap:15px;"></div>
+        <h2 class="text-center" style="margin-bottom:30px;font-size:28px;">📋 اختر الامتحان</h2>
+        <div id="examsList" style="display:grid;gap:18px;"></div>
     </div>
+    
     <div id="resetCodeScreen" class="glass-card hidden">
-        <h2 class="text-center" style="margin-bottom:20px;">🔑 إعادة الامتحان</h2>
-        <p style="text-align:center;color:rgba(255,255,255,0.7);margin-bottom:25px;">لقد أديت هذا الامتحان من قبل.<br>إذا خرجت بالخطأ، أدخل كود الإعادة من الأستاذ</p>        <input type="text" id="resetCodeInput" class="input-3d" placeholder="أدخل كود الإعادة (8 أحرف)" style="text-align:center;font-size:20px;letter-spacing:3px;text-transform:uppercase;">
-        <button class="btn btn-primary" onclick="verifyResetCode()">تحقق من الكود</button>
-        <button class="btn btn-google" onclick="backToExams()" style="margin-top:10px;">↩️ العودة للائحة الامتحانات</button>
-        <p id="resetError" style="color:var(--error);text-align:center;margin-top:15px;"></p>
+        <h2 class="text-center" style="margin-bottom:25px;font-size:28px;">🔑 إعادة الامتحان</h2>
+        <p style="text-align:center;color:rgba(255,255,255,0.75);margin-bottom:30px;">لقد أديت هذا الامتحان من قبل. أدخل كود الإعادة</p>
+        <input type="text" id="resetCodeInput" class="input-3d" placeholder="كود الإعادة (8 أحرف)" style="text-align:center;font-size:24px;letter-spacing:5px;text-transform:uppercase;">
+        <button class="btn btn-primary" onclick="verifyResetCode()">تحقق من الكود 🔍</button>
+        <button class="btn btn-google" onclick="backToExams()" style="margin-top:15px;">↩️ العودة</button>
+        <p id="resetError" style="color:var(--error);text-align:center;margin-top:20px;"></p>
     </div>
+    
     <div id="examInfoScreen" class="glass-card hidden">
-        <h2 id="examTitleDisplay" class="text-center" style="margin-bottom:15px;"></h2>
-        <p class="text-center" style="color:rgba(255,255,255,0.7);margin-bottom:25px;">عدد الأسئلة: <span id="totalQuestionsCount" style="color:var(--primary);font-weight:700;"></span></p>
-        <div style="background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.5);padding:18px;border-radius:12px;margin-bottom:25px;font-size:14px;">⚠️ <strong>تنبيه هام:</strong> لديك محاولة واحدة فقط.</div>
+        <h2 id="examTitleDisplay" class="text-center" style="margin-bottom:20px;font-size:28px;"></h2>
+        <p class="text-center" style="color:rgba(255,255,255,0.75);margin-bottom:30px;font-size:18px;">عدد الأسئلة: <span id="totalQuestionsCount" style="color:var(--primary);font-weight:700;font-size:22px;"></span></p>
+        <div style="background:rgba(245,158,11,0.2);border:2px solid rgba(245,158,11,0.5);padding:25px;border-radius:18px;margin-bottom:30px;">⚠️ <strong>تنبيه:</strong> لديك محاولة واحدة فقط.</div>
         <button class="btn btn-primary" onclick="startExam()">🚀 بدء الاختبار</button>
     </div>
     <div id="examScreen" class="hidden">
         <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
+        <div class="question-navigator" id="questionNavigator"></div>
         <div id="questionsContainer"></div>
-        <button id="finishBtn" class="btn btn-primary hidden" onclick="finishExam()">✅ تسليم الإجابة</button>
+        <div class="nav-buttons">
+            <button id="prevBtn" class="btn btn-nav btn-google" onclick="previousQuestion()">◀️ السابق</button>
+            <button id="nextBtn" class="btn btn-nav btn-primary" onclick="nextQuestion()">التالي ▶️</button>
+            <button id="finishBtn" class="btn btn-nav btn-success hidden" onclick="finishExam()">✅ تسليم الإجابة</button>
+        </div>
     </div>
+    
     <div id="resultScreen" class="glass-card hidden">
         <div class="text-center">
-            <h2 id="resultTitle" style="margin-bottom:20px;">النتيجة النهائية</h2>
+            <h2 id="resultTitle" style="margin-bottom:25px;font-size:32px;">النتيجة النهائية</h2>
+            
+            <!-- إحصائيات النتيجة -->
+            <div class="review-stats" style="margin-bottom:30px;">
+                <div class="review-stat correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div style="opacity:0.8;">إجابات صحيحة ✅</div>
+                </div>
+                <div class="review-stat incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div style="opacity:0.8;">إجابات خاطئة ❌</div>
+                </div>
+            </div>
+            
             <div class="score-ring"><svg><defs><linearGradient id="gradient"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs><circle class="bg" cx="90" cy="90" r="70"/><circle class="progress" cx="90" cy="90" r="70" id="scoreProgress"/></svg><div class="score-value" id="finalScore">0%</div></div>
             <div id="reviewContainer"></div>
             <div id="analysisContainer"></div>
-            <p style="margin-top:25px;color:rgba(255,255,255,0.6);font-size:14px;">🔒 تم حفظ نتيجتك تلقائياً</p>
+            <button class="btn btn-info" onclick="reviewExam()" style="margin-top:25px;">👁️ مراجعة الامتحان</button>
+            <p style="margin-top:35px;color:rgba(255,255,255,0.65);">🔒 تم حفظ نتيجتك تلقائياً</p>
         </div>
     </div>
+    
+    <!-- شاشة مراجعة الامتحان -->
+    <div id="reviewExamScreen" class="glass-card hidden">
+        <div class="review-header">
+            <h2 style="text-align:center;margin-bottom:15px;">📋 مراجعة الإجابات</h2>
+            <p style="text-align:center;opacity:0.8;">الإجابات الصحيحة باللون الأخضر ✅ والخاطئة باللون الأحمر ❌</p>
+            <button class="btn btn-primary" onclick="closeReviewExam()" style="margin-top:15px;width:auto;padding:12px 30px;">↩️ العودة للنتيجة</button>
+        </div>
+        <div id="reviewQuestionsContainer"></div>
+    </div>
 </div>
+
+<div id="toastContainer" class="toast-container"></div>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -136,33 +240,406 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
     let currentUser = null, questions = [], examName = "", studentAnswers = {}, score = 0;
-    let currentExamId = null, selectedExamId = null, selectedExamData = null;
+    let currentExamId = null, selectedExamId = null, selectedExamData = null, examStartTime = null, currentQuestionIndex = 0;
+    let currentStep = 1;
+    let isReviewMode = false;
 
-    async function signInWithGoogle() { const provider = new firebase.auth.GoogleAuthProvider(); try { await auth.signInWithRedirect(provider); } catch (error) { document.getElementById('loginError').innerText = 'خطأ: ' + error.message; } }
+    // حفظ الحالة في localStorage
+    function saveState() {
+        const state = { currentStep, currentExamId, selectedExamId, examName, studentAnswers, currentQuestionIndex, isReviewMode };
+        localStorage.setItem('examState', JSON.stringify(state));
+        updateStepper();
+    }
+
+    // استعادة الحالة عند تحديث الصفحة
+    function restoreState() {
+        const savedState = localStorage.getItem('examState');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            currentStep = state.currentStep || 1;
+            currentExamId = state.currentExamId;
+            selectedExamId = state.selectedExamId;
+            examName = state.examName;
+            studentAnswers = state.studentAnswers || {};
+            currentQuestionIndex = state.currentQuestionIndex || 0;
+            isReviewMode = state.isReviewMode || false;
+            return true;
+        }
+        return false;
+    }
+
+    // مسح الحالة عند الانتهاء
+    function clearState() {
+        localStorage.removeItem('examState');
+        localStorage.removeItem('studentName');
+        localStorage.removeItem('studentGrade');
+    }
+
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+        toast.innerHTML = `<span style="font-size:24px;">${icons[type]}</span><span>${message}</span>`;        container.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 3000);
+    }
+
+    // تحديث Progress Stepper
+    function updateStepper() {
+        document.querySelectorAll('.step').forEach((step, index) => {
+            const stepNum = index + 1;
+            step.classList.remove('active', 'completed');
+            if (stepNum < currentStep) step.classList.add('completed');
+            else if (stepNum === currentStep) step.classList.add('active');
+        });
+    }
+
+    // التعامل مع النقر على الخطوات
+    async function handleStepClick(stepNum) {
+        if (stepNum < currentStep && currentStep === 3) {
+            const confirmExit = confirm('⚠️ تحذير: إذا خرجت من الامتحان الآن ستحتاج إلى كود إعادة من الأستاذ للمتابعة. هل أنت متأكد؟');
+            if (confirmExit) {
+                try { await db.collection('students').doc(currentUser.email + '_' + currentExamId).delete(); } catch (error) { console.error('Error:', error); }
+                showToast('❌ تم الخروج من الامتحان. ستحتاج لكود إعادة', 'error');
+                clearState();
+                currentStep = 2;
+                document.getElementById('examScreen').classList.add('hidden');
+                document.getElementById('examSelectScreen').classList.remove('hidden');
+                updateStepper();
+                loadExamsList();
+            }
+            return;
+        }
+        if (stepNum === 1 && currentStep >= 1) { clearState(); location.reload(); }
+        else if (stepNum === 2 && currentStep >= 2) {
+            document.getElementById('examScreen').classList.add('hidden');
+            document.getElementById('examSelectScreen').classList.remove('hidden');
+            currentStep = 2;
+            updateStepper();
+            loadExamsList();
+        }
+    }
+
+    async function signInWithGoogle() { 
+        const provider = new firebase.auth.GoogleAuthProvider(); 
+        try { await auth.signInWithRedirect(provider); } 
+        catch (error) { showToast('خطأ في تسجيل الدخول: ' + error.message, 'error'); } 
+    }
     
-    auth.onAuthStateChanged(async (user) => { document.getElementById('loadingScreen').classList.add('hidden'); if (user) { currentUser = user; document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('nameInputSection').classList.remove('hidden'); } else { document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('nameInputSection').classList.add('hidden'); } });
+    auth.onAuthStateChanged(async (user) => { 
+        document.getElementById('loadingScreen').classList.add('hidden'); 
+        if (user) { 
+            currentUser = user;             document.getElementById('loginScreen').classList.remove('hidden'); 
+            document.getElementById('nameInputSection').classList.remove('hidden'); 
+            showToast('تم تسجيل الدخول بنجاح!', 'success');
+            const hasState = restoreState();
+            if (hasState) {
+                if (currentStep === 2) {
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('examSelectScreen').classList.remove('hidden');
+                    loadExamsList();
+                } else if (currentStep === 3) {
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('examScreen').classList.remove('hidden');
+                    await loadExamData(currentExamId);
+                } else if (currentStep === 4) {
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('resultScreen').classList.remove('hidden');
+                }
+            }
+            updateStepper();
+        } else { 
+            document.getElementById('loginScreen').classList.remove('hidden'); 
+            document.getElementById('nameInputSection').classList.add('hidden'); 
+        } 
+    });
     
-    auth.getRedirectResult().then((result) => { if (result.user) { currentUser = result.user; document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('nameInputSection').classList.remove('hidden'); } }).catch((error) => { document.getElementById('loginError').innerText = 'خطأ: ' + error.message; });
+    auth.getRedirectResult().then((result) => { 
+        if (result.user) { 
+            currentUser = result.user; 
+            document.getElementById('loginScreen').classList.remove('hidden'); 
+            document.getElementById('nameInputSection').classList.remove('hidden'); 
+            showToast('تم تسجيل الدخول بنجاح!', 'success');
+        } 
+    }).catch((error) => { showToast('خطأ: ' + error.message, 'error'); });
 
-    async function verifyAndStart() { const name = document.getElementById('studentName').value.trim(); if (name.length < 5) { alert('⚠️ أدخل الاسم الثلاثي بشكل صحيح'); return; } localStorage.setItem('studentName', name); document.getElementById('loginScreen').classList.add('hidden'); await loadExamsList(); }
+    async function verifyAndStart() { 
+        const name = document.getElementById('studentName').value.trim(); 
+        const grade = document.getElementById('studentGrade').value;
+        if (name.length < 5) { showToast('⚠️ أدخل الاسم الثلاثي بشكل صحيح', 'warning'); return; }
+        if (!grade) { showToast('⚠️ اختر صفك الدراسي', 'warning'); return; }
+        localStorage.setItem('studentName', name);
+        localStorage.setItem('studentGrade', grade);
+        document.getElementById('loginScreen').classList.add('hidden'); 
+        showToast('جاري تحميل الامتحانات...', 'info');
+        currentStep = 2;
+        saveState();
+        await loadExamsList(); 
+    }
 
-    async function loadExamsList() { try { document.getElementById('examSelectScreen').classList.remove('hidden'); const snapshot = await db.collection('exams').where('is_active', '==', true).get(); const container = document.getElementById('examsList'); container.innerHTML = ''; if (snapshot.empty) { container.innerHTML = '<p style="text-align:center;color:#f59e0b;padding:30px;">⚠️ لا توجد امتحانات نشطة حالياً</p>'; return; } snapshot.forEach(doc => { const exam = doc.data(); const card = document.createElement('div'); card.className = 'exam-card'; card.style.cursor = 'pointer'; card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:8px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p><span class="badge badge-primary">${exam.grade_level}</span></div><span style="font-size:24px;">➡️</span></div>`; container.appendChild(card); card.addEventListener('click', function() { console.log('🔔 نقر على الامتحان:', exam.name); selectExam(doc.id, exam); }); }); } catch (error) { console.error('خطأ في loadExamsList:', error); alert('خطأ: ' + error.message); } }
+    async function loadExamsList() { 
+        try {             document.getElementById('examSelectScreen').classList.remove('hidden'); 
+            const studentGrade = localStorage.getItem('studentGrade');
+            let query = db.collection('exams').where('is_active', '==', true);
+            if (studentGrade) query = query.where('grade_level', '==', studentGrade);
+            const snapshot = await query.get(); 
+            const container = document.getElementById('examsList'); 
+            container.innerHTML = ''; 
+            if (snapshot.empty) { container.innerHTML = `<p style="text-align:center;color:#f59e0b;padding:30px;">⚠️ لا توجد امتحانات نشطة لصف ${studentGrade}</p>`; return; }
+            showToast(`تم تحميل ${snapshot.size} امتحان`, 'success');
+            snapshot.forEach(doc => { 
+                const exam = doc.data(); 
+                const card = document.createElement('div'); 
+                card.className = 'exam-card'; 
+                card.style.cursor = 'pointer'; 
+                card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:8px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p><div style="display:flex;gap:8px;"><span class="badge badge-primary">${exam.grade_level}</span><span class="badge badge-info">${exam.subject}</span></div></div><span style="font-size:24px;">➡️</span></div>`; 
+                container.appendChild(card); 
+                card.addEventListener('click', function() { selectExam(doc.id, exam); }); 
+            }); 
+        } catch (error) { showToast('خطأ في تحميل الامتحانات: ' + error.message, 'error'); } 
+    }
 
-    async function selectExam(examId, exam) { try { console.log('📋 selectExam - البدء'); console.log('examId:', examId); selectedExamId = examId; const studentDocId = currentUser.email + '_' + examId; const doc = await db.collection('students').doc(studentDocId).get(); if (doc.exists) { console.log('✅ الطالب أدى الامتحان من قبل'); selectedExamData = doc.data(); document.getElementById('examSelectScreen').classList.add('hidden'); document.getElementById('resetCodeScreen').classList.remove('hidden'); return; } console.log('✅ لم يؤدِ الامتحان - متابعة'); currentExamId = examId; examName = exam.name; document.getElementById('examSelectScreen').classList.add('hidden'); await loadExamData(examId); } catch (error) { console.error('❌ خطأ في selectExam:', error); alert('خطأ في فتح الامتحان: ' + error.message); } }
+    async function selectExam(examId, exam) { 
+        try { 
+            selectedExamId = examId; 
+            const studentDocId = currentUser.email + '_' + examId; 
+            const doc = await db.collection('students').doc(studentDocId).get(); 
+            if (doc.exists) { 
+                selectedExamData = doc.data(); 
+                document.getElementById('examSelectScreen').classList.add('hidden'); 
+                document.getElementById('resetCodeScreen').classList.remove('hidden'); 
+                return; 
+            } 
+            currentExamId = examId; 
+            examName = exam.name; 
+            document.getElementById('examSelectScreen').classList.add('hidden'); 
+            await loadExamData(examId); 
+        } catch (error) { showToast('خطأ في فتح الامتحان: ' + error.message, 'error'); } 
+    }
 
-    async function verifyResetCode() { const code = document.getElementById('resetCodeInput').value.trim().toUpperCase(); const errorEl = document.getElementById('resetError'); if (code.length !== 8) { errorEl.innerText = '⚠️ الكود يجب أن يكون 8 أحرف'; return; } try { const examDoc = await db.collection('exams').doc(selectedExamId).get(); const exam = examDoc.data(); if (!exam || exam.reset_code !== code) { errorEl.innerText = '❌ كود الإعادة غير صحيح'; return; } await db.collection('students').doc(currentUser.email + '_' + selectedExamId).delete(); await db.collection('examResets').add({ exam_id: selectedExamId, exam_name: exam.name, student_email: currentUser.email, reset_code: code, used_at: new Date().toISOString() }); alert('✅ تم التحقق! يمكنك الآن أداء الامتحان'); document.getElementById('resetCodeScreen').classList.add('hidden'); document.getElementById('resetCodeInput').value = ''; errorEl.innerText = ''; currentExamId = selectedExamId; await loadExamData(selectedExamId); } catch (error) { errorEl.innerText = 'خطأ: ' + error.message; } }
+    async function verifyResetCode() { 
+        const code = document.getElementById('resetCodeInput').value.trim().toUpperCase(); 
+        if (code.length !== 8) { showToast('⚠️ الكود يجب أن يكون 8 أحرف', 'warning'); return; } 
+        try { 
+            const examDoc = await db.collection('exams').doc(selectedExamId).get(); 
+            const exam = examDoc.data(); 
+            if (!exam || exam.reset_code !== code) { showToast('❌ كود الإعادة غير صحيح', 'error'); return; } 
+            await db.collection('students').doc(currentUser.email + '_' + selectedExamId).delete(); 
+            await db.collection('examResets').add({ exam_id: selectedExamId, exam_name: exam.name, student_email: currentUser.email, reset_code: code, used_at: new Date().toISOString() }); 
+            showToast('✅ تم التحقق! يمكنك الآن أداء الامتحان', 'success'); 
+            document.getElementById('resetCodeScreen').classList.add('hidden');             document.getElementById('resetCodeInput').value = ''; 
+            currentExamId = selectedExamId; 
+            await loadExamData(selectedExamId); 
+        } catch (error) { showToast('خطأ: ' + error.message, 'error'); } 
+    }
 
-    function backToExams() { document.getElementById('resetCodeScreen').classList.add('hidden'); document.getElementById('examSelectScreen').classList.remove('hidden'); document.getElementById('resetCodeInput').value = ''; document.getElementById('resetError').innerText = ''; }
+    function backToExams() { 
+        document.getElementById('resetCodeScreen').classList.add('hidden'); 
+        document.getElementById('examSelectScreen').classList.remove('hidden'); 
+        document.getElementById('resetCodeInput').value = ''; 
+    }
 
-    async function loadExamData(examId) { try { const examDoc = await db.collection('exams').doc(examId).get(); examName = examDoc.data().name; document.getElementById('examNameDisplay').innerText = examName; document.getElementById('examTitleDisplay').innerText = examName; const snapshot = await db.collection('questions').where('exam_id', '==', examId).orderBy('order_num').get(); questions = []; snapshot.forEach(doc => questions.push(doc.data())); document.getElementById('totalQuestionsCount').innerText = questions.length; const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get(); if (doc.exists) { showResult(doc.data()); } else { document.getElementById('examInfoScreen').classList.remove('hidden'); } } catch (e) { alert("خطأ في التحميل: " + e.message); } }
+    async function loadExamData(examId) { 
+        try { 
+            const examDoc = await db.collection('exams').doc(examId).get(); 
+            examName = examDoc.data().name; 
+            document.getElementById('examNameDisplay').innerText = examName; 
+            document.getElementById('examTitleDisplay').innerText = examName; 
+            const snapshot = await db.collection('questions').where('exam_id', '==', examId).get(); 
+            questions = []; 
+            snapshot.forEach(doc => questions.push(doc.data())); 
+            questions.sort((a, b) => a.order_num - b.order_num);
+            document.getElementById('totalQuestionsCount').innerText = questions.length; 
+            const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get(); 
+            if (doc.exists) { showResult(doc.data()); } 
+            else { document.getElementById('examInfoScreen').classList.remove('hidden'); } 
+            showToast(`تم تحميل ${questions.length} سؤال`, 'success');
+        } catch (e) { showToast("خطأ في التحميل: " + e.message, 'error'); } 
+    }
 
-    function startExam() { document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('examScreen').classList.remove('hidden'); renderQuestions(); }
-    function renderQuestions() { const c = document.getElementById('questionsContainer'); c.innerHTML = ''; questions.forEach((q, i) => { const card = document.createElement('div'); card.className = 'question-card'; card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:18px;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" data-index="${String.fromCharCode(65+j)}" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div>`; c.appendChild(card); }); }
+    function startExam() { 
+        document.getElementById('examInfoScreen').classList.add('hidden'); 
+        document.getElementById('examScreen').classList.remove('hidden'); 
+        examStartTime = new Date();
+        currentQuestionIndex = 0;
+        currentStep = 3;
+        saveState();
+        renderQuestions(); 
+        renderNavigator();
+        updateNavButtons();
+        updateStepper();
+        showToast('🚀 ابدأ الاختبار! بالتوفيق', 'info');
+    }
+    
+    function renderQuestions() { 
+        const c = document.getElementById('questionsContainer'); 
+        c.innerHTML = ''; 
+        questions.forEach((q, i) => { 
+            const card = document.createElement('div'); 
+            card.className = 'question-card';             card.id = `question-${i}`;
+            card.style.display = i === currentQuestionIndex ? 'block' : 'none';
+            card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" data-index="${String.fromCharCode(65+j)}" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div>`; 
+            c.appendChild(card); 
+        });
+        if (studentAnswers[currentQuestionIndex] !== undefined) highlightSelectedOption(currentQuestionIndex, studentAnswers[currentQuestionIndex]);
+    }
 
-    function selectOption(qi, oi, el) { const p = document.getElementById(`opt-${qi}`); const all = p.querySelectorAll('.option-3d'); all.forEach(o => o.style.pointerEvents = 'none'); all.forEach(o => o.classList.remove('selected')); el.classList.add('selected'); studentAnswers[qi] = oi; document.getElementById('progressBar').style.width = ((Object.keys(studentAnswers).length / questions.length) * 100) + '%'; if (Object.keys(studentAnswers).length === questions.length) { document.getElementById('finishBtn').classList.remove('hidden'); document.getElementById('finishBtn').scrollIntoView({behavior: "smooth"}); } }
-    async function finishExam() { if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return; try { const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email; let correctCount = 0; let cats = {}; questions.forEach((q, i) => { const ok = (studentAnswers[i] === q.correct_index); if (ok) correctCount++; const cat = q.category || 'عام'; if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; cats[cat].total++; if (ok) cats[cat].correct++; }); const data = { email: currentUser.email, name: nm, display_name: currentUser.displayName, exam_id: currentExamId, exam_name: examName, score: correctCount, total_questions: questions.length, answers: studentAnswers, categories: cats, used_reset_code: false, created_at: new Date().toISOString() }; await db.collection('students').doc(currentUser.email + '_' + currentExamId).set(data); showResult(data); } catch (error) { alert('خطأ في التسليم: ' + error.message); } }
+    function renderNavigator() {
+        const nav = document.getElementById('questionNavigator');
+        nav.innerHTML = '';
+        questions.forEach((q, i) => {
+            const circle = document.createElement('div');
+            circle.className = 'nav-circle';
+            if (i === currentQuestionIndex) circle.classList.add('current');
+            if (studentAnswers[i] !== undefined) circle.classList.add('answered');
+            circle.innerText = i + 1;
+            circle.onclick = () => goToQuestion(i);
+            nav.appendChild(circle);
+        });
+    }
 
-    function showResult(data) { document.getElementById('examScreen').classList.add('hidden'); document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('resultScreen').classList.remove('hidden'); const p = Math.round((data.score / data.total_questions) * 100); document.getElementById('finalScore').innerText = '%' + p; document.getElementById('scoreProgress').style.strokeDashoffset = 440 - (440 * p / 100); document.getElementById('resultTitle').innerText = p >= 70 ? '🎉 أداء ممتاز!' : (p >= 50 ? '👍 أداء جيد' : '📚 يحتاج مراجعة'); let reviewHTML = '<h3 style="margin:20px 0 10px;text-align:right;">📋 مراجعة الإجابات</h3>'; questions.forEach((q, i) => { const userAns = data.answers ? data.answers[i] : 0; const ok = (userAns === q.correct_index); reviewHTML += `<div class="analysis-item"><div style="font-weight:700;">س${i+1}</div><div style="color:${ok?'var(--success)':'var(--error)'}">${ok?'✅':'❌'}</div></div>`; }); document.getElementById('reviewContainer').innerHTML = reviewHTML; if (data.categories) { let h = '<h3 style="margin:20px 0 10px;text-align:right;">📊 التحليل التفصيلي</h3>'; for (const [c, s] of Object.entries(data.categories)) { const x = Math.round((s.correct / s.total) * 100); const col = x >= 70 ? 'var(--success)' : (x >= 50 ? 'var(--warning)' : 'var(--error)'); h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`; } document.getElementById('analysisContainer').innerHTML = h; } }
+    function goToQuestion(index) {
+        document.querySelectorAll('.question-card').forEach((card, i) => { card.style.display = i === index ? 'block' : 'none'; });
+        currentQuestionIndex = index;
+        renderNavigator();
+        updateNavButtons();
+        saveState();
+        if (studentAnswers[index] !== undefined) highlightSelectedOption(index, studentAnswers[index]);
+    }
+
+    function previousQuestion() { if (currentQuestionIndex > 0) goToQuestion(currentQuestionIndex - 1); }
+    function nextQuestion() { if (currentQuestionIndex < questions.length - 1) goToQuestion(currentQuestionIndex + 1); }
+
+    function updateNavButtons() {
+        document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+        document.getElementById('nextBtn').disabled = currentQuestionIndex === questions.length - 1;
+        if (Object.keys(studentAnswers).length === questions.length) {
+            document.getElementById('finishBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+        } else {
+            document.getElementById('finishBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+    }
+
+    function highlightSelectedOption(qIndex, oIndex) {
+        const p = document.getElementById(`opt-${qIndex}`);
+        if (p) {
+            const all = p.querySelectorAll('.option-3d');            all.forEach((o, i) => { if (i === oIndex) o.classList.add('selected'); else o.classList.remove('selected'); });
+        }
+    }
+
+    function selectOption(qi, oi, el) { 
+        studentAnswers[qi] = oi;
+        const p = document.getElementById(`opt-${qi}`); 
+        const all = p.querySelectorAll('.option-3d'); 
+        all.forEach(o => o.classList.remove('selected')); 
+        el.classList.add('selected'); 
+        document.getElementById('progressBar').style.width = ((Object.keys(studentAnswers).length / questions.length) * 100) + '%'; 
+        renderNavigator();
+        updateNavButtons();
+        saveState();
+        if (Object.keys(studentAnswers).length === questions.length) showToast('✅ أكملت جميع الأسئلة! يمكنك التسليم', 'success');
+    }
+    async function finishExam() { 
+    if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return; 
+    try { 
+        const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email; 
+        const grade = localStorage.getItem('studentGrade') || 'غير محدد'; // ✅ الحصول على الصف
+        let correctCount = 0; 
+        let cats = {}; 
+        questions.forEach((q, i) => { 
+            const ok = (studentAnswers[i] === q.correct_index); 
+            if (ok) correctCount++; 
+            const cat = q.category || 'عام'; 
+            if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; 
+            cats[cat].total++; 
+            if (ok) cats[cat].correct++; 
+        }); 
+        const now = new Date();
+        const data = { 
+            email: currentUser.email, 
+            name: nm, 
+            display_name: currentUser.displayName, 
+            exam_id: currentExamId, 
+            exam_name: examName, 
+            score: correctCount, 
+            total_questions: questions.length, 
+            answers: studentAnswers, 
+            categories: cats, 
+            used_reset_code: false, 
+            created_at: now,
+            start_time: examStartTime || now,
+            end_time: now,
+            grade_level: grade  // ✅ إضافة الصف الدراسي للبيانات
+        }; 
+        await db.collection('students').doc(currentUser.email + '_' + currentExamId).set(data); 
+        showToast('✅ تم تسليم الاختبار بنجاح!', 'success');
+        currentStep = 4;
+        saveState();
+        setTimeout(() => showResult(data), 500);
+    } catch (error) { showToast('خطأ في التسليم: ' + error.message, 'error'); } 
+}
+
+    function showResult(data) { 
+        document.getElementById('examScreen').classList.add('hidden'); 
+        document.getElementById('examInfoScreen').classList.add('hidden'); 
+        document.getElementById('resultScreen').classList.remove('hidden'); 
+        const p = Math.round((data.score / data.total_questions) * 100); 
+        document.getElementById('finalScore').innerText = '%' + p; 
+        document.getElementById('scoreProgress').style.strokeDashoffset = 440 - (440 * p / 100); 
+        
+        // عرض عدد الإجابات الصحيحة والخاطئة
+        const correctCount = data.score;
+        const incorrectCount = data.total_questions - data.score;
+        document.getElementById('correctCount').innerText = correctCount;
+        document.getElementById('incorrectCount').innerText = incorrectCount;
+        
+        if (p >= 70) { document.getElementById('resultTitle').innerText = '🎉 أداء ممتاز!'; showToast('🎉 أداء ممتاز! مبروك!', 'success'); }
+        else if (p >= 50) { document.getElementById('resultTitle').innerText = '👍 أداء جيد'; showToast('👍 أداء جيد! استمر!', 'info'); }
+        else { document.getElementById('resultTitle').innerText = '📚 يحتاج مراجعة'; showToast('📚 يحتاج للمراجعة', 'warning'); }
+        
+        let reviewHTML = '<h3 style="margin:20px 0 10px;text-align:right;">📋 مراجعة سريعة</h3>'; 
+        questions.forEach((q, i) => { const userAns = data.answers ? data.answers[i] : 0; const ok = (userAns === q.correct_index); reviewHTML += `<div class="analysis-item"><div style="font-weight:700;">س${i+1}</div><div style="color:${ok?'var(--success)':'var(--error)'}">${ok?'✅':'❌'}</div></div>`; }); 
+        document.getElementById('reviewContainer').innerHTML = reviewHTML; 
+        if (data.categories) { 
+            let h = '<h3 style="margin:20px 0 10px;text-align:right;">📊 التحليل التفصيلي</h3>'; 
+            for (const [c, s] of Object.entries(data.categories)) { const x = Math.round((s.correct / s.total) * 100); const col = x >= 70 ? 'var(--success)' : (x >= 50 ? 'var(--warning)' : 'var(--error)'); h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`; } 
+            document.getElementById('analysisContainer').innerHTML = h; 
+        } 
+        updateStepper();
+    }
+    
+    // مراجعة الامتحان (عرض الإجابات بالألوان)
+    function reviewExam() {
+        document.getElementById('resultScreen').classList.add('hidden');
+        document.getElementById('reviewExamScreen').classList.remove('hidden');
+        const container = document.getElementById('reviewQuestionsContainer');
+        container.innerHTML = '';
+        questions.forEach((q, i) => {
+            const userAns = studentAnswers[i];
+            const correctAns = q.correct_index;
+            const isCorrect = userAns === correctAns;
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.style.border = isCorrect ? '2px solid var(--success)' : '2px solid var(--error)';
+            let optionsHTML = '';
+            q.options.forEach((opt, j) => {
+                let className = 'option-3d';
+                let icon = '';
+                if (j === correctAns) { className += ' correct'; icon = ' ✅'; }
+                else if (j === userAns && !isCorrect) { className += ' incorrect'; icon = ' ❌'; }
+                optionsHTML += `<div class="${className}" style="cursor:default;">${String.fromCharCode(65+j)}. ${opt}${icon}</div>`;
+            });
+            card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}<span style="float:left;color:${isCorrect?'var(--success)':'var(--error)'};font-size:24px;">${isCorrect?'✅':'❌'}</span></div><div>${optionsHTML}</div>${q.explanation ? `<div style="margin-top:15px;padding:15px;background:rgba(99,102,241,0.2);border-radius:12px;font-size:14px;">💡 ${q.explanation}</div>` : ''}`;
+            container.appendChild(card);
+        });
+    }
+    
+    function closeReviewExam() {
+        document.getElementById('reviewExamScreen').classList.add('hidden');
+        document.getElementById('resultScreen').classList.remove('hidden');
+    }
 </script>
 </body>
 </html>
