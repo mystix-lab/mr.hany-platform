@@ -367,58 +367,72 @@
     }
 
     async function signInWithGoogle() { 
-        try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            provider.setCustomParameters({ prompt: 'select_account' });
-            const result = await auth.signInWithPopup(provider);
-            if (result.user) {
-                currentUser = result.user;
-                document.getElementById('loginScreen').classList.remove('hidden');
-                document.getElementById('nameInputSection').classList.remove('hidden');
-                showToast('تم تسجيل الدخول بنجاح!', 'success');
-                updateStepper();
+    try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        const result = await auth.signInWithPopup(provider);
+        
+        if (result.user) {
+            currentUser = result.user;
+            
+            console.log('✅ تم تسجيل الدخول:', {
+                الاسم: currentUser.displayName,
+                البريد: currentUser.email,
+                UID: currentUser.uid
+            });
+            
+            // ✅ التحقق مما إذا كان هذا حساب الأستاذ
+            if (currentUser.email === 'hwaked62@gmail.com') {
+                showToast('⚠️ هذا حساب الأستاذ! استخدم حساب طالب مختلف', 'warning');
+                await auth.signOut();
+                return;
             }
-        } catch (error) { console.error('Error signing in:', error); showToast('خطأ في تسجيل الدخول: ' + error.message, 'error'); }
-    }
-    
-    auth.onAuthStateChanged(async (user) => { 
-        document.getElementById('loadingScreen').classList.add('hidden'); 
-        if (user) { 
-            currentUser = user;
-            const savedName = localStorage.getItem('studentName');
-            const savedGrade = localStorage.getItem('studentGrade');
-            if (savedName && savedGrade) {
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('examSelectScreen').classList.remove('hidden');
-                currentStep = 2; saveState(); loadExamsList();
-            } else {
-                document.getElementById('loginScreen').classList.remove('hidden');
-                document.getElementById('nameInputSection').classList.remove('hidden');
-                if (user.displayName) document.getElementById('studentName').value = user.displayName;
+            
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('nameInputSection').classList.remove('hidden');
+            
+            // ✅ ملء الاسم تلقائياً من حساب Google
+            if (currentUser.displayName) {
+                document.getElementById('studentName').value = currentUser.displayName;
             }
+            
+            showToast('تم تسجيل الدخول بنجاح!', 'success');
             updateStepper();
-        } else { 
-            document.getElementById('loginScreen').classList.remove('hidden'); 
-            document.getElementById('nameInputSection').classList.add('hidden'); 
-            currentStep = 1; updateStepper();        } 
-    });
+        }
+    } catch (error) { 
+        console.error('Error signing in:', error); 
+        showToast('خطأ في تسجيل الدخول: ' + error.message, 'error'); 
+    }
+}
 
     async function verifyAndStart() { 
     const name = document.getElementById('studentName').value.trim(); 
     const grade = document.getElementById('studentGrade').value;
     
-    if (name.length < 5) { 
-        showToast('⚠️ أدخل الاسم الثلاثي بشكل صحيح', 'warning'); 
+    console.log('📝 البيانات المدخلة:', {
+        الاسم: name,
+        الصف: grade,
+        البريد: currentUser?.email
+    });
+    
+    // ✅ التحقق من صحة البيانات
+    if (!name || name.length < 3) { 
+        showToast('⚠️ أدخل الاسم بشكل صحيح (3 أحرف على الأقل)', 'warning'); 
         return; 
     }
     if (!grade) { 
         showToast('⚠️ اختر صفك الدراسي', 'warning'); 
         return; 
     }
-    
-    // ✅ التحقق من وجود currentUser
     if (!currentUser) {
         showToast('❌ خطأ: يجب تسجيل الدخول أولاً', 'error');
+        return;
+    }
+    
+    // ✅ التحقق من أن البريد ليس بريد الأستاذ
+    if (currentUser.email === 'hwaked62@gmail.com') {
+        showToast('❌ لا يمكن استخدام حساب الأستاذ! سجل بحساب طالب مختلف', 'error');
+        await auth.signOut();
         return;
     }
     
@@ -428,26 +442,28 @@
     localStorage.setItem('studentName', name);
     localStorage.setItem('studentGrade', grade);
     localStorage.setItem('studentEmail', studentEmail);
+    localStorage.setItem('studentUID', currentUser.uid);
     
-    console.log('✅ بيانات الطالب المحفوظة:', {
+    console.log('✅ بيانات الطالب المحفوظة في localStorage:', {
         الاسم: name,
         البريد: studentEmail,
-        الصف: grade
+        الصف: grade,
+        UID: currentUser.uid
     });
     
-    // ✅ تحقق من أن البيانات حُفظت
+    // ✅ التحقق من أن البيانات حُفظت فعلياً
     const savedName = localStorage.getItem('studentName');
     const savedEmail = localStorage.getItem('studentEmail');
     const savedGrade = localStorage.getItem('studentGrade');
     
-    console.log('🔍 التحقق من البيانات المحفوظة:', {
+    console.log('🔍 التحقق من الحفظ:', {
         الاسم: savedName,
         البريد: savedEmail,
         الصف: savedGrade
     });
     
-    if (!savedName || !savedEmail) {
-        showToast('❌ خطأ في حفظ البيانات، حاول مرة أخرى', 'error');
+    if (!savedName || !savedEmail || !savedGrade) {
+        showToast('❌ خطأ في حفظ البيانات!', 'error');
         return;
     }
     
@@ -563,31 +579,25 @@
     
     try { 
         // ✅ الحصول على البيانات من localStorage
-        let studentName = localStorage.getItem('studentName');
-        let studentGrade = localStorage.getItem('studentGrade');
-        let studentEmail = localStorage.getItem('studentEmail');
+        const studentName = localStorage.getItem('studentName');
+        const studentGrade = localStorage.getItem('studentGrade');
+        const studentEmail = localStorage.getItem('studentEmail');
+        const studentUID = localStorage.getItem('studentUID');
         
-        // ✅ إذا لم توجد بيانات، استخدم بيانات المستخدم الحالي
-        if (!studentName) {
-            studentName = currentUser.displayName || 'طالب';
-            console.warn('⚠️ لم يتم العثور على الاسم في localStorage، تم استخدام:', studentName);
-        }
-        
-        if (!studentEmail) {
-            studentEmail = currentUser.email;
-            console.warn('⚠️ لم يتم العثور على البريد في localStorage، تم استخدام:', studentEmail);
-        }
-        
-        if (!studentGrade) {
-            studentGrade = 'غير محدد';
-            console.warn('⚠️ لم يتم العثور على الصف في localStorage');
-        }
-        
-        console.log('📝 بيانات الطالب للتسليم:', {
+        console.log('📊 بيانات الطالب قبل التسليم:', {
             الاسم: studentName,
             البريد: studentEmail,
-            الصف: studentGrade
+            الصف: studentGrade,
+            UID: studentUID
         });
+        
+        // ✅ التحقق من وجود البيانات
+        if (!studentName || !studentEmail) {
+            const errorMsg = `❌ خطأ: لم يتم العثور على بيانات الطالب\nالاسم: ${studentName || 'مفقود'}\nالبريد: ${studentEmail || 'مفقود'}`;
+            console.error(errorMsg);
+            showToast(errorMsg, 'error');
+            return;
+        }
         
         let correctCount = 0; 
         let cats = {}; 
@@ -603,10 +613,14 @@
         
         const now = new Date();
         const data = { 
+            // ✅ البيانات الصحيحة للطالب
             name: studentName,
             email: studentEmail,
             display_name: studentName,
-            grade_level: studentGrade,
+            grade_level: studentGrade || 'غير محدد',
+            student_uid: studentUID || currentUser.uid,
+            
+            // بيانات الامتحان
             exam_id: currentExamId, 
             exam_name: examName, 
             score: correctCount, 
@@ -616,15 +630,19 @@
             used_reset_code: false, 
             created_at: now, 
             start_time: examStartTime || now, 
-            end_time: now,
-            student_uid: currentUser.uid
+            end_time: now
         }; 
         
+        // ✅ استخدام معرف فريد
         const docId = `${studentEmail}_${currentExamId}`;
-        console.log('💾 حفظ النتيجة بمعرف:', docId);
+        console.log('💾 حفظ النتيجة في Firestore:', {
+            المعرف: docId,
+            البيانات: data
+        });
         
         await db.collection('students').doc(docId).set(data); 
         
+        console.log('✅ تم الحفظ بنجاح!');
         showToast('✅ تم تسليم الاختبار بنجاح!', 'success');
         currentStep = 4; 
         saveState(); 
