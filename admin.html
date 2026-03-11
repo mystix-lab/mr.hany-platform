@@ -455,30 +455,115 @@
     function copyResetCode() { const code = document.getElementById('resetCodeDisplay').innerText; navigator.clipboard.writeText(code).then(() => showToast('✅ تم نسخ الكود', 'success')); }
     async function regenerateResetCode() { if (!currentExamForReset) return; if (!confirm('⚠️ الكود القديم لن يعمل!')) return; const newCode = generateRandomCode(); await db.collection('exams').doc(currentExamForReset).update({ reset_code: newCode, updated_at: new Date().toISOString() }); document.getElementById('resetCodeDisplay').innerText = newCode; showToast('✅ تم توليد كود جديد', 'success'); loadExams(); }
     async function loadStudentsResults() {
-        try {
-            const tbody = document.querySelector('#studentsTable tbody');
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">جاري التحميل...</td></tr>';
-            const filterExam = document.getElementById('filterExam').value;
-            const filterGrade = document.getElementById('filterGrade').value;
-            const search = document.getElementById('searchStudent').value.toLowerCase();
-            let query = db.collection('students');
-            if (filterExam) query = query.where('exam_id', '==', filterExam);
-            const snapshot = await query.get();
-            loadExamsForFilter(snapshot);
-            let filtered = [];
-            snapshot.forEach(doc => filtered.push({ id: doc.id, ...doc.data() }));
-            if (filterGrade) filtered = filtered.filter(s => s.grade_level === filterGrade);
-            if (search) filtered = filtered.filter(s => (s.name && s.name.toLowerCase().includes(search)) || (s.email && s.email.toLowerCase().includes(search)));
-            filtered.sort((a, b) => { const dateA = a.created_at?.toDate ? a.created_at.toDate() : (a.created_at ? new Date(a.created_at) : new Date(0)); const dateB = b.created_at?.toDate ? b.created_at.toDate() : (b.created_at ? new Date(b.created_at) : new Date(0)); return dateB - dateA; });
-            if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;opacity:0.5;padding:40px;">📭 لا توجد نتائج</td></tr>'; document.getElementById('resultsStats').style.display = 'none'; document.getElementById('honorBoard').style.display = 'none'; document.querySelector('.chart-container').style.display = 'none'; return; }
-            calculateStats(filtered); displayHonorBoard(filtered); displayGradesChart(filtered);
-            const studentsByExam = {}; filtered.forEach(s => { if (!studentsByExam[s.exam_id]) studentsByExam[s.exam_id] = []; studentsByExam[s.exam_id].push(s); });
-            const studentsWithRank = {}; Object.keys(studentsByExam).forEach(examId => { const studentsInExam = studentsByExam[examId]; studentsInExam.sort((a, b) => { const percentA = (a.score / a.total_questions) * 100; const percentB = (b.score / b.total_questions) * 100; return percentB - percentA; }); studentsInExam.forEach((student, index) => { studentsWithRank[student.id] = { rank: index + 1, total: studentsInExam.length }; }); });
-            tbody.innerHTML = '';
-            filtered.forEach(s => { const percentage = Math.round((s.score / s.total_questions) * 100); const percentageColor = percentage >= 70 ? 'var(--success)' : (percentage >= 50 ? 'var(--warning)' : 'var(--error)'); const rankInfo = studentsWithRank[s.id] || { rank: '-', total: '-' }; let rankBadge = rankInfo.rank === 1 ? '<span class="badge badge-success">🥇 1</span>' : rankInfo.rank === 2 ? '<span class="badge badge-info">🥈 2</span>' : rankInfo.rank === 3 ? '<span class="badge badge-warning">🥉 3</span>' : `<span class="badge badge-primary">#${rankInfo.rank}</span>`; const row = `<tr><td style="font-weight:700;color:var(--success);">${s.name || 'غير محدد'}</td><td><span class="badge badge-primary">${s.grade_level || 'غير محدد'}</span></td><td>${s.exam_name || 'غير محدد'}</td><td>${s.score}/${s.total_questions}</td><td><span style="color:${percentageColor};font-weight:700;">${percentage}%</span></td><td>${rankBadge}</td><td><button class="btn btn-info btn-small" onclick="viewStudentDetail('${s.id}')">👁️ عرض</button></td></tr>`; tbody.innerHTML += row; });
-            showToast('✅ تم تحميل النتائج', 'success');
-        } catch (error) { console.error('خطأ:', error); showToast('خطأ في تحميل النتائج: ' + error.message, 'error'); }
+    try {
+        const tbody = document.querySelector('#studentsTable tbody');
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">جاري التحميل...</td></tr>';
+        
+        const filterExam = document.getElementById('filterExam').value;
+        const filterGrade = document.getElementById('filterGrade').value;
+        const search = document.getElementById('searchStudent').value.toLowerCase();
+        
+        let query = db.collection('students');
+        if (filterExam) query = query.where('exam_id', '==', filterExam);
+        
+        const snapshot = await query.get();
+        loadExamsForFilter(snapshot);
+        
+        let filtered = [];
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            filtered.push({ id: doc.id, ...data });
+        });
+        
+        // ✅ فلتر الصف
+        if (filterGrade) {
+            filtered = filtered.filter(s => s.grade_level === filterGrade);
+        }
+        
+        // ✅ بحث باسم الطالب
+        if (search) {
+            filtered = filtered.filter(s => {
+                const studentName = s.name || s.student_name || 'غير محدد';
+                return studentName.toLowerCase().includes(search) || 
+                       (s.email && s.email.toLowerCase().includes(search));
+            });
+        }
+        
+        // ✅ ترتيب حسب التاريخ
+        filtered.sort((a, b) => {
+            const dateA = a.created_at?.toDate ? a.created_at.toDate() : (a.created_at ? new Date(a.created_at) : new Date(0));
+            const dateB = b.created_at?.toDate ? b.created_at.toDate() : (b.created_at ? new Date(b.created_at) : new Date(0));
+            return dateB - dateA;
+        });
+        
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;opacity:0.5;padding:40px;">📭 لا توجد نتائج</td></tr>';
+            return;
+        }
+        
+        // ✅ حساب الترتيب
+        const studentsByExam = {};
+        filtered.forEach(s => {            if (!studentsByExam[s.exam_id]) studentsByExam[s.exam_id] = [];
+            studentsByExam[s.exam_id].push(s);
+        });
+        
+        const studentsWithRank = {};
+        Object.keys(studentsByExam).forEach(examId => {
+            const studentsInExam = studentsByExam[examId];
+            studentsInExam.sort((a, b) => {
+                const percentA = (a.score / a.total_questions) * 100;
+                const percentB = (b.score / b.total_questions) * 100;
+                return percentB - percentA;
+            });
+            studentsInExam.forEach((student, index) => {
+                studentsWithRank[student.id] = { rank: index + 1, total: studentsInExam.length };
+            });
+        });
+        
+        // ✅ عرض البيانات
+        tbody.innerHTML = '';
+        filtered.forEach(s => {
+            const percentage = Math.round((s.score / s.total_questions) * 100);
+            const percentageColor = percentage >= 70 ? 'var(--success)' : (percentage >= 50 ? 'var(--warning)' : 'var(--error)');
+            const rankInfo = studentsWithRank[s.id] || { rank: '-', total: '-' };
+            
+            // ✅ الحصول على اسم الطالب بشكل صحيح
+            const studentName = s.name || s.student_name || s.display_name || 'غير محدد';
+            const studentEmail = s.email || 'غير محدد';
+            const studentGrade = s.grade_level || 'غير محدد';
+            const examName = s.exam_name || 'غير محدد';
+            
+            let rankBadge = rankInfo.rank === 1 ? '🥇 1' : 
+                           rankInfo.rank === 2 ? '🥈 2' : 
+                           rankInfo.rank === 3 ? '🥉 3' : 
+                           `#${rankInfo.rank}`;
+            
+            const row = `
+                <tr>
+                    <td style="font-weight:700;color:var(--success);">
+                        <div>${studentName}</div>
+                        <div style="font-size:12px;opacity:0.7;font-weight:400;">${studentEmail}</div>
+                    </td>
+                    <td><span class="badge badge-primary">${studentGrade}</span></td>
+                    <td>${examName}</td>
+                    <td>${s.score}/${s.total_questions}</td>
+                    <td><span style="color:${percentageColor};font-weight:700;">${percentage}%</span></td>
+                    <td><span class="badge badge-primary">${rankBadge}</span></td>
+                    <td>
+                        <button class="btn btn-info btn-small" onclick="viewStudentDetail('${s.id}')">
+                            👁️ عرض
+                        </button>                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+        
+        showToast('✅ تم تحميل النتائج', 'success');
+    } catch (error) {
+        console.error('خطأ:', error);
+        showToast('خطأ في تحميل النتائج: ' + error.message, 'error');
     }
+}
     
     function calculateStats(students) { if (students.length === 0) return; const percentages = students.map(s => (s.score / s.total_questions) * 100); const avgScore = Math.round(percentages.reduce((a, b) => a + b, 0) / percentages.length); const topScore = Math.max(...percentages); let totalTime = 0, timeCount = 0; students.forEach(s => { if (s.start_time && s.end_time) { let startTime, endTime; if (s.start_time?.toDate) startTime = s.start_time.toDate(); else if (s.start_time instanceof Date) startTime = s.start_time; else startTime = new Date(s.start_time); if (s.end_time?.toDate) endTime = s.end_time.toDate(); else if (s.end_time instanceof Date) endTime = s.end_time; else endTime = new Date(s.end_time); totalTime += (endTime - startTime) / 60000; timeCount++; } }); const avgTime = timeCount > 0 ? Math.round(totalTime / timeCount) : 0; const uniqueStudents = new Set(students.map(s => s.email)).size; document.getElementById('avgScore').innerText = `${avgScore}%`; document.getElementById('topScore').innerText = `${Math.round(topScore)}%`; document.getElementById('avgTime').innerText = `${avgTime}د`; document.getElementById('totalStudentsCount').innerText = uniqueStudents; document.getElementById('resultsStats').style.display = 'grid'; }
     
@@ -514,42 +599,130 @@
     function applyAdvancedFilters() { showToast('🔍 جاري تطبيق الفلترة...', 'info'); loadStudentsResults(); }
     async function loadExamsForFilter() { const select = document.getElementById('filterExam'); if (select.options.length > 1) return; const snapshot = await db.collection('exams').where('teacher_email', '==', currentUser.email).get(); snapshot.forEach(doc => { const exam = doc.data(); const opt = document.createElement('option'); opt.value = doc.id; opt.innerText = exam.name; select.appendChild(opt); }); }
     
-    async function viewStudentDetail(id) {
-        try {
-            currentStudentId = id;
-            const doc = await db.collection('students').doc(id).get();
-            if (!doc.exists) return;
-            const s = doc.data();
-            const percentage = Math.round((s.score / s.total_questions) * 100);
-            let durationText = 'غير محدد';
-            if (s.start_time && s.end_time) {
-                let startTime, endTime;
-                if (s.start_time?.toDate) startTime = s.start_time.toDate(); else if (s.start_time instanceof Date) startTime = s.start_time; else startTime = new Date(s.start_time);
-                if (s.end_time?.toDate) endTime = s.end_time.toDate(); else if (s.end_time instanceof Date) endTime = s.end_time; else endTime = new Date(s.end_time);
-                const diffMs = endTime - startTime; const diffMins = Math.floor(diffMs / 60000); const diffSecs = Math.floor((diffMs % 60000) / 1000);
-                durationText = `${diffMins} دقيقة و ${diffSecs} ثانية`;
-            }
-            let submitDate, startTime, endTime;
-            if (s.created_at?.toDate) submitDate = s.created_at.toDate(); else if (s.created_at instanceof Date) submitDate = s.created_at; else submitDate = new Date(s.created_at);
-            if (s.start_time) { if (s.start_time?.toDate) startTime = s.start_time.toDate(); else if (s.start_time instanceof Date) startTime = s.start_time; else startTime = new Date(s.start_time); }
-            if (s.end_time) { if (s.end_time?.toDate) endTime = s.end_time.toDate(); else if (s.end_time instanceof Date) endTime = s.end_time; else endTime = new Date(s.end_time); }
-            const dateStr = submitDate.toLocaleDateString('ar-EG');
-            const timeStr = submitDate.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const startTimeStr = startTime ? startTime.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : 'غير محدد';
-            const endTimeStr = endTime ? endTime.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : 'غير محدد';
-            const allStudents = await db.collection('students').where('email', '==', s.email).where('exam_id', '==', s.exam_id).get();
-            const attemptsCount = allStudents.size;
-            const examStudents = await db.collection('students').where('exam_id', '==', s.exam_id).get();
-            let studentsArray = []; examStudents.forEach(doc => { studentsArray.push(doc.data()); });
-            studentsArray.sort((a, b) => { const percentA = (a.score / a.total_questions) * 100; const percentB = (b.score / b.total_questions) * 100; return percentB - percentA; });
-            const rank = studentsArray.findIndex(st => st.email === s.email) + 1;
-            let rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
-            const content = document.getElementById('studentDetailContent');
-            content.innerHTML = `<div style="text-align:center;margin-bottom:30px;"><div style="width:100px;height:100px;background:linear-gradient(135deg, var(--primary), var(--secondary));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 15px;font-size:48px;">👨‍🎓</div><h2 style="margin-bottom:10px;color:var(--success);">${s.name || 'غير محدد'}</h2><p style="opacity:0.7;font-size:14px;">${s.email || 'غير محدد'}</p><p style="opacity:0.6;font-size:13px;margin-top:5px;">📚 ${s.grade_level || 'غير محدد'}</p></div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:25px;"><div style="background:rgba(99,102,241,0.1);padding:20px;border-radius:16px;border:1px solid rgba(99,102,241,0.2);"><div style="font-size:13px;opacity:0.7;margin-bottom:8px;">📝 الامتحان</div><div style="font-weight:700;font-size:16px;">${s.exam_name}</div></div><div style="background:rgba(16,185,129,0.1);padding:20px;border-radius:16px;border:1px solid rgba(16,185,129,0.2);"><div style="font-size:13px;opacity:0.7;margin-bottom:8px;">📊 الدرجة</div><div style="font-weight:700;font-size:18px;color:var(--success);">${s.score}/${s.total_questions} (${percentage}%)</div></div><div style="background:rgba(245,158,11,0.1);padding:20px;border-radius:16px;border:1px solid rgba(245,158,11,0.2);"><div style="font-size:13px;opacity:0.7;margin-bottom:8px;">🏆 الترتيب</div><div style="font-weight:700;font-size:18px;">${rankEmoji} من ${studentsArray.length}</div></div><div style="background:rgba(6,182,212,0.1);padding:20px;border-radius:16px;border:1px solid rgba(6,182,212,0.2);"><div style="font-size:13px;opacity:0.7;margin-bottom:8px;">🔄 عدد المحاولات</div><div style="font-weight:700;font-size:18px;">${attemptsCount} ${attemptsCount === 1 ? 'محاولة' : 'محاولات'}</div></div></div><h3 style="margin:20px 0 15px;font-size:16px;border-bottom:2px solid rgba(255,255,255,0.1);padding-bottom:10px;">⏰ التفاصيل الزمنية</h3><div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:16px;margin-bottom:15px;"><div style="display:flex;justify-content:space-between;margin-bottom:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;"><span style="opacity:0.7;">📅 تاريخ التسليم:</span><span style="font-weight:700;">${dateStr}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;"><span style="opacity:0.7;">🕐 وقت التسليم:</span><span style="font-weight:700;">${timeStr}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;"><span style="opacity:0.7;">▶️ وقت البدء:</span><span style="font-weight:700;">${startTimeStr}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;"><span style="opacity:0.7;">⏹️ وقت الانتهاء:</span><span style="font-weight:700;">${endTimeStr}</span></div><div style="display:flex;justify-content:space-between;padding:10px;background:rgba(99,102,241,0.2);border-radius:10px;border:1px solid rgba(99,102,241,0.3);"><span style="opacity:0.9;">⏱️ المدة المستغرقة:</span><span style="font-weight:700;color:var(--primary);">${durationText}</span></div></div><h3 style="margin:20px 0 15px;font-size:16px;border-bottom:2px solid rgba(255,255,255,0.1);padding-bottom:10px;">📊 التحليل التفصيلي</h3><div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:16px;">${s.categories ? Object.entries(s.categories).map(([cat, stats]) => { const catPercent = Math.round((stats.correct / stats.total) * 100); const color = catPercent >= 70 ? 'var(--success)' : (catPercent >= 50 ? 'var(--warning)' : 'var(--error)'); return `<div style="margin-bottom:15px;"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-weight:600;">${cat}</span><span style="color:${color};font-weight:700;">${stats.correct}/${stats.total} (${catPercent}%)</span></div><div style="height:8px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;"><div style="height:100%;width:${catPercent}%;background:${color};border-radius:10px;"></div></div></div>`; }).join('') : '<p style="opacity:0.7;text-align:center;">لا توجد تفاصيل متاحة</p>'}</div><div style="margin-top:25px;padding:15px;background:${s.used_reset_code ? 'rgba(245,158,11,0.1)' : 'rgba(6,182,212,0.1)'};border-radius:12px;border:1px solid ${s.used_reset_code ? 'rgba(245,158,11,0.3)' : 'rgba(6,182,212,0.3)'};"><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:24px;">${s.used_reset_code ? '✅' : '❌'}</span><div><div style="font-weight:700;">كود الإعادة</div><div style="font-size:13px;opacity:0.7;">${s.used_reset_code ? 'تم استخدام كود الإعادة' : 'لم يتم استخدام كود الإعادة'}</div></div></div></div>`;
-            document.getElementById('studentDetailModal').classList.remove('hidden');
-            showToast('✅ تم عرض تفاصيل الطالب', 'success');
-        } catch (error) { console.error('❌ خطأ في viewStudentDetail:', error); showToast('خطأ في عرض التفاصيل: ' + error.message, 'error'); }
+    async function viewStudentDetail(studentId) {
+    try {
+        console.log('🔍 عرض تفاصيل الطالب ID:', studentId);
+        
+        const doc = await db.collection('students').doc(studentId).get();
+        
+        if (!doc.exists) {
+            showToast('❌ الطالب غير موجود', 'error');
+            return;
+        }
+        
+        const s = doc.data();
+        
+        // ✅ الحصول على البيانات بشكل صحيح
+        const studentName = s.name || s.student_name || s.display_name || 'غير محدد';
+        const studentEmail = s.email || 'غير محدد';
+        const studentGrade = s.grade_level || 'غير محدد';
+        const examName = s.exam_name || 'غير محدد';
+        const percentage = Math.round((s.score / s.total_questions) * 100);
+        
+        // حساب المدة
+        let durationText = 'غير محدد';
+        if (s.start_time && s.end_time) {
+            let startTime, endTime;
+            if (s.start_time?.toDate) startTime = s.start_time.toDate();
+            else if (s.start_time instanceof Date) startTime = s.start_time;
+            else startTime = new Date(s.start_time);
+            
+            if (s.end_time?.toDate) endTime = s.end_time.toDate();
+            else if (s.end_time instanceof Date) endTime = s.end_time;
+            else endTime = new Date(s.end_time);
+            
+            const diffMs = endTime - startTime;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffSecs = Math.floor((diffMs % 60000) / 1000);
+            durationText = `${diffMins} دقيقة و ${diffSecs} ثانية`;
+        }
+        
+        // حساب الترتيب
+        const examStudents = await db.collection('students')
+            .where('exam_id', '==', s.exam_id)
+            .get();
+        
+        let studentsArray = [];
+        examStudents.forEach(doc => { studentsArray.push(doc.data()); });
+        studentsArray.sort((a, b) => {
+            const percentA = (a.score / a.total_questions) * 100;
+            const percentB = (b.score / b.total_questions) * 100;
+            return percentB - percentA;
+        });        
+        const rank = studentsArray.findIndex(st => st.email === s.email) + 1;
+        let rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+        
+        // حساب عدد المحاولات
+        const allAttempts = await db.collection('students')
+            .where('email', '==', s.email)
+            .where('exam_id', '==', s.exam_id)
+            .get();
+        const attemptsCount = allAttempts.size;
+        
+        // عرض التفاصيل
+        const content = document.getElementById('studentDetailContent');
+        content.innerHTML = `
+            <div style="text-align:center;margin-bottom:30px;">
+                <div style="width:100px;height:100px;background:linear-gradient(135deg, var(--primary), var(--secondary));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 15px;font-size:48px;">👨‍🎓</div>
+                <h2 style="margin-bottom:10px;color:var(--success);">${studentName}</h2>
+                <p style="opacity:0.7;font-size:14px;">${studentEmail}</p>
+                <p style="opacity:0.6;font-size:13px;margin-top:5px;">📚 ${studentGrade}</p>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:25px;">
+                <div style="background:rgba(99,102,241,0.1);padding:20px;border-radius:16px;border:1px solid rgba(99,102,241,0.2);">
+                    <div style="font-size:13px;opacity:0.7;margin-bottom:8px;">📝 الامتحان</div>
+                    <div style="font-weight:700;font-size:16px;">${examName}</div>
+                </div>
+                <div style="background:rgba(16,185,129,0.1);padding:20px;border-radius:16px;border:1px solid rgba(16,185,129,0.2);">
+                    <div style="font-size:13px;opacity:0.7;margin-bottom:8px;">📊 الدرجة</div>
+                    <div style="font-weight:700;font-size:18px;color:var(--success);">${s.score}/${s.total_questions} (${percentage}%)</div>
+                </div>
+                <div style="background:rgba(245,158,11,0.1);padding:20px;border-radius:16px;border:1px solid rgba(245,158,11,0.2);">
+                    <div style="font-size:13px;opacity:0.7;margin-bottom:8px;">🏆 الترتيب</div>
+                    <div style="font-weight:700;font-size:18px;">${rankEmoji} من ${studentsArray.length}</div>
+                </div>
+                <div style="background:rgba(6,182,212,0.1);padding:20px;border-radius:16px;border:1px solid rgba(6,182,212,0.2);">
+                    <div style="font-size:13px;opacity:0.7;margin-bottom:8px;">🔄 عدد المحاولات</div>
+                    <div style="font-weight:700;font-size:18px;">${attemptsCount} ${attemptsCount === 1 ? 'محاولة' : 'محاولات'}</div>
+                </div>
+            </div>
+            
+            <h3 style="margin:20px 0 15px;font-size:16px;border-bottom:2px solid rgba(255,255,255,0.1);padding-bottom:10px;">⏰ التفاصيل الزمنية</h3>
+            <div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:16px;margin-bottom:15px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;">
+                    <span style="opacity:0.7;">⏱️ المدة المستغرقة:</span>
+                    <span style="font-weight:700;color:var(--primary);">${durationText}</span>
+                </div>
+            </div>
+            
+            <h3 style="margin:20px 0 15px;font-size:16px;border-bottom:2px solid rgba(255,255,255,0.1);padding-bottom:10px;">📊 التحليل التفصيلي</h3>
+            <div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:16px;">                ${s.categories ? Object.entries(s.categories).map(([cat, stats]) => {
+                    const catPercent = Math.round((stats.correct / stats.total) * 100);
+                    const color = catPercent >= 70 ? 'var(--success)' : (catPercent >= 50 ? 'var(--warning)' : 'var(--error)');
+                    return `
+                        <div style="margin-bottom:15px;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                                <span style="font-weight:600;">${cat}</span>
+                                <span style="color:${color};font-weight:700;">${stats.correct}/${stats.total} (${catPercent}%)</span>
+                            </div>
+                            <div style="height:8px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;">
+                                <div style="height:100%;width:${catPercent}%;background:${color};border-radius:10px;"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('') : '<p style="opacity:0.7;text-align:center;">لا توجد تفاصيل متاحة</p>'}
+            </div>
+        `;
+        
+        document.getElementById('studentDetailModal').classList.remove('hidden');
+        showToast('✅ تم عرض تفاصيل الطالب', 'success');
+        
+    } catch (error) {
+        console.error('❌ خطأ في viewStudentDetail:', error);
+        showToast('خطأ في عرض التفاصيل: ' + error.message, 'error');
     }
+}
     
     function closeStudentDetail() { document.getElementById('studentDetailModal').classList.add('hidden'); }
     function exportStudentPDF() { showToast('📥 جاري تحضير التقرير...', 'info'); setTimeout(() => { window.print(); showToast('✅ تم فتح نافذة الطباعة', 'success'); }, 500); }
