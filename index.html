@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الاختبارات | أ. هاني محمد الداودي</title>
+    
+    <!-- ✅ PWA Manifest - ضروري جداً -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- ✅ Apple Touch Icon - للآيفون والآيباد -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <!-- ✅ Theme Color - لون الشريط العلوي -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="امتحانات هاني">
+    
+    <!-- ✅ Microsoft Tile -->
+    <meta name="msapplication-TileColor" content="#6366f1">
+    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
+    
+    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #8b5cf6; --success: #10b981; --error: #ef4444; --warning: #f59e0b; --info: #06b6d4; --dark: #1e1b4b; --darker: #0f172a; --accent: #ec4899; }
@@ -259,7 +277,7 @@
     
     <div class="footer-credits">
         <p class="brand">✨ Mystix Universe - Omar ✨</p>
-        <p class="developer">جميع الحقوق محفوظة © 2026</p>
+        <p class="developer">جميع الحقوق محفوظة © 2025</p>
         <p style="font-size:12px;opacity:0.5;">تم التطوير بكل ❤️</p>
     </div>
 </div>
@@ -848,5 +866,15 @@
         document.getElementById('resultScreen').classList.remove('hidden');
     }
 </script>
+<!-- ✅ Register Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('✅ Service Worker registered'))
+                    .catch(err => console.log('❌ Service Worker registration failed'));
+            });
+        }
+    </script>
 </body>
 </html>

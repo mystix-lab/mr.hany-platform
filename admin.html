@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة الامتحانات | أ. هاني محمد الداودي</title>
+    <!-- ✅ PWA Manifest للأستاذ -->
+    <link rel="manifest" href="manifest-admin.json">
+    
+    <!-- ✅ Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="icons/icon-admin-192x192.png">
+    
+    <!-- ✅ Theme Color - أخضر للأستاذ -->
+    <meta name="theme-color" content="#10b981">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="إدارة الامتحانات">
+    <meta name="msapplication-TileColor" content="#10b981">
+    <meta name="msapplication-TileImage" content="icons/icon-admin-144x144.png">
+    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -1157,5 +1171,15 @@
         loadQuestionsForExam();
     }
 </script>
+<!-- ✅ Register Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('✅ Service Worker registered'))
+                    .catch(err => console.log('❌ Service Worker registration failed'));
+            });
+        }
+    </script>
 </body>
 </html>
