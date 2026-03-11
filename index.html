@@ -38,7 +38,59 @@
         .option-3d.correct::before { background: linear-gradient(135deg, var(--success), #059669); }
         .option-3d.incorrect { border-color: var(--error); background: rgba(239,68,68,0.2); }
         .option-3d.incorrect::before { background: linear-gradient(135deg, var(--error), #dc2626); }
-        .score-ring { width: 200px; height: 200px; margin: 40px auto; position: relative; animation: scaleIn 0.8s ease; }
+        .score-ring { 
+    width: 200px; 
+    height: 200px; 
+    margin: 40px auto; 
+    position: relative; 
+    animation: scaleIn 0.8s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-ring svg { 
+    width: 100%; 
+    height: 100%; 
+    transform: rotate(-90deg);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.score-ring circle { 
+    fill: none; 
+    stroke-width: 14; 
+    stroke-linecap: round; 
+}
+
+.score-ring .bg { 
+    stroke: rgba(255,255,255,0.1); 
+}
+
+.score-ring .progress { 
+    stroke: url(#gradient); 
+    stroke-dasharray: 440; 
+    stroke-dashoffset: 440; 
+    transition: stroke-dashoffset 2.5s; 
+    filter: drop-shadow(0 0 20px rgba(99,102,241,0.6)); 
+}
+
+.score-value { 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    font-size: 48px; 
+    font-weight: 900; 
+    background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    animation: pulse 2s infinite;
+    z-index: 10;
+    text-align: center;
+    line-height: 1;
+}
         @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
         .score-ring circle { fill: none; stroke-width: 14; stroke-linecap: round; }
