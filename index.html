@@ -416,13 +416,13 @@
         return; 
     }
     
-    // ✅ التحقق من أن currentUser موجود
+    // ✅ التحقق من وجود currentUser
     if (!currentUser) {
         showToast('❌ خطأ: يجب تسجيل الدخول أولاً', 'error');
         return;
     }
     
-    // ✅ حفظ البيانات في localStorage
+    // ✅ حفظ البيانات بشكل صحيح
     const studentEmail = currentUser.email;
     
     localStorage.setItem('studentName', name);
@@ -432,9 +432,24 @@
     console.log('✅ بيانات الطالب المحفوظة:', {
         الاسم: name,
         البريد: studentEmail,
-        الصف: grade,
-        UID: currentUser.uid
+        الصف: grade
     });
+    
+    // ✅ تحقق من أن البيانات حُفظت
+    const savedName = localStorage.getItem('studentName');
+    const savedEmail = localStorage.getItem('studentEmail');
+    const savedGrade = localStorage.getItem('studentGrade');
+    
+    console.log('🔍 التحقق من البيانات المحفوظة:', {
+        الاسم: savedName,
+        البريد: savedEmail,
+        الصف: savedGrade
+    });
+    
+    if (!savedName || !savedEmail) {
+        showToast('❌ خطأ في حفظ البيانات، حاول مرة أخرى', 'error');
+        return;
+    }
     
     document.getElementById('loginScreen').classList.add('hidden'); 
     showToast('جاري تحميل الامتحانات...', 'info');
@@ -547,19 +562,28 @@
     stopExamStatusMonitor();
     
     try { 
-        // ✅ الحصول على البيانات من localStorage أولاً
-        const studentName = localStorage.getItem('studentName');
-        const studentGrade = localStorage.getItem('studentGrade');
-        const studentEmail = localStorage.getItem('studentEmail');
+        // ✅ الحصول على البيانات من localStorage
+        let studentName = localStorage.getItem('studentName');
+        let studentGrade = localStorage.getItem('studentGrade');
+        let studentEmail = localStorage.getItem('studentEmail');
         
-        // ✅ التحقق من وجود البيانات
-        if (!studentName || !studentEmail) {
-            showToast('❌ خطأ: لم يتم العثور على بيانات الطالب', 'error');
-            console.error('البيانات المفقودة:', { studentName, studentEmail });
-            return;
+        // ✅ إذا لم توجد بيانات، استخدم بيانات المستخدم الحالي
+        if (!studentName) {
+            studentName = currentUser.displayName || 'طالب';
+            console.warn('⚠️ لم يتم العثور على الاسم في localStorage، تم استخدام:', studentName);
         }
         
-        console.log('📝 بيانات الطالب:', {
+        if (!studentEmail) {
+            studentEmail = currentUser.email;
+            console.warn('⚠️ لم يتم العثور على البريد في localStorage، تم استخدام:', studentEmail);
+        }
+        
+        if (!studentGrade) {
+            studentGrade = 'غير محدد';
+            console.warn('⚠️ لم يتم العثور على الصف في localStorage');
+        }
+        
+        console.log('📝 بيانات الطالب للتسليم:', {
             الاسم: studentName,
             البريد: studentEmail,
             الصف: studentGrade
@@ -579,13 +603,10 @@
         
         const now = new Date();
         const data = { 
-            // ✅ استخدام البيانات الصحيحة
-            name: studentName,              // اسم الطالب الحقيقي
-            email: studentEmail,            // بريد الطالب الحقيقي
-            display_name: studentName,      // نفس الاسم
-            grade_level: studentGrade || 'غير محدد',
-            
-            // بيانات الامتحان
+            name: studentName,
+            email: studentEmail,
+            display_name: studentName,
+            grade_level: studentGrade,
             exam_id: currentExamId, 
             exam_name: examName, 
             score: correctCount, 
@@ -599,7 +620,6 @@
             student_uid: currentUser.uid
         }; 
         
-        // ✅ استخدام معرف فريد بناءً على بريد الطالب
         const docId = `${studentEmail}_${currentExamId}`;
         console.log('💾 حفظ النتيجة بمعرف:', docId);
         
