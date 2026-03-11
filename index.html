@@ -418,28 +418,73 @@
     function changeGrade() { clearState(); localStorage.removeItem('studentGrade'); localStorage.removeItem('studentName'); location.reload(); }
 
     function startTimer(duration) {
-        if (!duration || duration <= 0) { document.getElementById('timerWrapper').classList.add('hidden'); return; }
-        examDuration = duration; timeRemaining = duration * 60;
-        document.getElementById('timerWrapper').classList.remove('hidden');
-        updateTimerDisplay();
-        timerInterval = setInterval(() => {
-            timeRemaining--; updateTimerDisplay();
-            if (timeRemaining === 300) { showToast('⚠️ تبقى 5 دقائق فقط!', 'warning'); document.getElementById('timerDisplay').classList.add('timer-warning'); }
-            if (timeRemaining === 60) { showToast('⚠️ تبقى دقيقة واحدة فقط!', 'error'); document.getElementById('timerDisplay').classList.add('timer-danger'); }
-            if (timeRemaining <= 0) { clearInterval(timerInterval); showToast('⏰ انتهى الوقت!', 'error'); finishExamAutomatically(); }
-        }, 1000);
+    console.log('🚀 بدء العداد لمدة:', duration, 'دقيقة');
+    
+    if (!duration || duration <= 0) { 
+        console.log('⚠️ الوقت غير صالح');
+        document.getElementById('timerWrapper').classList.add('hidden'); 
+        return; 
     }
+    
+    examDuration = duration; 
+    timeRemaining = duration * 60;
+    console.log('⏱️ الوقت بالثواني:', timeRemaining);
+    
+    document.getElementById('timerWrapper').classList.remove('hidden');
+    updateTimerDisplay();
+    
+    // ✅ تأكد من إيقاف أي عداد سابق
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    timerInterval = setInterval(() => {
+        timeRemaining--; 
+        updateTimerDisplay();
+        
+        if (timeRemaining === 300) { 
+            showToast('⚠️ تبقى 5 دقائق فقط!', 'warning'); 
+            document.getElementById('timerDisplay').classList.add('timer-warning'); 
+        }
+        if (timeRemaining === 60) { 
+            showToast('⚠️ تبقى دقيقة واحدة فقط!', 'error'); 
+            document.getElementById('timerDisplay').classList.add('timer-danger'); 
+        }
+        if (timeRemaining <= 0) { 
+            clearInterval(timerInterval); 
+            showToast('⏰ انتهى الوقت!', 'error'); 
+            finishExamAutomatically(); 
+        }
+    }, 1000);
+    
+    console.log('✅ العداد بدأ بنجاح');
+}
 
     function updateTimerDisplay() {
-        const hours = Math.floor(timeRemaining / 3600);
-        const minutes = Math.floor((timeRemaining % 3600) / 60);
-        const seconds = timeRemaining % 60;
-        document.getElementById('timerText').innerText = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-        const timerDisplay = document.getElementById('timerDisplay');
-        if (timeRemaining <= 60) { timerDisplay.classList.add('timer-danger'); timerDisplay.classList.remove('timer-warning'); }
-        else if (timeRemaining <= 300) { timerDisplay.classList.add('timer-warning'); timerDisplay.classList.remove('timer-danger'); }
-        else { timerDisplay.classList.remove('timer-warning', 'timer-danger'); }
+    const hours = Math.floor(timeRemaining / 3600);
+    const minutes = Math.floor((timeRemaining % 3600) / 60);
+    const seconds = timeRemaining % 60;
+    
+    const hoursStr = hours.toString().padStart(2, '0');
+    const minutesStr = minutes.toString().padStart(2, '0');
+    const secondsStr = seconds.toString().padStart(2, '0');
+    
+    const timerText = `${hoursStr}:${minutesStr}:${secondsStr}`;
+    document.getElementById('timerText').innerText = timerText;
+    
+    console.log('⏱️ الوقت المتبقي:', timerText);
+    
+    const timerDisplay = document.getElementById('timerDisplay');
+    if (timeRemaining <= 60) { 
+        timerDisplay.classList.add('timer-danger'); 
+        timerDisplay.classList.remove('timer-warning'); 
+    } else if (timeRemaining <= 300) { 
+        timerDisplay.classList.add('timer-warning'); 
+        timerDisplay.classList.remove('timer-danger'); 
+    } else { 
+        timerDisplay.classList.remove('timer-warning', 'timer-danger'); 
     }
+}
     function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } document.getElementById('timerWrapper').classList.add('hidden'); }
     async function finishExamAutomatically() {
         showToast('⏰ انتهى الوقت! جاري التسليم...', 'error');
@@ -488,7 +533,40 @@
 
     async function loadExamData(examId) { try { const examDoc = await db.collection('exams').doc(examId).get({ source: 'server' }); if (!examDoc.exists) { showToast('❌ الامتحان غير موجود', 'error'); return; } examName = examDoc.data().name; document.getElementById('examNameDisplay').innerText = examName; document.getElementById('examTitleDisplay').innerText = examName; const snapshot = await db.collection('questions').where('exam_id', '==', examId).get({ source: 'server' }); questions = []; snapshot.forEach(doc => questions.push(doc.data())); questions.sort((a, b) => a.order_num - b.order_num); document.getElementById('totalQuestionsCount').innerText = questions.length; const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get(); if (doc.exists) { showResult(doc.data()); } else { document.getElementById('examInfoScreen').classList.remove('hidden'); } showToast(`تم تحميل ${questions.length} سؤال`, 'success'); } catch (e) { showToast("خطأ في التحميل: " + e.message, 'error'); } }
 
-    function startExam() { document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('examScreen').classList.remove('hidden'); examStartTime = new Date(); currentQuestionIndex = 0; currentStep = 3; saveState(); db.collection('exams').doc(currentExamId).get().then(doc => { if (doc.exists()) { const examData = doc.data(); const timeLimit = examData.time_limit_minutes || 0; if (timeLimit > 0) { startTimer(timeLimit); } } }); renderQuestions(); renderNavigator(); updateNavButtons(); updateStepper(); showToast('🚀 ابدأ الاختبار! بالتوفيق', 'info'); }
+    function startExam() { 
+    document.getElementById('examInfoScreen').classList.add('hidden'); 
+    document.getElementById('examScreen').classList.remove('hidden'); 
+    examStartTime = new Date();
+    currentQuestionIndex = 0;
+    currentStep = 3;
+    saveState();
+    
+    // ✅ الحصول على وقت الامتحان
+    db.collection('exams').doc(currentExamId).get().then(doc => { 
+        if (doc.exists()) { 
+            const examData = doc.data(); 
+            const timeLimit = parseInt(examData.time_limit_minutes) || 0;
+            console.log('⏱️ وقت الامتحان:', timeLimit, 'دقيقة');
+            
+            if (timeLimit > 0) { 
+                startTimer(timeLimit);
+                showToast(`⏱️ وقت الامتحان: ${timeLimit} دقيقة`, 'info');
+            } else {
+                console.log('⚠️ لا يوجد وقت محدد للامتحان');
+            }
+        } else {
+            console.log('❌ لم يتم العثور على بيانات الامتحان');
+        }
+    }).catch(error => {
+        console.error('❌ خطأ في جلب بيانات الامتحان:', error);
+    });
+    
+    renderQuestions(); 
+    renderNavigator();
+    updateNavButtons();
+    updateStepper();
+    showToast('🚀 ابدأ الاختبار! بالتوفيق', 'info');
+}
     
     function renderQuestions() { const c = document.getElementById('questionsContainer'); c.innerHTML = ''; questions.forEach((q, i) => { const card = document.createElement('div'); card.className = 'question-card'; card.id = `question-${i}`; card.style.display = i === currentQuestionIndex ? 'block' : 'none'; card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" data-index="${String.fromCharCode(65+j)}" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div>`; c.appendChild(card); }); if (studentAnswers[currentQuestionIndex] !== undefined) highlightSelectedOption(currentQuestionIndex, studentAnswers[currentQuestionIndex]); }
 
