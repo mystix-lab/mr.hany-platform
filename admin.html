@@ -554,7 +554,46 @@
     function closeStudentDetail() { document.getElementById('studentDetailModal').classList.add('hidden'); }
     function exportStudentPDF() { showToast('📥 جاري تحضير التقرير...', 'info'); setTimeout(() => { window.print(); showToast('✅ تم فتح نافذة الطباعة', 'success'); }, 500); }
     function exportStudentsCSV() { let csv = "الاسم,البريد,الصف,الامتحان,الدرجة,النسبة,التاريخ\n"; document.querySelectorAll('#studentsTable tbody tr').forEach(r => { const cells = r.querySelectorAll('td'); if (cells.length > 1) { csv += `${cells[0].innerText},${cells[1].innerText},${cells[2].innerText},${cells[3].innerText},${cells[4].innerText},${cells[5].innerText},${cells[6].innerText}\n`; } }); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const url = window.URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'نتائج_الطلاب_' + new Date().toISOString().split('T')[0] + '.csv'; a.click(); showToast('✅ تم تصدير النتائج', 'success'); }
-    async function loadResetLogs() { const tbody = document.querySelector('#resetsTable tbody'); tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">جاري التحميل...</td></tr>'; const snapshot = await db.collection('examResets').orderBy('used_at', 'desc').limit(100).get(); tbody.innerHTML = ''; if (snapshot.empty) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;opacity:0.5;">لا توجد سجلات</td></tr>'; return; } snapshot.forEach(doc => { const log = doc.data(); tbody.innerHTML += `<tr><td>${log.exam_name || 'غير معروف'}</td><td style="font-weight:700;">${log.student_name || log.student_email}</td><td style="font-size:13px;opacity:0.7;">${log.student_email}</td><td style="font-family:monospace;color:var(--warning);">${log.reset_code}</td><td>${log.used_at ? new Date(log.used_at.toDate ? log.used_at.toDate() : new Date(log.used_at)).toLocaleDateString('ar-EG') : '-'}</td></tr>`; }); }
+    async function loadResetLogs() { 
+    try {
+        const tbody = document.querySelector('#resetsTable tbody'); 
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">جاري التحميل...</td></tr>'; 
+        
+        const snapshot = await db.collection('examResets')
+            .orderBy('used_at', 'desc')
+            .limit(100)
+            .get(); 
+        
+        tbody.innerHTML = ''; 
+        
+        if (snapshot.empty) { 
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;opacity:0.5;">لا توجد سجلات</td></tr>'; 
+            return; 
+        } 
+        
+        snapshot.forEach(doc => { 
+            const log = doc.data(); 
+            
+            // ✅ التأكد من عرض بيانات الطالب الصحيحة
+            const studentName = log.student_name || log.student_email || 'غير محدد';
+            const studentEmail = log.student_email || 'غير محدد';
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td>${log.exam_name || 'غير معروف'}</td>
+                    <td style="font-weight:700;">${studentName}</td>
+                    <td style="font-size:13px;opacity:0.7;">${studentEmail}</td>
+                    <td style="font-family:monospace;color:var(--warning);">${log.reset_code}</td>
+                    <td>${log.used_at ? new Date(log.used_at).toLocaleDateString('ar-EG') : '-'}</td>
+                </tr>
+            `; 
+        }); 
+        
+    } catch (error) {
+        console.error('❌ خطأ في تحميل السجل:', error);
+        showToast('خطأ في تحميل السجل', 'error');
+    }
+}
     
     async function loadExamsForQuestionsFilter() { const select = document.getElementById('filterExamQuestions'); if (select.options.length > 1) return; const snapshot = await db.collection('exams').where('teacher_email', '==', currentUser.email).get(); snapshot.forEach(doc => { const opt = document.createElement('option'); opt.value = doc.id; opt.innerText = doc.data().name; select.appendChild(opt); }); }
     
