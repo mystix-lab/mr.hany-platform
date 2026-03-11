@@ -404,19 +404,44 @@
     });
 
     async function verifyAndStart() { 
-        const name = document.getElementById('studentName').value.trim(); 
-        const grade = document.getElementById('studentGrade').value;
-        if (name.length < 5) { showToast('⚠️ أدخل الاسم الثلاثي بشكل صحيح', 'warning'); return; }
-        if (!grade) { showToast('⚠️ اختر صفك الدراسي', 'warning'); return; }
-        const studentData = { name: name, grade: grade, email: currentUser.email, displayName: currentUser.displayName || name };
-        localStorage.setItem('studentName', name);
-        localStorage.setItem('studentGrade', grade);
-        localStorage.setItem('studentEmail', currentUser.email);
-        console.log('✅ بيانات الطالب المحفوظة:', studentData);
-        document.getElementById('loginScreen').classList.add('hidden'); 
-        showToast('جاري تحميل الامتحانات...', 'info');
-        currentStep = 2; saveState(); await loadExamsList(); 
+    const name = document.getElementById('studentName').value.trim(); 
+    const grade = document.getElementById('studentGrade').value;
+    
+    if (name.length < 5) { 
+        showToast('⚠️ أدخل الاسم الثلاثي بشكل صحيح', 'warning'); 
+        return; 
     }
+    if (!grade) { 
+        showToast('⚠️ اختر صفك الدراسي', 'warning'); 
+        return; 
+    }
+    
+    // ✅ التحقق من أن currentUser موجود
+    if (!currentUser) {
+        showToast('❌ خطأ: يجب تسجيل الدخول أولاً', 'error');
+        return;
+    }
+    
+    // ✅ حفظ البيانات في localStorage
+    const studentEmail = currentUser.email;
+    
+    localStorage.setItem('studentName', name);
+    localStorage.setItem('studentGrade', grade);
+    localStorage.setItem('studentEmail', studentEmail);
+    
+    console.log('✅ بيانات الطالب المحفوظة:', {
+        الاسم: name,
+        البريد: studentEmail,
+        الصف: grade,
+        UID: currentUser.uid
+    });
+    
+    document.getElementById('loginScreen').classList.add('hidden'); 
+    showToast('جاري تحميل الامتحانات...', 'info');
+    currentStep = 2; 
+    saveState(); 
+    await loadExamsList(); 
+}
 
     function changeGrade() { clearState(); localStorage.removeItem('studentGrade'); localStorage.removeItem('studentName'); localStorage.removeItem('studentEmail'); location.reload(); }
     // ✅ مراقبة حالة الامتحان
@@ -518,24 +543,78 @@
     function selectOption(qi, oi, el) { studentAnswers[qi] = oi; const p = document.getElementById(`opt-${qi}`); const all = p.querySelectorAll('.option-3d'); all.forEach(o => o.classList.remove('selected')); el.classList.add('selected'); document.getElementById('progressBar').style.width = ((Object.keys(studentAnswers).length / questions.length) * 100) + '%'; renderNavigator(); updateNavButtons(); saveState(); if (Object.keys(studentAnswers).length === questions.length) showToast('✅ أكملت جميع الأسئلة! يمكنك التسليم', 'success'); }
 
     async function finishExam() { 
-        if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return;
-        stopExamStatusMonitor();
-        try { 
-            const studentName = localStorage.getItem('studentName') || currentUser.displayName || 'طالب';
-            const studentGrade = localStorage.getItem('studentGrade') || 'غير محدد';
-            const studentEmail = localStorage.getItem('studentEmail') || currentUser.email;
-            console.log('📝 بيانات الطالب قبل الحفظ:', { name: studentName, email: studentEmail, grade: studentGrade });
-            let correctCount = 0; let cats = {};
-            questions.forEach((q, i) => { const ok = (studentAnswers[i] === q.correct_index); if (ok) correctCount++; const cat = q.category || 'عام'; if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; cats[cat].total++; if (ok) cats[cat].correct++; });
-            const now = new Date();
-            const data = { name: studentName, email: studentEmail, display_name: currentUser.displayName || studentName, grade_level: studentGrade, exam_id: currentExamId, exam_name: examName, score: correctCount, total_questions: questions.length, answers: studentAnswers, categories: cats, used_reset_code: false, created_at: now, start_time: examStartTime || now, end_time: now, student_uid: currentUser.uid };
-            const docId = `${studentEmail}_${currentExamId}`;
-            console.log('💾 حفظ النتيجة بمعرف:', docId);
-            await db.collection('students').doc(docId).set(data);
-            showToast('✅ تم تسليم الاختبار بنجاح!', 'success');
-            currentStep = 4; saveState(); setTimeout(() => showResult(data), 500);
-        } catch (error) { console.error('❌ خطأ في التسليم:', error); showToast('خطأ في التسليم: ' + error.message, 'error'); } 
-    }
+    if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return;
+    stopExamStatusMonitor();
+    
+    try { 
+        // ✅ الحصول على البيانات من localStorage أولاً
+        const studentName = localStorage.getItem('studentName');
+        const studentGrade = localStorage.getItem('studentGrade');
+        const studentEmail = localStorage.getItem('studentEmail');
+        
+        // ✅ التحقق من وجود البيانات
+        if (!studentName || !studentEmail) {
+            showToast('❌ خطأ: لم يتم العثور على بيانات الطالب', 'error');
+            console.error('البيانات المفقودة:', { studentName, studentEmail });
+            return;
+        }
+        
+        console.log('📝 بيانات الطالب:', {
+            الاسم: studentName,
+            البريد: studentEmail,
+            الصف: studentGrade
+        });
+        
+        let correctCount = 0; 
+        let cats = {}; 
+        
+        questions.forEach((q, i) => { 
+            const ok = (studentAnswers[i] === q.correct_index); 
+            if (ok) correctCount++; 
+            const cat = q.category || 'عام'; 
+            if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; 
+            cats[cat].total++; 
+            if (ok) cats[cat].correct++; 
+        }); 
+        
+        const now = new Date();
+        const data = { 
+            // ✅ استخدام البيانات الصحيحة
+            name: studentName,              // اسم الطالب الحقيقي
+            email: studentEmail,            // بريد الطالب الحقيقي
+            display_name: studentName,      // نفس الاسم
+            grade_level: studentGrade || 'غير محدد',
+            
+            // بيانات الامتحان
+            exam_id: currentExamId, 
+            exam_name: examName, 
+            score: correctCount, 
+            total_questions: questions.length, 
+            answers: studentAnswers, 
+            categories: cats, 
+            used_reset_code: false, 
+            created_at: now, 
+            start_time: examStartTime || now, 
+            end_time: now,
+            student_uid: currentUser.uid
+        }; 
+        
+        // ✅ استخدام معرف فريد بناءً على بريد الطالب
+        const docId = `${studentEmail}_${currentExamId}`;
+        console.log('💾 حفظ النتيجة بمعرف:', docId);
+        
+        await db.collection('students').doc(docId).set(data); 
+        
+        showToast('✅ تم تسليم الاختبار بنجاح!', 'success');
+        currentStep = 4; 
+        saveState(); 
+        setTimeout(() => showResult(data), 500);
+        
+    } catch (error) { 
+        console.error('❌ خطأ في التسليم:', error);
+        showToast('خطأ في التسليم: ' + error.message, 'error'); 
+    } 
+}
 
     function showResult(data) { document.getElementById('examScreen').classList.add('hidden'); document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('resultScreen').classList.remove('hidden'); const p = Math.round((data.score / data.total_questions) * 100); document.getElementById('finalScore').innerText = '%' + p; const circumference = 2 * Math.PI * 90; const offset = circumference - (p / 100) * circumference; document.getElementById('scoreProgress').style.strokeDashoffset = offset; const correctCount = data.score; const incorrectCount = data.total_questions - data.score; document.getElementById('correctCount').innerText = correctCount; document.getElementById('incorrectCount').innerText = incorrectCount; if (p >= 70) { document.getElementById('resultTitle').innerText = '🎉 أداء ممتاز!'; showToast('🎉 أداء ممتاز! مبروك!', 'success'); } else if (p >= 50) { document.getElementById('resultTitle').innerText = '👍 أداء جيد'; showToast('👍 أداء جيد! استمر!', 'info'); } else { document.getElementById('resultTitle').innerText = '📚 يحتاج مراجعة'; showToast('📚 يحتاج للمراجعة', 'warning'); } let reviewHTML = '<h3 style="margin:20px 0 10px;text-align:right;">📋 مراجعة سريعة</h3>'; questions.forEach((q, i) => { const userAns = data.answers ? data.answers[i] : 0; const ok = (userAns === q.correct_index); reviewHTML += `<div class="analysis-item"><div style="font-weight:700;">س${i+1}</div><div style="color:${ok?'var(--success)':'var(--error)'}">${ok?'✅':'❌'}</div></div>`; }); document.getElementById('reviewContainer').innerHTML = reviewHTML; if (data.categories) { let h = '<h3 style="margin:20px 0 10px;text-align:right;">📊 التحليل التفصيلي</h3>'; for (const [c, s] of Object.entries(data.categories)) { const x = Math.round((s.correct / s.total) * 100); const col = x >= 70 ? 'var(--success)' : (x >= 50 ? 'var(--warning)' : 'var(--error)'); h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`; } document.getElementById('analysisContainer').innerHTML = h; } updateStepper(); }
     
