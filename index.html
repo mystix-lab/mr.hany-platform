@@ -26,19 +26,20 @@
         .input-3d:focus { outline: none; border-color: var(--primary); background: rgba(255,255,255,0.12); box-shadow: 0 0 30px rgba(99,102,241,0.4); }
         .hidden { display: none !important; }
         /* شاشة الصلاة على النبي ﷺ */
-.intro-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; animation: fadeIn 0.5s ease; }
-.intro-content { text-align: center; padding: 40px; max-width: 800px; }
-.intro-icon { font-size: 80px; margin-bottom: 30px; animation: float 3s ease-in-out infinite; }
-.intro-title { font-size: 42px; font-weight: 900; margin-bottom: 20px; background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
-.intro-subtitle { font-size: 24px; opacity: 0.9; margin-bottom: 40px; color: rgba(255,255,255,0.9); }
-.intro-progress { width: 300px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin: 0 auto; }
-.intro-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 10px; animation: progressFill 8s linear forwards; box-shadow: 0 0 20px rgba(99,102,241,0.6); }
-.intro-countdown { margin-top: 20px; font-size: 18px; opacity: 0.7; }
-@keyframes progressFill { from { width: 0%; } to { width: 100%; } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeOut { to { opacity: 0; transform: scale(1.1); } }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .intro-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; animation: fadeIn 0.5s ease; }
+        .intro-content { text-align: center; padding: 40px; max-width: 800px; }
+        .intro-icon { font-size: 80px; margin-bottom: 30px; animation: float 3s ease-in-out infinite; }
+        .intro-title { font-size: 42px; font-weight: 900; margin-bottom: 20px; background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
+        .intro-subtitle { font-size: 24px; opacity: 0.9; margin-bottom: 40px; color: rgba(255,255,255,0.9); }
+        .intro-progress { width: 300px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin: 0 auto; }
+        .intro-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 10px; animation: progressFill 8s linear forwards; box-shadow: 0 0 20px rgba(99,102,241,0.6); }
+        .intro-countdown { margin-top: 20px; font-size: 18px; opacity: 0.7; }
+        @keyframes progressFill { from { width: 0%; } to { width: 100%; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: scale(1.1); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        
         .question-card { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-radius: 24px; padding: 35px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.15); transition: all 0.4s; animation: slideIn 0.5s ease; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         .question-card:hover { border-color: rgba(99,102,241,0.4); box-shadow: 0 15px 40px rgba(99,102,241,0.2); }
@@ -60,12 +61,10 @@
         .score-content { position: relative; z-index: 10; text-align: center; }
         .score-percentage { font-size: 56px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; line-height: 1; display: block; }
         .score-label { font-size: 16px; opacity: 0.8; margin-top: 8px; font-weight: 600; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .header { text-align: center; margin-bottom: 50px; animation: fadeInDown 1s ease; }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }
         .logo { font-size: 80px; display: block; margin-bottom: 25px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 15px 30px rgba(99,102,241,0.5)); }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         h1 { font-size: 36px; margin: 20px 0; background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
         h3 { font-size: 18px; opacity: 0.85; font-weight: 600; }
         .exam-badge { display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 14px 35px; border-radius: 50px; font-size: 16px; margin-top: 20px; box-shadow: 0 10px 40px rgba(99,102,241,0.5); animation: glow 2s infinite; border: 1px solid rgba(255,255,255,0.2); }
@@ -73,7 +72,7 @@
         .progress-bar { height: 12px; background: rgba(255,255,255,0.1); border-radius: 15px; margin-bottom: 35px; overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.4); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent)); width: 0%; transition: width 0.6s; box-shadow: 0 0 30px rgba(99,102,241,0.7); }
         .loader { width: 70px; height: 70px; border: 5px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 50px auto; box-shadow: 0 0 40px rgba(99,102,241,0.6); }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spin { 100% { transform: rotate(360deg); }}
         .analysis-item { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-radius: 18px; padding: 22px; margin: 14px 0; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.15); }
         .analysis-item:hover { background: rgba(255,255,255,0.12); transform: translateX(8px); border-color: rgba(99,102,241,0.4); }
         .mini-progress { width: 140px; height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
@@ -140,7 +139,6 @@
     </div>
 
     <div class="container">
-    <div class="container">
       <div class="header">
         <span class="logo">📚</span>
         <h1>منصة الاختبارات الإلكترونية</h1>
@@ -149,19 +147,19 @@
     </div>
     
     <div class="progress-stepper" id="progressStepper">
-        <div class="step active" data-step="1">
+        <div class="step active" data-step="1" onclick="handleStepClick(1)">
             <div class="step-circle">1</div>
             <div class="step-label">التسجيل</div>
         </div>
-        <div class="step" data-step="2">
+        <div class="step" data-step="2" onclick="handleStepClick(2)">
             <div class="step-circle">2</div>
             <div class="step-label">اختيار الامتحان</div>
         </div>
-        <div class="step" data-step="3">
+        <div class="step" data-step="3" onclick="handleStepClick(3)">
             <div class="step-circle">3</div>
             <div class="step-label">دخول الامتحان</div>
         </div>
-        <div class="step" data-step="4">
+        <div class="step" data-step="4" onclick="handleStepClick(4)">
             <div class="step-circle">4</div>
             <div class="step-label">الانتهاء</div>
         </div>
@@ -261,7 +259,7 @@
     
     <div class="footer-credits">
         <p class="brand">✨ Mystix Universe - Omar ✨</p>
-        <p class="developer">جميع الحقوق محفوظة © 2026</p>
+        <p class="developer">جميع الحقوق محفوظة © 2025</p>
         <p style="font-size:12px;opacity:0.5;">تم التطوير بكل ❤️</p>
     </div>
 </div>
@@ -282,61 +280,184 @@
     let currentExamId = null, selectedExamId = null, selectedExamData = null, examStartTime = null, currentQuestionIndex = 0;
     let currentStep = 1;
     let examStatusCheckInterval = null;
-// شاشة الصلاة على النبي - تختفي بعد 8 ثواني
-window.addEventListener('load', function() {
-    // إخفاء شاشة التحميل
-    setTimeout(() => {
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) loadingScreen.classList.add('hidden');
-    }, 1500);
-    
-    // التعامل مع شاشة الصلاة
-    const introScreen = document.getElementById('introScreen');
-    if (introScreen) {
-        // تحديث العد التنازلي
-        let countdown = 8;
-        const countdownEl = document.getElementById('introCountdown');
-        const interval = setInterval(function() {
-            countdown--;
-            if (countdown > 0 && countdownEl) { 
-                countdownEl.innerText = `سيبدأ الامتحان خلال ${countdown} ثوانٍ...`; 
-            }
-        }, 1000);
+
+    // ✅ الكود الصحيح لشاشة الصلاة والتحميل
+    window.addEventListener('load', function() {
+        console.log('✅ الصفحة تم تحميلها');
         
-        // إخفاء الشاشة بعد 8 ثواني
-        setTimeout(function() {
-            introScreen.style.animation = 'fadeOut 0.5s ease forwards';
-            setTimeout(function() { 
-                introScreen.classList.add('hidden');
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                console.log('🔍 إخفاء شاشة التحميل');
+                loadingScreen.classList.add('hidden');
+            }
+        }, 1500);
+        
+        const introScreen = document.getElementById('introScreen');
+        const countdownEl = document.getElementById('introCountdown');
+        
+        if (introScreen && !introScreen.classList.contains('hidden')) {
+            console.log('🕌 بدء شاشة الصلاة');
+            let countdown = 8;
+            
+            if (countdownEl) {
+                countdownEl.innerText = `سيبدأ الامتحان خلال ${countdown} ثوانٍ...`;
+            }
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                console.log('⏱️ العداد:', countdown);
                 
-                // التحقق مما إذا كان الطالب مسجل مسبقاً
-                const savedName = localStorage.getItem('studentName');
-                const savedGrade = localStorage.getItem('studentGrade');
-                if (savedName && savedGrade) {
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('examSelectScreen').classList.remove('hidden');
-                } else {
-                    document.getElementById('loginScreen').classList.remove('hidden');
+                if (countdown > 0 && countdownEl) {
+                    countdownEl.innerText = `سيبدأ الامتحان خلال ${countdown} ثوانٍ...`;
+                } else if (countdown === 0 && countdownEl) {
+                    countdownEl.innerText = 'جاري التحضير...';
                 }
-            }, 500);
-        }, 8000);
-    } else {
-        // إذا لم تكن شاشة الصلاة موجودة، أظهر شاشة التسجيل مباشرة
+            }, 1000);
+            
+            setTimeout(() => {
+                console.log('🔽 إخفاء شاشة الصلاة');
+                clearInterval(countdownInterval);
+                                if (introScreen) {
+                    introScreen.style.transition = 'opacity 0.5s ease';
+                    introScreen.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        introScreen.classList.add('hidden');
+                        showAppropriateScreen();
+                    }, 500);
+                }
+            }, 8000);
+        } else {
+            console.log('⏭️ تخطي شاشة الصلاة');
+            showAppropriateScreen();
+        }
+    });
+
+    // ✅ دالة إظهار الشاشة المناسبة
+    function showAppropriateScreen() {
+        console.log('📋 إظهار الشاشة المناسبة');
+        
         const savedName = localStorage.getItem('studentName');
         const savedGrade = localStorage.getItem('studentGrade');
+        const savedStep = localStorage.getItem('currentStep');
+        
+        console.log('📝 البيانات المحفوظة:', { savedName, savedGrade, savedStep });
+        
+        hideAllScreens();
+        
         if (savedName && savedGrade) {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('examSelectScreen').classList.remove('hidden');
-        } else {
+            const step = parseInt(savedStep) || 2;
+            
+            if (step === 3 && currentExamId) {
+                console.log('🔄 استعادة جلسة الامتحان');
+                document.getElementById('examScreen').classList.remove('hidden');
+                currentStep = 3;
+                updateStepper();
+                if (currentExamId) loadExamData(currentExamId);
+            } else if (step === 4) {
+                console.log('📊 إظهار النتيجة');
+                document.getElementById('resultScreen').classList.remove('hidden');
+                currentStep = 4;
+                updateStepper();
+            } else {
+                console.log('📋 الذهاب لاختيار الامتحان');
+                document.getElementById('examSelectScreen').classList.remove('hidden');
+                currentStep = 2;
+                updateStepper();
+                loadExamsList();
+            }
+        } else {            console.log('🎓 إظهار شاشة التسجيل');
             document.getElementById('loginScreen').classList.remove('hidden');
+            currentStep = 1;
+            updateStepper();
         }
     }
-    
-    console.log('✅ المنصة جاهزة');
-});
 
-    function saveState() { const state = { currentStep, currentExamId, selectedExamId, examName, studentAnswers, currentQuestionIndex }; localStorage.setItem('examState', JSON.stringify(state)); updateStepper(); }
-    function restoreState() { const savedState = localStorage.getItem('examState'); if (savedState) { const state = JSON.parse(savedState); currentStep = state.currentStep || 1; currentExamId = state.currentExamId; selectedExamId = state.selectedExamId; examName = state.examName; studentAnswers = state.studentAnswers || {}; currentQuestionIndex = state.currentQuestionIndex || 0; return true; } return false; }
+    // ✅ دالة إخفاء جميع الشاشات
+    function hideAllScreens() {
+        const screens = ['loginScreen', 'examSelectScreen', 'examInfoScreen', 'examScreen', 'resultScreen', 'resetCodeScreen'];
+        screens.forEach(screenId => {
+            const screen = document.getElementById(screenId);
+            if (screen) screen.classList.add('hidden');
+        });
+    }
+
+    // ✅ دالة التنقل بين الخطوات
+    async function handleStepClick(stepNum) {
+        console.log('🖱️ النقر على الخطوة:', stepNum);
+        
+        const savedName = localStorage.getItem('studentName');
+        const savedGrade = localStorage.getItem('studentGrade');
+        
+        if (!savedName || !savedGrade) {
+            if (stepNum !== 1) {
+                showToast('⚠️ يجب تسجيل الدخول أولاً', 'warning');
+                return;
+            }
+        }
+        
+        hideAllScreens();
+        
+        switch(stepNum) {
+            case 1:
+                document.getElementById('loginScreen').classList.remove('hidden');
+                currentStep = 1;
+                break;
+            case 2:
+                if (savedName && savedGrade) {
+                    document.getElementById('examSelectScreen').classList.remove('hidden');
+                    currentStep = 2;
+                    loadExamsList();
+                } else {
+                    showToast('⚠️ يجب تسجيل الدخول أولاً', 'warning');
+                    document.getElementById('loginScreen').classList.remove('hidden');
+                }
+                break;
+            case 3:
+                if (currentExamId) {
+                    const confirmEntry = confirm('⚠️ هل تريد الدخول للامتحان الحالي؟');                    if (confirmEntry) {
+                        document.getElementById('examInfoScreen').classList.remove('hidden');
+                        currentStep = 3;
+                        loadExamData(currentExamId);
+                    } else {
+                        document.getElementById('examSelectScreen').classList.remove('hidden');
+                    }
+                } else {
+                    showToast('⚠️ يجب اختيار امتحان أولاً', 'warning');
+                    document.getElementById('examSelectScreen').classList.remove('hidden');
+                }
+                break;
+            case 4:
+                showToast('ℹ️ لا توجد نتيجة بعد', 'info');
+                document.getElementById('examSelectScreen').classList.remove('hidden');
+                break;
+        }
+        updateStepper();
+    }
+
+    function saveState() { 
+        const state = { currentStep, currentExamId, selectedExamId, examName, studentAnswers, currentQuestionIndex, timestamp: Date.now() }; 
+        localStorage.setItem('examState', JSON.stringify(state));
+        localStorage.setItem('currentStep', currentStep);
+        updateStepper(); 
+    }
+    
+    function restoreState() { 
+        const savedState = localStorage.getItem('examState'); 
+        if (savedState) { 
+            const state = JSON.parse(savedState); 
+            currentStep = state.currentStep || 1; 
+            currentExamId = state.currentExamId; 
+            selectedExamId = state.selectedExamId; 
+            examName = state.examName; 
+            studentAnswers = state.studentAnswers || {}; 
+            currentQuestionIndex = state.currentQuestionIndex || 0; 
+            return true; 
+        } 
+        return false; 
+    }
+    
     function clearState() { localStorage.removeItem('examState'); }
 
     function showToast(message, type = 'success') {
@@ -344,8 +465,7 @@ window.addEventListener('load', function() {
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
-        toast.innerHTML = `<span style="font-size:24px;">${icons[type]}</span><span>${message}</span>`;
-        container.appendChild(toast);
+        toast.innerHTML = `<span style="font-size:24px;">${icons[type]}</span><span>${message}</span>`;        container.appendChild(toast);
         setTimeout(() => { toast.remove(); }, 3000);
     }
 
@@ -353,11 +473,13 @@ window.addEventListener('load', function() {
         document.querySelectorAll('.step').forEach((step, index) => {
             const stepNum = index + 1;
             step.classList.remove('active', 'completed');
-            if (stepNum < currentStep) step.classList.add('completed');            else if (stepNum === currentStep) step.classList.add('active');
+            if (stepNum < currentStep) step.classList.add('completed');
+            else if (stepNum === currentStep) step.classList.add('active');
         });
+        localStorage.setItem('currentStep', currentStep);
     }
 
-    // ✅ دالة تسجيل دخول آمنة
+    // ✅ دالة تسجيل دخول آمنة - تسمح باستخدام نفس البيانات لامتحانات مختلفة
     async function studentLogin() {
         const name = document.getElementById('studentName').value.trim();
         const email = document.getElementById('studentEmail').value.trim().toLowerCase();
@@ -375,20 +497,6 @@ window.addEventListener('load', function() {
         
         try {
             showToast('🔍 جاري التحقق من البيانات...', 'info');
-            const emailQuery = await db.collection('students').where('email', '==', email).limit(1).get();
-            if (!emailQuery.empty) {
-                const existingStudent = emailQuery.docs[0].data();
-                showToast(`❌ هذا البريد مسجل مسبقاً باسم: ${existingStudent.name}`, 'error');
-                console.warn('⚠️ محاولة غش - بريد مكرر:', email);
-                return;
-            }
-            const phoneQuery = await db.collection('students').where('phone', '==', phone).limit(1).get();
-            if (!phoneQuery.empty) {
-                const existingStudent = phoneQuery.docs[0].data();
-                showToast(`❌ هذا الرقم مسجل مسبقاً باسم: ${existingStudent.name}`, 'error');
-                console.warn('⚠️ محاولة غش - هاتف مكرر:', phone);
-                return;
-            }
             
             const studentId = `${email}_${Date.now()}`;
             localStorage.setItem('studentName', name);
@@ -398,33 +506,53 @@ window.addEventListener('load', function() {
             localStorage.setItem('studentId', studentId);
             
             console.log('✅ بيانات الطالب المحفوظة:', { الاسم: name, البريد: email, الهاتف: phone, الصف: grade });
-            document.getElementById('loginScreen').classList.add('hidden');
+            
+            hideAllScreens();
             document.getElementById('examSelectScreen').classList.remove('hidden');
             currentStep = 2;
             saveState();
-            loadExamsList();            showToast('✅ تم تسجيل الدخول بنجاح!', 'success');
-        } catch (error) {
-            console.error('❌ خطأ في التحقق:', error);
+            loadExamsList();
+            showToast('✅ تم تسجيل الدخول بنجاح!', 'success');
+            
+        } catch (error) {            console.error('❌ خطأ في التحقق:', error);
             showToast('خطأ في التحقق: ' + error.message, 'error');
         }
     }
     async function loadExamsList() { 
         try { 
+            console.log('📋 جاري تحميل الامتحانات...');
             clearState(); 
+            hideAllScreens();
             document.getElementById('examSelectScreen').classList.remove('hidden'); 
+            
             const studentGrade = localStorage.getItem('studentGrade');
+            console.log('📚 صف الطالب:', studentGrade);
+            
             let query = db.collection('exams').where('is_active', '==', true);
-            if (studentGrade && studentGrade !== 'غير محدد') query = query.where('grade_level', '==', studentGrade);
+            
+            if (studentGrade && studentGrade !== 'غير محدد') {
+                console.log('🔍 البحث عن امتحانات الصف:', studentGrade);
+                query = query.where('grade_level', '==', studentGrade);
+            }
+            
             const snapshot = await query.get({ source: 'server' });
+            console.log('📊 عدد الامتحانات:', snapshot.size);
+            
             const container = document.getElementById('examsList'); 
             container.innerHTML = ''; 
+            
             if (snapshot.empty) { 
-                container.innerHTML = `<div style="text-align:center;padding:40px;"><div style="font-size:64px;margin-bottom:20px;">⚠️</div><h3 style="color:var(--warning);margin-bottom:15px;">لا توجد امتحانات نشطة</h3><p style="opacity:0.8;">${studentGrade ? `لا توجد امتحانات لصف ${studentGrade}` : 'لم تقم باختيار صفك الدراسي'}</p><button class="btn btn-primary" onclick="location.reload()" style="width:auto;padding:12px 30px;margin-top:20px;">🔄 إعادة التسجيل</button></div>`; 
+                console.warn('⚠️ لا توجد امتحانات نشطة');
+                container.innerHTML = `<div style="text-align:center;padding:40px;"><div style="font-size:64px;margin-bottom:20px;">⚠️</div><h3 style="color:var(--warning);margin-bottom:15px;">لا توجد امتحانات نشطة</h3><p style="opacity:0.8;margin-bottom:20px;">${studentGrade ? `لا توجد امتحانات لصف ${studentGrade}` : 'لم تقم باختيار صفك الدراسي'}</p><button class="btn btn-primary" onclick="location.reload()" style="width:auto;padding:12px 30px;margin-top:20px;">🔄 إعادة التحميل</button></div>`; 
                 return; 
             }
+            
             showToast(`تم تحميل ${snapshot.size} امتحان`, 'success');
+            
             snapshot.forEach(doc => { 
                 const exam = doc.data(); 
+                console.log('✅ امتحان:', exam.name);
+                
                 const card = document.createElement('div'); 
                 card.className = 'exam-card'; 
                 card.style.cursor = 'pointer'; 
@@ -432,32 +560,52 @@ window.addEventListener('load', function() {
                 container.appendChild(card); 
                 card.addEventListener('click', () => selectExam(doc.id, exam)); 
             }); 
-        } catch (error) { showToast('خطأ في تحميل الامتحانات: ' + error.message, 'error'); } 
+            
+        } catch (error) { 
+            console.error('❌ خطأ في تحميل الامتحانات:', error);
+            showToast('خطأ في تحميل الامتحانات: ' + error.message, 'error');
+        } 
     }
 
-    async function selectExam(examId, exam) { 
-        try { 
+    async function selectExam(examId, exam) {         try { 
+            console.log('📋 اختيار الامتحان:', examId);
+            
             const examDoc = await db.collection('exams').doc(examId).get({ source: 'server' });
-            if (!examDoc.exists || !examDoc.data().is_active) { showToast('⚠️ هذا الامتحان غير نشط', 'warning'); return; }
-            selectedExamId = examId; 
+            if (!examDoc.exists || !examDoc.data().is_active) { 
+                showToast('⚠️ هذا الامتحان غير نشط', 'warning'); 
+                return; 
+            }
+            
+            selectedExamId = examId;
             const studentEmail = localStorage.getItem('studentEmail');
+            
             const doc = await db.collection('students').doc(`${studentEmail}_${examId}`).get(); 
+            
             if (doc.exists) { 
+                console.log('⚠️ الطالب أدى هذا الامتحان من قبل');
                 selectedExamData = doc.data(); 
-                document.getElementById('examSelectScreen').classList.add('hidden'); 
+                hideAllScreens();
                 document.getElementById('resetCodeScreen').classList.remove('hidden'); 
+                currentStep = 2;
+                updateStepper();
                 return; 
             } 
+            
             currentExamId = examId; 
             examName = exam.name; 
-            document.getElementById('examSelectScreen').classList.add('hidden'); 
+            hideAllScreens();
             await loadExamData(examId); 
-        } catch (error) { showToast('خطأ في فتح الامتحان: ' + error.message, 'error'); } 
+            
+        } catch (error) { 
+            console.error('❌ خطأ في selectExam:', error);
+            showToast('خطأ في فتح الامتحان: ' + error.message, 'error'); 
+        } 
     }
 
     async function verifyResetCode() { 
         const code = document.getElementById('resetCodeInput').value.trim().toUpperCase(); 
-        if (code.length !== 8) { showToast('⚠️ الكود يجب أن يكون 8 أحرف', 'warning'); return; }         try { 
+        if (code.length !== 8) { showToast('⚠️ الكود يجب أن يكون 8 أحرف', 'warning'); return; } 
+        try { 
             const examDoc = await db.collection('exams').doc(selectedExamId).get({ source: 'server' }); 
             const exam = examDoc.data(); 
             if (!exam || exam.reset_code !== code) { showToast('❌ كود الإعادة غير صحيح', 'error'); return; } 
@@ -468,11 +616,10 @@ window.addEventListener('load', function() {
             document.getElementById('resetCodeScreen').classList.add('hidden'); 
             currentExamId = selectedExamId; 
             await loadExamData(selectedExamId); 
-        } catch (error) { showToast('خطأ: ' + error.message, 'error'); } 
-    }
+        } catch (error) { showToast('خطأ: ' + error.message, 'error'); }     }
 
     function backToExams() { 
-        document.getElementById('resetCodeScreen').classList.add('hidden'); 
+        hideAllScreens();
         document.getElementById('examSelectScreen').classList.remove('hidden'); 
         document.getElementById('resetCodeInput').value = ''; 
     }
@@ -492,13 +639,16 @@ window.addEventListener('load', function() {
             const studentEmail = localStorage.getItem('studentEmail');
             const doc = await db.collection('students').doc(`${studentEmail}_${examId}`).get(); 
             if (doc.exists) { showResult(doc.data()); } 
-            else { document.getElementById('examInfoScreen').classList.remove('hidden'); } 
+            else { 
+                hideAllScreens();
+                document.getElementById('examInfoScreen').classList.remove('hidden'); 
+            }
             showToast(`تم تحميل ${questions.length} سؤال`, 'success');
         } catch (e) { showToast("خطأ: " + e.message, 'error'); } 
     }
 
     function startExam() { 
-        document.getElementById('examInfoScreen').classList.add('hidden'); 
+        hideAllScreens();
         document.getElementById('examScreen').classList.remove('hidden'); 
         examStartTime = new Date();
         currentQuestionIndex = 0;
@@ -506,7 +656,8 @@ window.addEventListener('load', function() {
         saveState();
         renderQuestions(); 
         renderNavigator();
-        updateNavButtons();        updateStepper();
+        updateNavButtons();
+        updateStepper();
         showToast('🚀 ابدأ الاختبار!', 'info');
     }
     
@@ -514,8 +665,7 @@ window.addEventListener('load', function() {
         const c = document.getElementById('questionsContainer'); 
         c.innerHTML = ''; 
         questions.forEach((q, i) => { 
-            const card = document.createElement('div'); 
-            card.className = 'question-card'; 
+            const card = document.createElement('div');             card.className = 'question-card'; 
             card.id = `question-${i}`;
             card.style.display = i === currentQuestionIndex ? 'block' : 'none';
             card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" data-letter="${String.fromCharCode(65+j)}" onclick="selectOption(${i},${j},this)"><span>${o}</span></div>`).join('')}</div>`; 
@@ -555,7 +705,8 @@ window.addEventListener('load', function() {
         document.getElementById('nextBtn').disabled = currentQuestionIndex === questions.length - 1;
         if (Object.keys(studentAnswers).length === questions.length) {
             document.getElementById('finishBtn').classList.remove('hidden');
-            document.getElementById('nextBtn').classList.add('hidden');        } else {
+            document.getElementById('nextBtn').classList.add('hidden');
+        } else {
             document.getElementById('finishBtn').classList.add('hidden');
             document.getElementById('nextBtn').classList.remove('hidden');
         }
@@ -563,8 +714,7 @@ window.addEventListener('load', function() {
 
     function highlightSelectedOption(qIndex, oIndex) {
         const p = document.getElementById(`opt-${qIndex}`);
-        if (p) {
-            const all = p.querySelectorAll('.option-3d');
+        if (p) {            const all = p.querySelectorAll('.option-3d');
             all.forEach((o, i) => { if (i === oIndex) o.classList.add('selected'); else o.classList.remove('selected'); });
         }
     }
@@ -581,6 +731,7 @@ window.addEventListener('load', function() {
         saveState();
         if (Object.keys(studentAnswers).length === questions.length) showToast('✅ أكملت جميع الأسئلة!', 'success');
     }
+
     async function finishExam() { 
         if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return;
         try { 
@@ -612,8 +763,7 @@ window.addEventListener('load', function() {
                 email: studentEmail,
                 phone: studentPhone,
                 display_name: studentName,
-                grade_level: studentGrade,
-                student_id: studentId,
+                grade_level: studentGrade,                student_id: studentId,
                 exam_id: currentExamId, 
                 exam_name: examName, 
                 score: correctCount, 
@@ -630,7 +780,8 @@ window.addEventListener('load', function() {
             console.log('💾 حفظ النتيجة:', docId);
             await db.collection('students').doc(docId).set(data); 
             showToast('✅ تم التسليم بنجاح!', 'success');
-            currentStep = 4;             saveState(); 
+            currentStep = 4; 
+            saveState(); 
             setTimeout(() => showResult(data), 500);
         } catch (error) { 
             showToast('خطأ: ' + error.message, 'error'); 
@@ -638,8 +789,7 @@ window.addEventListener('load', function() {
     }
 
     function showResult(data) { 
-        document.getElementById('examScreen').classList.add('hidden'); 
-        document.getElementById('examInfoScreen').classList.add('hidden'); 
+        hideAllScreens();
         document.getElementById('resultScreen').classList.remove('hidden'); 
         const p = Math.round((data.score / data.total_questions) * 100); 
         document.getElementById('finalScore').innerText = '%' + p; 
@@ -662,15 +812,14 @@ window.addEventListener('load', function() {
             for (const [c, s] of Object.entries(data.categories)) { 
                 const x = Math.round((s.correct / s.total) * 100); 
                 const col = x >= 70 ? 'var(--success)' : (x >= 50 ? 'var(--warning)' : 'var(--error)'); 
-                h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`; 
-            } 
+                h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`;             } 
             document.getElementById('analysisContainer').innerHTML = h; 
         } 
         updateStepper();
     }
     
     function reviewExam() {
-        document.getElementById('resultScreen').classList.add('hidden');
+        hideAllScreens();
         document.getElementById('reviewExamScreen').classList.remove('hidden');
         const container = document.getElementById('reviewQuestionsContainer');
         container.innerHTML = '';
@@ -679,7 +828,8 @@ window.addEventListener('load', function() {
             const correctAns = q.correct_index;
             const isCorrect = userAns === correctAns;
             const card = document.createElement('div');
-            card.className = 'question-card';            card.style.border = isCorrect ? '2px solid var(--success)' : '2px solid var(--error)';
+            card.className = 'question-card';
+            card.style.border = isCorrect ? '2px solid var(--success)' : '2px solid var(--error)';
             let optionsHTML = '';
             q.options.forEach((opt, j) => {
                 let className = 'option-3d';
@@ -694,7 +844,7 @@ window.addEventListener('load', function() {
     }
     
     function closeReviewExam() {
-        document.getElementById('reviewExamScreen').classList.add('hidden');
+        hideAllScreens();
         document.getElementById('resultScreen').classList.remove('hidden');
     }
 </script>
