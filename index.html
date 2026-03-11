@@ -26,6 +26,19 @@
         .input-3d::placeholder { color: rgba(255,255,255,0.4); }
         .input-3d:focus { outline: none; border-color: var(--primary); background: rgba(255,255,255,0.12); box-shadow: 0 0 30px rgba(99,102,241,0.4); }
         .hidden { display: none !important; }
+        /* شاشة الصلاة على النبي ﷺ */
+        .intro-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; animation: fadeIn 0.5s ease; }
+        .intro-content { text-align: center; padding: 40px; max-width: 800px; }
+        .intro-icon { font-size: 80px; margin-bottom: 30px; animation: float 3s ease-in-out infinite; }
+        .intro-title { font-size: 42px; font-weight: 900; margin-bottom: 20px; background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
+        .intro-subtitle { font-size: 24px; opacity: 0.9; margin-bottom: 40px; color: rgba(255,255,255,0.9); }
+        .intro-progress { width: 300px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin: 0 auto; }
+        .intro-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 10px; animation: progressFill 8s linear forwards; box-shadow: 0 0 20px rgba(99,102,241,0.6); }
+        .intro-countdown { margin-top: 20px; font-size: 18px; opacity: 0.7; }
+        @keyframes progressFill { from { width: 0%; } to { width: 100%; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: scale(1.1); } }
+        
         .question-card { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-radius: 24px; padding: 35px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.15); transition: all 0.4s; animation: slideIn 0.5s ease; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         .question-card:hover { border-color: rgba(99,102,241,0.4); box-shadow: 0 15px 40px rgba(99,102,241,0.2); }
@@ -38,68 +51,20 @@
         .option-3d.correct::before { background: linear-gradient(135deg, var(--success), #059669); }
         .option-3d.incorrect { border-color: var(--error); background: rgba(239,68,68,0.2); }
         .option-3d.incorrect::before { background: linear-gradient(135deg, var(--error), #dc2626); }
-        .score-ring { 
-    width: 200px; 
-    height: 200px; 
-    margin: 40px auto; 
-    position: relative; 
-    animation: scaleIn 0.8s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.score-ring svg { 
-    width: 100%; 
-    height: 100%; 
-    transform: rotate(-90deg);
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.score-ring circle { 
-    fill: none; 
-    stroke-width: 14; 
-    stroke-linecap: round; 
-}
-
-.score-ring .bg { 
-    stroke: rgba(255,255,255,0.1); 
-}
-
-.score-ring .progress { 
-    stroke: url(#gradient); 
-    stroke-dasharray: 440; 
-    stroke-dashoffset: 440; 
-    transition: stroke-dashoffset 2.5s; 
-    filter: drop-shadow(0 0 20px rgba(99,102,241,0.6)); 
-}
-
-.score-value { 
-    position: absolute; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    font-size: 48px; 
-    font-weight: 900; 
-    background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); 
-    -webkit-background-clip: text; 
-    -webkit-text-fill-color: transparent; 
-    animation: pulse 2s infinite;
-    z-index: 10;
-    text-align: center;
-    line-height: 1;
-}
-        @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-        .score-ring circle { fill: none; stroke-width: 14; stroke-linecap: round; }
+        .score-container { display: flex; justify-content: center; align-items: center; margin: 40px 0; }
+        .score-ring { width: 220px; height: 220px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); position: absolute; top: 0; left: 0; }
+        .score-ring circle { fill: none; stroke-width: 16; stroke-linecap: round; }
         .score-ring .bg { stroke: rgba(255,255,255,0.1); }
-        .score-ring .progress { stroke: url(#gradient); stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 2.5s; filter: drop-shadow(0 0 20px rgba(99,102,241,0.6)); }
-        .score-value { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.08); } }
+        .score-ring .progress { stroke: url(#gradient); stroke-dasharray: 565.48; stroke-dashoffset: 565.48; transition: stroke-dashoffset 2.5s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 0 20px rgba(99,102,241,0.6)); }
+        .score-content { position: relative; z-index: 10; text-align: center; }
+        .score-percentage { font-size: 56px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; line-height: 1; display: block; }
+        .score-label { font-size: 16px; opacity: 0.8; margin-top: 8px; font-weight: 600; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .header { text-align: center; margin-bottom: 50px; animation: fadeInDown 1s ease; }
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }        .logo { font-size: 80px; display: block; margin-bottom: 25px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 15px 30px rgba(99,102,241,0.5)); }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }
+        .logo { font-size: 80px; display: block; margin-bottom: 25px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 15px 30px rgba(99,102,241,0.5)); }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         h1 { font-size: 36px; margin: 20px 0; background: linear-gradient(135deg, #fff, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
         h3 { font-size: 18px; opacity: 0.85; font-weight: 600; }
@@ -145,82 +110,46 @@
         .toast.info { background: linear-gradient(135deg, var(--info), #0891b2); }
         @keyframes slideInDown { from { transform: translateY(-150px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(-30px); } }
+        .timer-wrapper { position: sticky; top: 20px; z-index: 100; margin-bottom: 30px; }
+        .timer-display { background: linear-gradient(135deg, rgba(99,102,241,0.95), rgba(139,92,246,0.95)); backdrop-filter: blur(20px); padding: 15px 40px; border-radius: 50px; display: flex; align-items: center; justify-content: center; gap: 15px; box-shadow: 0 10px 40px rgba(99,102,241,0.5), inset 0 1px 0 rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.2); min-width: 200px; margin: 0 auto; animation: slideDown 0.5s ease; }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .timer-icon { font-size: 28px; animation: pulse 1s infinite; }
+        .timer-text { font-size: 28px; font-weight: 900; font-family: 'Courier New', monospace; letter-spacing: 2px; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+        .timer-warning { background: linear-gradient(135deg, rgba(245,158,11,0.95), rgba(217,119,6,0.95)) !important; animation: shake 0.5s infinite; }
+        .timer-danger { background: linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.95)) !important; animation: shake 0.3s infinite; }
+        @keyframes shake { 0%, 100% { transform: translateX(0) rotate(0deg); } 25% { transform: translateX(-5px) rotate(-2deg); } 75% { transform: translateX(5px) rotate(2deg); } }
         .review-header { background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.1)); padding: 20px; border-radius: 16px; margin-bottom: 25px; border: 2px solid rgba(16,185,129,0.4); }
         .review-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
         .review-stat { background: rgba(255,255,255,0.08); padding: 20px; border-radius: 16px; text-align: center; }
-        .review-stat.correct { border: 2px solid var(--success); }        .review-stat.incorrect { border: 2px solid var(--error); }
+        .review-stat.correct { border: 2px solid var(--success); }
+        .review-stat.incorrect { border: 2px solid var(--error); }
         .review-stat .number { font-size: 36px; font-weight: 900; margin-bottom: 5px; }
         .review-stat.correct .number { color: var(--success); }
         .review-stat.incorrect .number { color: var(--error); }
-        @media (max-width: 600px) { .glass-card { padding: 28px; } h1 { font-size: 26px; } .logo { font-size: 60px; } .score-ring { width: 160px; height: 160px; } .score-value { font-size: 36px; } .question-card { padding: 24px; } .nav-circle { width: 38px; height: 38px; font-size: 13px; } .nav-buttons { flex-direction: column; gap: 15px; } .btn-nav { width: 100%; } .progress-stepper { flex-wrap: wrap; gap: 15px; } .step-label { font-size: 11px; } .step-circle { width: 40px; height: 40px; font-size: 14px; } }
-        /* ✅ عداد الوقت التنازلي */
-.timer-container {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    animation: slideDown 0.5s ease;
-}
-
-@keyframes slideDown {
-    from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
-    to { transform: translateX(-50%) translateY(0); opacity: 1; }
-}
-
-.timer-display {
-    background: linear-gradient(135deg, rgba(99,102,241,0.95), rgba(139,92,246,0.95));
-    backdrop-filter: blur(20px);
-    padding: 15px 40px;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    box-shadow: 0 10px 40px rgba(99,102,241,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
-    border: 2px solid rgba(255,255,255,0.2);
-    min-width: 200px;
-    justify-content: center;
-}
-
-.timer-icon {
-    font-size: 28px;
-    animation: pulse 1s infinite;
-}
-
-.timer-text {
-    font-size: 28px;
-    font-weight: 900;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 2px;
-    color: #fff;
-    text-shadow: 0 0 20px rgba(255,255,255,0.5);
-}
-
-.timer-warning {
-    background: linear-gradient(135deg, rgba(245,158,11,0.95), rgba(217,119,6,0.95)) !important;
-    animation: shake 0.5s infinite;
-}
-
-.timer-danger {
-    background: linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.95)) !important;
-    animation: shake 0.3s infinite;
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(-50%) rotate(0deg); }
-    25% { transform: translateX(-52%) rotate(-2deg); }
-    75% { transform: translateX(-48%) rotate(2deg); }
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-}
+        .footer-credits { text-align: center; padding: 30px 20px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .footer-credits p { font-size: 14px; opacity: 0.7; margin-bottom: 10px; }
+        .footer-credits .brand { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .footer-credits .developer { font-size: 13px; opacity: 0.6; }
+        @media (max-width: 600px) { .glass-card { padding: 28px; } h1 { font-size: 26px; } .logo { font-size: 60px; } .score-ring { width: 180px; height: 180px; } .score-percentage { font-size: 42px; } .question-card { padding: 24px; } .nav-circle { width: 38px; height: 38px; font-size: 13px; } .nav-buttons { flex-direction: column; gap: 15px; } .btn-nav { width: 100%; } .progress-stepper { flex-wrap: wrap; gap: 15px; } .step-label { font-size: 11px; } .step-circle { width: 40px; height: 40px; font-size: 14px; } .timer-text { font-size: 22px; } .timer-display { padding: 12px 30px; } .intro-title { font-size: 32px; } .intro-subtitle { font-size: 20px; } .intro-icon { font-size: 60px; } }
     </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
+
+    <!-- شاشة الصلاة على النبي ﷺ -->
+    <div id="introScreen" class="intro-screen">
+        <div class="intro-content">
+            <div class="intro-icon">🕌</div>
+            <h1 class="intro-title">صَلِّ عَلَى النَّبِي ﷺ</h1>
+            <p class="intro-subtitle">وَادْعُ لِأَهْلِنَا فِي فِلِسْطِين 🇵🇸</p>
+            <div class="intro-progress">
+                <div class="intro-progress-bar" id="introProgressBar"></div>
+            </div>
+            <p class="intro-countdown" id="introCountdown">سيبدأ الامتحان خلال 8 ثوانٍ...</p>
+        </div>
+    </div>
+
+    <div class="container">
+      <div class="header">
         <span class="logo">📚</span>
         <h1>منصة الاختبارات الإلكترونية</h1>
         <h3>الأستاذ / هاني محمد الداودي</h3>
@@ -245,13 +174,6 @@
             <div class="step-label">الانتهاء</div>
         </div>
     </div>
-    <!-- ✅ عداد الوقت التنازلي -->
-<div id="timerContainer" class="timer-container hidden">
-    <div class="timer-display" id="timerDisplay">
-        <span class="timer-icon">⏱️</span>
-        <span class="timer-text" id="timerText">00:00:00</span>
-    </div>
-</div>
     
     <div id="loadingScreen" class="glass-card text-center"><div class="loader"></div><p style="font-size:18px;margin-top:20px;">جاري تهيئة المنصة...</p></div>
     
@@ -295,6 +217,12 @@
     </div>
     <div id="examScreen" class="hidden">
         <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
+        <div class="timer-wrapper" id="timerWrapper">
+            <div class="timer-display" id="timerDisplay">
+                <span class="timer-icon">⏱️</span>
+                <span class="timer-text" id="timerText">00:00:00</span>
+            </div>
+        </div>
         <div class="question-navigator" id="questionNavigator"></div>
         <div id="questionsContainer"></div>
         <div class="nav-buttons">
@@ -317,7 +245,24 @@
                     <div style="opacity:0.8;">إجابات خاطئة ❌</div>
                 </div>
             </div>
-            <div class="score-ring"><svg><defs><linearGradient id="gradient"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs><circle class="bg" cx="90" cy="90" r="70"/><circle class="progress" cx="90" cy="90" r="70" id="scoreProgress"/></svg><div class="score-value" id="finalScore">0%</div></div>
+            <div class="score-container">
+                <div class="score-ring">
+                    <svg>
+                        <defs>
+                            <linearGradient id="gradient">
+                                <stop offset="0%" stop-color="#6366f1"/>
+                                <stop offset="100%" stop-color="#8b5cf6"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="bg" cx="100" cy="100" r="90"/>
+                        <circle class="progress" cx="100" cy="100" r="90" id="scoreProgress"/>
+                    </svg>
+                    <div class="score-content">
+                        <span class="score-percentage" id="finalScore">0%</span>
+                        <div class="score-label">نسبة النجاح</div>
+                    </div>
+                </div>
+            </div>
             <div id="reviewContainer"></div>
             <div id="analysisContainer"></div>
             <button class="btn btn-info" onclick="reviewExam()" style="margin-top:25px;">👁️ مراجعة الامتحان</button>
@@ -332,6 +277,12 @@
             <button class="btn btn-primary" onclick="closeReviewExam()" style="margin-top:15px;width:auto;padding:12px 30px;">↩️ العودة للنتيجة</button>
         </div>
         <div id="reviewQuestionsContainer"></div>
+    </div>
+    
+    <div class="footer-credits">
+        <p class="brand">✨ Mystix Universe - Omar ✨</p>
+        <p class="developer">جميع الحقوق محفوظة © 2026</p>
+        <p style="font-size:12px;opacity:0.5;">تم التطوير بكل ❤️</p>
     </div>
 </div>
 
@@ -350,36 +301,28 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
     let currentUser = null, questions = [], examName = "", studentAnswers = {}, score = 0;
-    let examDuration = 0; // مدة الامتحان بالدقائق
-    let timeRemaining = 0; // الوقت المتبقي بالثواني
-    let timerInterval = null; // معرف العداد
     let currentExamId = null, selectedExamId = null, selectedExamData = null, examStartTime = null, currentQuestionIndex = 0;
     let currentStep = 1;
+    let examDuration = 0, timeRemaining = 0, timerInterval = null;
 
-    function saveState() {
-        const state = { currentStep, currentExamId, selectedExamId, examName, studentAnswers, currentQuestionIndex };
-        localStorage.setItem('examState', JSON.stringify(state));
-        updateStepper();
-    }
+    // شاشة الصلاة على النبي - تختفي بعد 8 ثواني
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            const introScreen = document.getElementById('introScreen');
+            introScreen.style.animation = 'fadeOut 0.5s ease forwards';
+            setTimeout(function() { introScreen.classList.add('hidden'); }, 500);
+        }, 8000);
+        let countdown = 8;
+        const countdownEl = document.getElementById('introCountdown');
+        const interval = setInterval(function() {
+            countdown--;
+            if (countdown > 0) { countdownEl.innerText = `سيبدأ الامتحان خلال ${countdown} ثوانٍ...`; }
+        }, 1000);
+    });
 
-    function restoreState() {
-        const savedState = localStorage.getItem('examState');
-        if (savedState) {
-            const state = JSON.parse(savedState);
-            currentStep = state.currentStep || 1;
-            currentExamId = state.currentExamId;
-            selectedExamId = state.selectedExamId;
-            examName = state.examName;
-            studentAnswers = state.studentAnswers || {};
-            currentQuestionIndex = state.currentQuestionIndex || 0;
-            return true;
-        }
-        return false;
-    }
-
-    function clearState() {
-        localStorage.removeItem('examState');
-    }
+    function saveState() { const state = { currentStep, currentExamId, selectedExamId, examName, studentAnswers, currentQuestionIndex }; localStorage.setItem('examState', JSON.stringify(state)); updateStepper(); }
+    function restoreState() { const savedState = localStorage.getItem('examState'); if (savedState) { const state = JSON.parse(savedState); currentStep = state.currentStep || 1; currentExamId = state.currentExamId; selectedExamId = state.selectedExamId; examName = state.examName; studentAnswers = state.studentAnswers || {}; currentQuestionIndex = state.currentQuestionIndex || 0; return true; } return false; }
+    function clearState() { localStorage.removeItem('examState'); }
 
     function showToast(message, type = 'success') {
         const container = document.getElementById('toastContainer');
@@ -393,12 +336,12 @@
 
     function updateStepper() {
         document.querySelectorAll('.step').forEach((step, index) => {
-            const stepNum = index + 1;            step.classList.remove('active', 'completed');
+            const stepNum = index + 1;
+            step.classList.remove('active', 'completed');
             if (stepNum < currentStep) step.classList.add('completed');
             else if (stepNum === currentStep) step.classList.add('active');
         });
-        const grade = localStorage.getItem('studentGrade');
-        const gradeDisplay = document.getElementById('currentGradeDisplay');
+        const grade = localStorage.getItem('studentGrade');        const gradeDisplay = document.getElementById('currentGradeDisplay');
         if (gradeDisplay) gradeDisplay.innerText = grade || '-';
     }
 
@@ -408,12 +351,10 @@
             if (confirmExit) {
                 try { await db.collection('students').doc(currentUser.email + '_' + currentExamId).delete(); } catch (error) { console.error('Error:', error); }
                 showToast('❌ تم الخروج من الامتحان. ستحتاج لكود إعادة', 'error');
-                clearState();
-                currentStep = 2;
+                clearState(); currentStep = 2;
                 document.getElementById('examScreen').classList.add('hidden');
                 document.getElementById('examSelectScreen').classList.remove('hidden');
-                updateStepper();
-                loadExamsList();
+                updateStepper(); loadExamsList();
             }
             return;
         }
@@ -421,74 +362,47 @@
         else if (stepNum === 2 && currentStep >= 2) {
             document.getElementById('examScreen').classList.add('hidden');
             document.getElementById('examSelectScreen').classList.remove('hidden');
-            currentStep = 2;
-            updateStepper();
-            loadExamsList();
+            currentStep = 2; updateStepper(); loadExamsList();
         }
     }
 
     async function signInWithGoogle() { 
-    try {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        provider.setCustomParameters({
-            prompt: 'select_account'
-        });
-        
-        // ✅ استخدام signInWithPopup بدلاً من redirect
-        const result = await auth.signInWithPopup(provider);
-        
-        if (result.user) {
-            currentUser = result.user;
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('nameInputSection').classList.remove('hidden');
-            showToast('تم تسجيل الدخول بنجاح!', 'success');
-            updateStepper();
-        }
-    } catch (error) {
-        console.error('Error signing in:', error);
-        showToast('خطأ في تسجيل الدخول: ' + error.message, 'error');
+        try {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            const result = await auth.signInWithPopup(provider);
+            if (result.user) {
+                currentUser = result.user;
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('nameInputSection').classList.remove('hidden');
+                showToast('تم تسجيل الدخول بنجاح!', 'success');
+                updateStepper();
+            }
+        } catch (error) { console.error('Error signing in:', error); showToast('خطأ في تسجيل الدخول: ' + error.message, 'error'); }
     }
-}
     
     auth.onAuthStateChanged(async (user) => { 
-    document.getElementById('loadingScreen').classList.add('hidden'); 
-    
-    if (user) { 
-        currentUser = user;
-        console.log('✅ User logged in:', user.email);
-        
-        // التحقق مما إذا كان الطالب قد أكمل البيانات
-        const savedName = localStorage.getItem('studentName');
-        const savedGrade = localStorage.getItem('studentGrade');
-        
-        if (savedName && savedGrade) {
-            // الطالب أكمل البيانات مسبقاً
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('examSelectScreen').classList.remove('hidden');
-            currentStep = 2;
-            saveState();
-            loadExamsList();
-        } else {
-            // الطالب يحتاج لإدخال البيانات
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('nameInputSection').classList.remove('hidden');
-            
-            // ملء الاسم إذا كان موجوداً في حساب Google
-            if (user.displayName) {
-                document.getElementById('studentName').value = user.displayName;
+        document.getElementById('loadingScreen').classList.add('hidden'); 
+        if (user) { 
+            currentUser = user;
+            const savedName = localStorage.getItem('studentName');
+            const savedGrade = localStorage.getItem('studentGrade');
+            if (savedName && savedGrade) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('examSelectScreen').classList.remove('hidden');
+                currentStep = 2; saveState(); loadExamsList();            } else {
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('nameInputSection').classList.remove('hidden');
+                if (user.displayName) document.getElementById('studentName').value = user.displayName;
             }
-        }
-        updateStepper();
-    } else { 
-        // المستخدم غير مسجل
-        document.getElementById('loginScreen').classList.remove('hidden');
-        document.getElementById('nameInputSection').classList.add('hidden');
-        currentStep = 1;
-        updateStepper();
-    } 
-});
-    
-    
+            updateStepper();
+        } else { 
+            document.getElementById('loginScreen').classList.remove('hidden'); 
+            document.getElementById('nameInputSection').classList.add('hidden'); 
+            currentStep = 1; updateStepper();
+        } 
+    });
+
     async function verifyAndStart() { 
         const name = document.getElementById('studentName').value.trim(); 
         const grade = document.getElementById('studentGrade').value;
@@ -498,416 +412,106 @@
         localStorage.setItem('studentGrade', grade);
         document.getElementById('loginScreen').classList.add('hidden'); 
         showToast('جاري تحميل الامتحانات...', 'info');
-        currentStep = 2;
-        saveState();
-        await loadExamsList(); 
+        currentStep = 2; saveState(); await loadExamsList(); 
     }
 
-    function changeGrade() {
-        clearState();
-        localStorage.removeItem('studentGrade');
-        localStorage.removeItem('studentName');
-        location.reload();
+    function changeGrade() { clearState(); localStorage.removeItem('studentGrade'); localStorage.removeItem('studentName'); location.reload(); }
+
+    function startTimer(duration) {
+        if (!duration || duration <= 0) { document.getElementById('timerWrapper').classList.add('hidden'); return; }
+        examDuration = duration; timeRemaining = duration * 60;
+        document.getElementById('timerWrapper').classList.remove('hidden');
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            timeRemaining--; updateTimerDisplay();
+            if (timeRemaining === 300) { showToast('⚠️ تبقى 5 دقائق فقط!', 'warning'); document.getElementById('timerDisplay').classList.add('timer-warning'); }
+            if (timeRemaining === 60) { showToast('⚠️ تبقى دقيقة واحدة فقط!', 'error'); document.getElementById('timerDisplay').classList.add('timer-danger'); }
+            if (timeRemaining <= 0) { clearInterval(timerInterval); showToast('⏰ انتهى الوقت!', 'error'); finishExamAutomatically(); }
+        }, 1000);
     }
+
+    function updateTimerDisplay() {
+        const hours = Math.floor(timeRemaining / 3600);
+        const minutes = Math.floor((timeRemaining % 3600) / 60);
+        const seconds = timeRemaining % 60;
+        document.getElementById('timerText').innerText = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        const timerDisplay = document.getElementById('timerDisplay');
+        if (timeRemaining <= 60) { timerDisplay.classList.add('timer-danger'); timerDisplay.classList.remove('timer-warning'); }
+        else if (timeRemaining <= 300) { timerDisplay.classList.add('timer-warning'); timerDisplay.classList.remove('timer-danger'); }
+        else { timerDisplay.classList.remove('timer-warning', 'timer-danger'); }
+    }
+    function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } document.getElementById('timerWrapper').classList.add('hidden'); }
+    async function finishExamAutomatically() {
+        showToast('⏰ انتهى الوقت! جاري التسليم...', 'error');
+        try {
+            const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email;
+            const grade = localStorage.getItem('studentGrade') || 'غير محدد';
+            let correctCount = 0; let cats = {};
+            questions.forEach((q, i) => { const ok = (studentAnswers[i] === q.correct_index); if (ok) correctCount++; const cat = q.category || 'عام'; if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; cats[cat].total++; if (ok) cats[cat].correct++; });
+            const now = new Date();
+            const data = { email: currentUser.email, name: nm, display_name: currentUser.displayName, exam_id: currentExamId, exam_name: examName, score: correctCount, total_questions: questions.length, answers: studentAnswers, categories: cats, used_reset_code: false, created_at: now, start_time: examStartTime || now, end_time: now, grade_level: grade, time_expired: true };
+            await db.collection('students').doc(currentUser.email + '_' + currentExamId).set(data);
+            currentStep = 4; saveState(); stopTimer();
+            setTimeout(() => { showResult(data); showToast('📝 تم تسليم إجابتك تلقائياً', 'info'); }, 1000);
+        } catch (error) { console.error('Error auto-submitting:', error); showToast('خطأ في التسليم التلقائي: ' + error.message, 'error'); }
+    }
+
     async function loadExamsList() { 
         try { 
-            clearState();
-            document.getElementById('examSelectScreen').classList.remove('hidden'); 
+            clearState(); document.getElementById('examSelectScreen').classList.remove('hidden'); 
             const studentGrade = localStorage.getItem('studentGrade');
             let query = db.collection('exams').where('is_active', '==', true);
-            if (studentGrade && studentGrade !== 'غير محدد' && studentGrade !== '') {
-                query = query.where('grade_level', '==', studentGrade);
-            }
+            if (studentGrade && studentGrade !== 'غير محدد' && studentGrade !== '') query = query.where('grade_level', '==', studentGrade);
             const snapshot = await query.get({ source: 'server' });
-            const container = document.getElementById('examsList'); 
-            container.innerHTML = ''; 
-            if (snapshot.empty) { 
-                container.innerHTML = `<div style="text-align:center;padding:40px;"><div style="font-size:64px;margin-bottom:20px;">⚠️</div><h3 style="color:var(--warning);margin-bottom:15px;">لا توجد امتحانات نشطة</h3><p style="opacity:0.8;margin-bottom:20px;">${studentGrade ? `لا توجد امتحانات لصف ${studentGrade}` : 'لم تقم باختيار صفك الدراسي'}</p>${!studentGrade ? `<button class="btn btn-primary" onclick="location.reload()" style="width:auto;padding:12px 30px;">🔄 إعادة التسجيل</button>` : ''}</div>`; 
-                return; 
-            }
+            const container = document.getElementById('examsList'); container.innerHTML = ''; 
+            if (snapshot.empty) { container.innerHTML = `<div style="text-align:center;padding:40px;"><div style="font-size:64px;margin-bottom:20px;">⚠️</div><h3 style="color:var(--warning);margin-bottom:15px;">لا توجد امتحانات نشطة</h3><p style="opacity:0.8;margin-bottom:20px;">${studentGrade ? `لا توجد امتحانات لصف ${studentGrade}` : 'لم تقم باختيار صفك الدراسي'}</p>${!studentGrade ? `<button class="btn btn-primary" onclick="location.reload()" style="width:auto;padding:12px 30px;">🔄 إعادة التسجيل</button>` : ''}</div>`; return; }
             showToast(`تم تحميل ${snapshot.size} امتحان`, 'success');
-            snapshot.forEach(doc => { 
-                const exam = doc.data(); 
-                const card = document.createElement('div'); 
-                card.className = 'exam-card'; 
-                card.style.cursor = 'pointer'; 
-                card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:8px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p><div style="display:flex;gap:8px;"><span class="badge badge-primary">${exam.grade_level}</span><span class="badge badge-info">${exam.subject}</span></div></div><span style="font-size:24px;">➡️</span></div>`; 
-                container.appendChild(card); 
-                card.addEventListener('click', function() { selectExam(doc.id, exam); }); 
-            }); 
+            snapshot.forEach(doc => { const exam = doc.data(); const card = document.createElement('div'); card.className = 'exam-card'; card.style.cursor = 'pointer'; card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:8px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p><div style="display:flex;gap:8px;"><span class="badge badge-primary">${exam.grade_level}</span><span class="badge badge-info">${exam.subject}</span></div></div><span style="font-size:24px;">➡️</span></div>`; container.appendChild(card); card.addEventListener('click', function() { selectExam(doc.id, exam); }); }); 
         } catch (error) { showToast('خطأ في تحميل الامتحانات: ' + error.message, 'error'); } 
     }
 
     async function selectExam(examId, exam) { 
         try { 
-            const isActive = await checkExamStatus(examId);
-            if (!isActive) { clearState(); loadExamsList(); return; }
-            selectedExamId = examId; 
-            const studentDocId = currentUser.email + '_' + examId; 
+            const isActive = await checkExamStatus(examId); if (!isActive) { clearState(); loadExamsList(); return; }
+            selectedExamId = examId; const studentDocId = currentUser.email + '_' + examId; 
             const doc = await db.collection('students').doc(studentDocId).get(); 
-            if (doc.exists) { 
-                selectedExamData = doc.data(); 
-                document.getElementById('examSelectScreen').classList.add('hidden'); 
-                document.getElementById('resetCodeScreen').classList.remove('hidden'); 
-                return; 
-            } 
-            currentExamId = examId; 
-            examName = exam.name; 
-            document.getElementById('examSelectScreen').classList.add('hidden'); 
-            await loadExamData(examId); 
+            if (doc.exists) { selectedExamData = doc.data(); document.getElementById('examSelectScreen').classList.add('hidden'); document.getElementById('resetCodeScreen').classList.remove('hidden'); return; } 
+            currentExamId = examId; examName = exam.name; document.getElementById('examSelectScreen').classList.add('hidden'); await loadExamData(examId); 
         } catch (error) { showToast('خطأ في فتح الامتحان: ' + error.message, 'error'); } 
     }
 
-    async function checkExamStatus(examId) {        try {
-            const examDoc = await db.collection('exams').doc(examId).get({ source: 'server' });
-            if (!examDoc.exists) { showToast('❌ الامتحان غير موجود', 'error'); return false; }
-            if (!examDoc.data().is_active) { showToast('⚠️ هذا الامتحان غير نشط حالياً', 'warning'); return false; }
-            return true;
-        } catch (error) { showToast('خطأ في التحقق من حالة الامتحان', 'error'); return false; }
-    }
+    async function checkExamStatus(examId) { try { const examDoc = await db.collection('exams').doc(examId).get({ source: 'server' }); if (!examDoc.exists) { showToast('❌ الامتحان غير موجود', 'error'); return false; } if (!examDoc.data().is_active) { showToast('⚠️ هذا الامتحان غير نشط حالياً', 'warning'); return false; } return true; } catch (error) { showToast('خطأ في التحقق من حالة الامتحان', 'error'); return false; } }
 
-    async function verifyResetCode() { 
-        const code = document.getElementById('resetCodeInput').value.trim().toUpperCase(); 
-        if (code.length !== 8) { showToast('⚠️ الكود يجب أن يكون 8 أحرف', 'warning'); return; } 
-        try { 
-            const examDoc = await db.collection('exams').doc(selectedExamId).get({ source: 'server' }); 
-            const exam = examDoc.data(); 
-            if (!exam || exam.reset_code !== code) { showToast('❌ كود الإعادة غير صحيح', 'error'); return; } 
-            await db.collection('students').doc(currentUser.email + '_' + selectedExamId).delete(); 
-            await db.collection('examResets').add({ exam_id: selectedExamId, exam_name: exam.name, student_email: currentUser.email, reset_code: code, used_at: new Date().toISOString() }); 
-            showToast('✅ تم التحقق! يمكنك الآن أداء الامتحان', 'success'); 
-            document.getElementById('resetCodeScreen').classList.add('hidden'); 
-            document.getElementById('resetCodeInput').value = ''; 
-            currentExamId = selectedExamId; 
-            await loadExamData(selectedExamId); 
-        } catch (error) { showToast('خطأ: ' + error.message, 'error'); } 
-    }
+    async function verifyResetCode() { const code = document.getElementById('resetCodeInput').value.trim().toUpperCase(); if (code.length !== 8) { showToast('⚠️ الكود يجب أن يكون 8 أحرف', 'warning'); return; } try { const examDoc = await db.collection('exams').doc(selectedExamId).get({ source: 'server' }); const exam = examDoc.data(); if (!exam || exam.reset_code !== code) { showToast('❌ كود الإعادة غير صحيح', 'error'); return; } await db.collection('students').doc(currentUser.email + '_' + selectedExamId).delete(); await db.collection('examResets').add({ exam_id: selectedExamId, exam_name: exam.name, student_email: currentUser.email, reset_code: code, used_at: new Date().toISOString() }); showToast('✅ تم التحقق! يمكنك الآن أداء الامتحان', 'success'); document.getElementById('resetCodeScreen').classList.add('hidden'); document.getElementById('resetCodeInput').value = ''; currentExamId = selectedExamId; await loadExamData(selectedExamId); } catch (error) { showToast('خطأ: ' + error.message, 'error'); } }
 
-    function backToExams() { 
-        document.getElementById('resetCodeScreen').classList.add('hidden'); 
-        document.getElementById('examSelectScreen').classList.remove('hidden'); 
-        document.getElementById('resetCodeInput').value = ''; 
-    }
+    function backToExams() { document.getElementById('resetCodeScreen').classList.add('hidden'); document.getElementById('examSelectScreen').classList.remove('hidden'); document.getElementById('resetCodeInput').value = ''; }
 
-    async function loadExamData(examId) { 
-        try { 
-            const examDoc = await db.collection('exams').doc(examId).get({ source: 'server' });
-            if (!examDoc.exists) { showToast('❌ الامتحان غير موجود', 'error'); return; }
-            examName = examDoc.data().name; 
-            document.getElementById('examNameDisplay').innerText = examName; 
-            document.getElementById('examTitleDisplay').innerText = examName; 
-            const snapshot = await db.collection('questions').where('exam_id', '==', examId).get({ source: 'server' });
-            questions = []; 
-            snapshot.forEach(doc => questions.push(doc.data())); 
-            questions.sort((a, b) => a.order_num - b.order_num);
-            document.getElementById('totalQuestionsCount').innerText = questions.length; 
-            const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get(); 
-            if (doc.exists) { showResult(doc.data()); } 
-            else { document.getElementById('examInfoScreen').classList.remove('hidden'); } 
-            showToast(`تم تحميل ${questions.length} سؤال`, 'success');
-        } catch (e) { showToast("خطأ في التحميل: " + e.message, 'error'); } 
-    }
-    // ✅ بدء العداد التنازلي
-function startTimer(duration) {
-    if (!duration || duration <= 0) {
-        document.getElementById('timerContainer').classList.add('hidden');
-        return;
-    }
-    
-    examDuration = duration;
-    timeRemaining = duration * 60;
-    
-    document.getElementById('timerContainer').classList.remove('hidden');
-    updateTimerDisplay();
-    
-    timerInterval = setInterval(() => {
-        timeRemaining--;
-        updateTimerDisplay();
-        
-        if (timeRemaining === 300) {
-            showToast('⚠️ تبقى 5 دقائق فقط!', 'warning');
-            document.getElementById('timerDisplay').classList.add('timer-warning');
-        }
-        
-        if (timeRemaining === 60) {
-            showToast('⚠️ تبقى دقيقة واحدة فقط!', 'error');
-            document.getElementById('timerDisplay').classList.add('timer-danger');
-        }
-        
-        if (timeRemaining <= 0) {
-            clearInterval(timerInterval);
-            showToast('⏰ انتهى الوقت!', 'error');
-            finishExamAutomatically();
-        }
-    }, 1000);
-}
+    async function loadExamData(examId) { try { const examDoc = await db.collection('exams').doc(examId).get({ source: 'server' }); if (!examDoc.exists) { showToast('❌ الامتحان غير موجود', 'error'); return; } examName = examDoc.data().name; document.getElementById('examNameDisplay').innerText = examName; document.getElementById('examTitleDisplay').innerText = examName; const snapshot = await db.collection('questions').where('exam_id', '==', examId).get({ source: 'server' }); questions = []; snapshot.forEach(doc => questions.push(doc.data())); questions.sort((a, b) => a.order_num - b.order_num); document.getElementById('totalQuestionsCount').innerText = questions.length; const doc = await db.collection('students').doc(currentUser.email + '_' + examId).get(); if (doc.exists) { showResult(doc.data()); } else { document.getElementById('examInfoScreen').classList.remove('hidden'); } showToast(`تم تحميل ${questions.length} سؤال`, 'success'); } catch (e) { showToast("خطأ في التحميل: " + e.message, 'error'); } }
 
-// ✅ تحديث عرض العداد
-function updateTimerDisplay() {
-    const hours = Math.floor(timeRemaining / 3600);
-    const minutes = Math.floor((timeRemaining % 3600) / 60);
-    const seconds = timeRemaining % 60;
+    function startExam() { document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('examScreen').classList.remove('hidden'); examStartTime = new Date(); currentQuestionIndex = 0; currentStep = 3; saveState(); db.collection('exams').doc(currentExamId).get().then(doc => { if (doc.exists()) { const examData = doc.data(); const timeLimit = examData.time_limit_minutes || 0; if (timeLimit > 0) { startTimer(timeLimit); } } }); renderQuestions(); renderNavigator(); updateNavButtons(); updateStepper(); showToast('🚀 ابدأ الاختبار! بالتوفيق', 'info'); }
     
-    const hoursStr = hours.toString().padStart(2, '0');
-    const minutesStr = minutes.toString().padStart(2, '0');
-    const secondsStr = seconds.toString().padStart(2, '0');
-    
-    document.getElementById('timerText').innerText = 
-        `${hoursStr}:${minutesStr}:${secondsStr}`;
-    
-    const timerDisplay = document.getElementById('timerDisplay');
-    if (timeRemaining <= 60) {        timerDisplay.classList.add('timer-danger');
-        timerDisplay.classList.remove('timer-warning');
-    } else if (timeRemaining <= 300) {
-        timerDisplay.classList.add('timer-warning');
-        timerDisplay.classList.remove('timer-danger');
-    } else {
-        timerDisplay.classList.remove('timer-warning', 'timer-danger');
-    }
-}
+    function renderQuestions() { const c = document.getElementById('questionsContainer'); c.innerHTML = ''; questions.forEach((q, i) => { const card = document.createElement('div'); card.className = 'question-card'; card.id = `question-${i}`; card.style.display = i === currentQuestionIndex ? 'block' : 'none'; card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" data-index="${String.fromCharCode(65+j)}" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div>`; c.appendChild(card); }); if (studentAnswers[currentQuestionIndex] !== undefined) highlightSelectedOption(currentQuestionIndex, studentAnswers[currentQuestionIndex]); }
 
-// ✅ إيقاف العداد
-function stopTimer() {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-    }
-    document.getElementById('timerContainer').classList.add('hidden');
-}
+    function renderNavigator() { const nav = document.getElementById('questionNavigator'); nav.innerHTML = ''; questions.forEach((q, i) => { const circle = document.createElement('div'); circle.className = 'nav-circle'; if (i === currentQuestionIndex) circle.classList.add('current'); if (studentAnswers[i] !== undefined) circle.classList.add('answered'); circle.innerText = i + 1; circle.onclick = () => goToQuestion(i); nav.appendChild(circle); }); }
 
-// ✅ إنهاء الامتحان تلقائياً
-async function finishExamAutomatically() {
-    showToast('⏰ انتهى الوقت! جاري التسليم...', 'error');
-    
-    try {
-        const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email;
-        const grade = localStorage.getItem('studentGrade') || 'غير محدد';
-        let correctCount = 0;
-        let cats = {};
-        
-        questions.forEach((q, i) => {
-            const ok = (studentAnswers[i] === q.correct_index);
-            if (ok) correctCount++;
-            const cat = q.category || 'عام';
-            if (!cats[cat]) cats[cat] = { total: 0, correct: 0 };
-            cats[cat].total++;
-            if (ok) cats[cat].correct++;
-        });
-        
-        const now = new Date();
-        const data = {
-            email: currentUser.email,
-            name: nm,
-            display_name: currentUser.displayName,
-            exam_id: currentExamId,
-            exam_name: examName,
-            score: correctCount,
-            total_questions: questions.length,
-            answers: studentAnswers,
-            categories: cats,
-            used_reset_code: false,            created_at: now,
-            start_time: examStartTime || now,
-            end_time: now,
-            grade_level: grade,
-            time_expired: true
-        };
-        
-        await db.collection('students').doc(currentUser.email + '_' + currentExamId).set(data);
-        
-        currentStep = 4;
-        saveState();
-        stopTimer();
-        
-        setTimeout(() => {
-            showResult(data);
-            showToast('📝 تم تسليم إجابتك تلقائياً', 'info');
-        }, 1000);
-        
-    } catch (error) {
-        console.error('Error auto-submitting:', error);
-        showToast('خطأ في التسليم التلقائي: ' + error.message, 'error');
-    }
-}
-    function startExam() { 
-    document.getElementById('examInfoScreen').classList.add('hidden'); 
-    document.getElementById('examScreen').classList.remove('hidden'); 
-    examStartTime = new Date();
-    currentQuestionIndex = 0;
-    currentStep = 3;
-    saveState();
-    
-    // ✅ بدء العداد التنازلي
-    db.collection('exams').doc(currentExamId).get().then(doc => {
-        if (doc.exists) {
-            const examData = doc.data();
-            const timeLimit = examData.time_limit_minutes || 0;
-            if (timeLimit > 0) {
-                startTimer(timeLimit);
-            }
-        }
-    });
-    
-    renderQuestions(); 
-    renderNavigator();
-    updateNavButtons();
-    updateStepper();
-    showToast('🚀 ابدأ الاختبار! بالتوفيق', 'info');
-}
-    
-    function renderQuestions() { 
-        const c = document.getElementById('questionsContainer'); 
-        c.innerHTML = ''; 
-        questions.forEach((q, i) => { 
-            const card = document.createElement('div'); 
-            card.className = 'question-card'; 
-            card.id = `question-${i}`;
-            card.style.display = i === currentQuestionIndex ? 'block' : 'none';
-            card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" data-index="${String.fromCharCode(65+j)}" onclick="selectOption(${i},${j},this)">${o}</div>`).join('')}</div>`; 
-            c.appendChild(card); 
-        });
-        if (studentAnswers[currentQuestionIndex] !== undefined) highlightSelectedOption(currentQuestionIndex, studentAnswers[currentQuestionIndex]);
-    }
+    function goToQuestion(index) { document.querySelectorAll('.question-card').forEach((card, i) => { card.style.display = i === index ? 'block' : 'none'; }); currentQuestionIndex = index; renderNavigator(); updateNavButtons(); saveState(); if (studentAnswers[index] !== undefined) highlightSelectedOption(index, studentAnswers[index]); }
 
-    function renderNavigator() {
-        const nav = document.getElementById('questionNavigator');
-        nav.innerHTML = '';
-        questions.forEach((q, i) => {
-            const circle = document.createElement('div');
-            circle.className = 'nav-circle';
-            if (i === currentQuestionIndex) circle.classList.add('current');
-            if (studentAnswers[i] !== undefined) circle.classList.add('answered');
-            circle.innerText = i + 1;
-            circle.onclick = () => goToQuestion(i);
-            nav.appendChild(circle);
-        });
-    }
-
-    function goToQuestion(index) {
-        document.querySelectorAll('.question-card').forEach((card, i) => { card.style.display = i === index ? 'block' : 'none'; });
-        currentQuestionIndex = index;
-        renderNavigator();
-        updateNavButtons();
-        saveState();
-        if (studentAnswers[index] !== undefined) highlightSelectedOption(index, studentAnswers[index]);
-    }
     function previousQuestion() { if (currentQuestionIndex > 0) goToQuestion(currentQuestionIndex - 1); }
     function nextQuestion() { if (currentQuestionIndex < questions.length - 1) goToQuestion(currentQuestionIndex + 1); }
 
-    function updateNavButtons() {
-        document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
-        document.getElementById('nextBtn').disabled = currentQuestionIndex === questions.length - 1;
-        if (Object.keys(studentAnswers).length === questions.length) {
-            document.getElementById('finishBtn').classList.remove('hidden');
-            document.getElementById('nextBtn').classList.add('hidden');
-        } else {
-            document.getElementById('finishBtn').classList.add('hidden');
-            document.getElementById('nextBtn').classList.remove('hidden');
-        }
-    }
+    function updateNavButtons() { document.getElementById('prevBtn').disabled = currentQuestionIndex === 0; document.getElementById('nextBtn').disabled = currentQuestionIndex === questions.length - 1; if (Object.keys(studentAnswers).length === questions.length) { document.getElementById('finishBtn').classList.remove('hidden'); document.getElementById('nextBtn').classList.add('hidden'); } else { document.getElementById('finishBtn').classList.add('hidden'); document.getElementById('nextBtn').classList.remove('hidden'); } }
 
-    function highlightSelectedOption(qIndex, oIndex) {
-        const p = document.getElementById(`opt-${qIndex}`);
-        if (p) {
-            const all = p.querySelectorAll('.option-3d');
-            all.forEach((o, i) => { if (i === oIndex) o.classList.add('selected'); else o.classList.remove('selected'); });
-        }
-    }
+    function highlightSelectedOption(qIndex, oIndex) { const p = document.getElementById(`opt-${qIndex}`); if (p) { const all = p.querySelectorAll('.option-3d'); all.forEach((o, i) => { if (i === oIndex) o.classList.add('selected'); else o.classList.remove('selected'); }); } }
 
-    function selectOption(qi, oi, el) { 
-        studentAnswers[qi] = oi;
-        const p = document.getElementById(`opt-${qi}`); 
-        const all = p.querySelectorAll('.option-3d'); 
-        all.forEach(o => o.classList.remove('selected')); 
-        el.classList.add('selected'); 
-        document.getElementById('progressBar').style.width = ((Object.keys(studentAnswers).length / questions.length) * 100) + '%'; 
-        renderNavigator();
-        updateNavButtons();
-        saveState();
-        if (Object.keys(studentAnswers).length === questions.length) showToast('✅ أكملت جميع الأسئلة! يمكنك التسليم', 'success');
-    }
-    async function finishExam() { 
-        if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return; 
-        
-        // ✅ إيقاف العداد
-        stopTimer();
-    
-        try { 
-            const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email; 
-            const grade = localStorage.getItem('studentGrade') || 'غير محدد';
-            let correctCount = 0; 
-            let cats = {}; 
-            questions.forEach((q, i) => { 
-                const ok = (studentAnswers[i] === q.correct_index); 
-                if (ok) correctCount++; 
-                const cat = q.category || 'عام'; 
-                if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; 
-                cats[cat].total++; 
-                if (ok) cats[cat].correct++; 
-            }); 
-            const now = new Date();
-            const data = { email: currentUser.email, name: nm, display_name: currentUser.displayName, exam_id: currentExamId, exam_name: examName, score: correctCount, total_questions: questions.length, answers: studentAnswers, categories: cats, used_reset_code: false, created_at: now, start_time: examStartTime || now, end_time: now, grade_level: grade }; 
-            await db.collection('students').doc(currentUser.email + '_' + currentExamId).set(data); 
-            showToast('✅ تم تسليم الاختبار بنجاح!', 'success');
-            currentStep = 4;
-            saveState();
-            setTimeout(() => showResult(data), 500);
-        } catch (error) { showToast('خطأ في التسليم: ' + error.message, 'error'); } 
-    }
+    function selectOption(qi, oi, el) { studentAnswers[qi] = oi; const p = document.getElementById(`opt-${qi}`); const all = p.querySelectorAll('.option-3d'); all.forEach(o => o.classList.remove('selected')); el.classList.add('selected'); document.getElementById('progressBar').style.width = ((Object.keys(studentAnswers).length / questions.length) * 100) + '%'; renderNavigator(); updateNavButtons(); saveState(); if (Object.keys(studentAnswers).length === questions.length) showToast('✅ أكملت جميع الأسئلة! يمكنك التسليم', 'success'); }
 
-    function showResult(data) { 
-        document.getElementById('examScreen').classList.add('hidden'); 
-        document.getElementById('examInfoScreen').classList.add('hidden'); 
-        document.getElementById('resultScreen').classList.remove('hidden'); 
-        const p = Math.round((data.score / data.total_questions) * 100); 
-        document.getElementById('finalScore').innerText = '%' + p; 
-        document.getElementById('scoreProgress').style.strokeDashoffset = 440 - (440 * p / 100); 
-        const correctCount = data.score;
-        const incorrectCount = data.total_questions - data.score;
-        document.getElementById('correctCount').innerText = correctCount;
-        document.getElementById('incorrectCount').innerText = incorrectCount;
-        if (p >= 70) { document.getElementById('resultTitle').innerText = '🎉 أداء ممتاز!'; showToast('🎉 أداء ممتاز! مبروك!', 'success'); }
-        else if (p >= 50) { document.getElementById('resultTitle').innerText = '👍 أداء جيد'; showToast('👍 أداء جيد! استمر!', 'info'); }
-        else { document.getElementById('resultTitle').innerText = '📚 يحتاج مراجعة'; showToast('📚 يحتاج للمراجعة', 'warning'); }
-        let reviewHTML = '<h3 style="margin:20px 0 10px;text-align:right;">📋 مراجعة سريعة</h3>'; 
-        questions.forEach((q, i) => { const userAns = data.answers ? data.answers[i] : 0; const ok = (userAns === q.correct_index); reviewHTML += `<div class="analysis-item"><div style="font-weight:700;">س${i+1}</div><div style="color:${ok?'var(--success)':'var(--error)'}">${ok?'✅':'❌'}</div></div>`; }); 
-        document.getElementById('reviewContainer').innerHTML = reviewHTML; 
-        if (data.categories) { 
-            let h = '<h3 style="margin:20px 0 10px;text-align:right;">📊 التحليل التفصيلي</h3>'; 
-            for (const [c, s] of Object.entries(data.categories)) { const x = Math.round((s.correct / s.total) * 100); const col = x >= 70 ? 'var(--success)' : (x >= 50 ? 'var(--warning)' : 'var(--error)'); h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`; } 
-            document.getElementById('analysisContainer').innerHTML = h; 
-        } 
-        updateStepper();
-    }
+    async function finishExam() { if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return; stopTimer(); try { const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email; const grade = localStorage.getItem('studentGrade') || 'غير محدد'; let correctCount = 0; let cats = {}; questions.forEach((q, i) => { const ok = (studentAnswers[i] === q.correct_index); if (ok) correctCount++; const cat = q.category || 'عام'; if (!cats[cat]) cats[cat] = { total: 0, correct: 0 }; cats[cat].total++; if (ok) cats[cat].correct++; }); const now = new Date(); const data = { email: currentUser.email, name: nm, display_name: currentUser.displayName, exam_id: currentExamId, exam_name: examName, score: correctCount, total_questions: questions.length, answers: studentAnswers, categories: cats, used_reset_code: false, created_at: now, start_time: examStartTime || now, end_time: now, grade_level: grade }; await db.collection('students').doc(currentUser.email + '_' + currentExamId).set(data); showToast('✅ تم تسليم الاختبار بنجاح!', 'success'); currentStep = 4; saveState(); setTimeout(() => showResult(data), 500); } catch (error) { showToast('خطأ في التسليم: ' + error.message, 'error'); } }
+
+    function showResult(data) { document.getElementById('examScreen').classList.add('hidden'); document.getElementById('examInfoScreen').classList.add('hidden'); document.getElementById('resultScreen').classList.remove('hidden'); const p = Math.round((data.score / data.total_questions) * 100); document.getElementById('finalScore').innerText = '%' + p; const circumference = 2 * Math.PI * 90; const offset = circumference - (p / 100) * circumference; document.getElementById('scoreProgress').style.strokeDashoffset = offset; const correctCount = data.score; const incorrectCount = data.total_questions - data.score; document.getElementById('correctCount').innerText = correctCount; document.getElementById('incorrectCount').innerText = incorrectCount; if (p >= 70) { document.getElementById('resultTitle').innerText = '🎉 أداء ممتاز!'; showToast('🎉 أداء ممتاز! مبروك!', 'success'); } else if (p >= 50) { document.getElementById('resultTitle').innerText = '👍 أداء جيد'; showToast('👍 أداء جيد! استمر!', 'info'); } else { document.getElementById('resultTitle').innerText = '📚 يحتاج مراجعة'; showToast('📚 يحتاج للمراجعة', 'warning'); } let reviewHTML = '<h3 style="margin:20px 0 10px;text-align:right;">📋 مراجعة سريعة</h3>'; questions.forEach((q, i) => { const userAns = data.answers ? data.answers[i] : 0; const ok = (userAns === q.correct_index); reviewHTML += `<div class="analysis-item"><div style="font-weight:700;">س${i+1}</div><div style="color:${ok?'var(--success)':'var(--error)'}">${ok?'✅':'❌'}</div></div>`; }); document.getElementById('reviewContainer').innerHTML = reviewHTML; if (data.categories) { let h = '<h3 style="margin:20px 0 10px;text-align:right;">📊 التحليل التفصيلي</h3>'; for (const [c, s] of Object.entries(data.categories)) { const x = Math.round((s.correct / s.total) * 100); const col = x >= 70 ? 'var(--success)' : (x >= 50 ? 'var(--warning)' : 'var(--error)'); h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`; } document.getElementById('analysisContainer').innerHTML = h; } updateStepper(); }
     
-    function reviewExam() {
-        document.getElementById('resultScreen').classList.add('hidden');
-        document.getElementById('reviewExamScreen').classList.remove('hidden');
-        const container = document.getElementById('reviewQuestionsContainer');
-        container.innerHTML = '';
-        questions.forEach((q, i) => {
-            const userAns = studentAnswers[i];
-            const correctAns = q.correct_index;
-            const isCorrect = userAns === correctAns;
-            const card = document.createElement('div');
-            card.className = 'question-card';
-            card.style.border = isCorrect ? '2px solid var(--success)' : '2px solid var(--error)';
-            let optionsHTML = '';
-            q.options.forEach((opt, j) => {
-                let className = 'option-3d';
-                let icon = '';
-                if (j === correctAns) { className += ' correct'; icon = ' ✅'; }
-                else if (j === userAns && !isCorrect) { className += ' incorrect'; icon = ' ❌'; }
-                optionsHTML += `<div class="${className}" style="cursor:default;">${String.fromCharCode(65+j)}. ${opt}${icon}</div>`;
-            });
-            card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}<span style="float:left;color:${isCorrect?'var(--success)':'var(--error)'};font-size:24px;">${isCorrect?'✅':'❌'}</span></div><div>${optionsHTML}</div>${q.explanation ? `<div style="margin-top:15px;padding:15px;background:rgba(99,102,241,0.2);border-radius:12px;font-size:14px;">💡 ${q.explanation}</div>` : ''}`;
-            container.appendChild(card);
-        });
-    }
+    function reviewExam() { document.getElementById('resultScreen').classList.add('hidden'); document.getElementById('reviewExamScreen').classList.remove('hidden'); const container = document.getElementById('reviewQuestionsContainer'); container.innerHTML = ''; questions.forEach((q, i) => { const userAns = studentAnswers[i]; const correctAns = q.correct_index; const isCorrect = userAns === correctAns; const card = document.createElement('div'); card.className = 'question-card'; card.style.border = isCorrect ? '2px solid var(--success)' : '2px solid var(--error)'; let optionsHTML = ''; q.options.forEach((opt, j) => { let className = 'option-3d'; let icon = ''; if (j === correctAns) { className += ' correct'; icon = ' ✅'; } else if (j === userAns && !isCorrect) { className += ' incorrect'; icon = ' ❌'; } optionsHTML += `<div class="${className}" style="cursor:default;">${String.fromCharCode(65+j)}. ${opt}${icon}</div>`; }); card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}<span style="float:left;color:${isCorrect?'var(--success)':'var(--error)'};font-size:24px;">${isCorrect?'✅':'❌'}</span></div><div>${optionsHTML}</div>${q.explanation ? `<div style="margin-top:15px;padding:15px;background:rgba(99,102,241,0.2);border-radius:12px;font-size:14px;">💡 ${q.explanation}</div>` : ''}`; container.appendChild(card); }); }
     
-    function closeReviewExam() {
-        document.getElementById('reviewExamScreen').classList.add('hidden');
-        document.getElementById('resultScreen').classList.remove('hidden');
-    }
+    function closeReviewExam() { document.getElementById('reviewExamScreen').classList.add('hidden'); document.getElementById('resultScreen').classList.remove('hidden'); }
 </script>
 </body>
 </html>
