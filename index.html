@@ -101,6 +101,69 @@
         .review-stat.correct .number { color: var(--success); }
         .review-stat.incorrect .number { color: var(--error); }
         @media (max-width: 600px) { .glass-card { padding: 28px; } h1 { font-size: 26px; } .logo { font-size: 60px; } .score-ring { width: 160px; height: 160px; } .score-value { font-size: 36px; } .question-card { padding: 24px; } .nav-circle { width: 38px; height: 38px; font-size: 13px; } .nav-buttons { flex-direction: column; gap: 15px; } .btn-nav { width: 100%; } .progress-stepper { flex-wrap: wrap; gap: 15px; } .step-label { font-size: 11px; } .step-circle { width: 40px; height: 40px; font-size: 14px; } }
+        /* ✅ عداد الوقت التنازلي */
+.timer-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+.timer-display {
+    background: linear-gradient(135deg, rgba(99,102,241,0.95), rgba(139,92,246,0.95));
+    backdrop-filter: blur(20px);
+    padding: 15px 40px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 10px 40px rgba(99,102,241,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.2);
+    min-width: 200px;
+    justify-content: center;
+}
+
+.timer-icon {
+    font-size: 28px;
+    animation: pulse 1s infinite;
+}
+
+.timer-text {
+    font-size: 28px;
+    font-weight: 900;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+}
+
+.timer-warning {
+    background: linear-gradient(135deg, rgba(245,158,11,0.95), rgba(217,119,6,0.95)) !important;
+    animation: shake 0.5s infinite;
+}
+
+.timer-danger {
+    background: linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.95)) !important;
+    animation: shake 0.3s infinite;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(-50%) rotate(0deg); }
+    25% { transform: translateX(-52%) rotate(-2deg); }
+    75% { transform: translateX(-48%) rotate(2deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
     </style>
 </head>
 <body>
@@ -130,6 +193,13 @@
             <div class="step-label">الانتهاء</div>
         </div>
     </div>
+    <!-- ✅ عداد الوقت التنازلي -->
+<div id="timerContainer" class="timer-container hidden">
+    <div class="timer-display" id="timerDisplay">
+        <span class="timer-icon">⏱️</span>
+        <span class="timer-text" id="timerText">00:00:00</span>
+    </div>
+</div>
     
     <div id="loadingScreen" class="glass-card text-center"><div class="loader"></div><p style="font-size:18px;margin-top:20px;">جاري تهيئة المنصة...</p></div>
     
@@ -228,6 +298,9 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
     let currentUser = null, questions = [], examName = "", studentAnswers = {}, score = 0;
+    let examDuration = 0; // مدة الامتحان بالدقائق
+    let timeRemaining = 0; // الوقت المتبقي بالثواني
+    let timerInterval = null; // معرف العداد
     let currentExamId = null, selectedExamId = null, selectedExamData = null, examStartTime = null, currentQuestionIndex = 0;
     let currentStep = 1;
 
@@ -482,19 +555,152 @@
             showToast(`تم تحميل ${questions.length} سؤال`, 'success');
         } catch (e) { showToast("خطأ في التحميل: " + e.message, 'error'); } 
     }
-    function startExam() { 
-        document.getElementById('examInfoScreen').classList.add('hidden'); 
-        document.getElementById('examScreen').classList.remove('hidden'); 
-        examStartTime = new Date();
-        currentQuestionIndex = 0;
-        currentStep = 3;
-        saveState();
-        renderQuestions(); 
-        renderNavigator();
-        updateNavButtons();
-        updateStepper();
-        showToast('🚀 ابدأ الاختبار! بالتوفيق', 'info');
+    // ✅ بدء العداد التنازلي
+function startTimer(duration) {
+    if (!duration || duration <= 0) {
+        document.getElementById('timerContainer').classList.add('hidden');
+        return;
     }
+    
+    examDuration = duration;
+    timeRemaining = duration * 60;
+    
+    document.getElementById('timerContainer').classList.remove('hidden');
+    updateTimerDisplay();
+    
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        
+        if (timeRemaining === 300) {
+            showToast('⚠️ تبقى 5 دقائق فقط!', 'warning');
+            document.getElementById('timerDisplay').classList.add('timer-warning');
+        }
+        
+        if (timeRemaining === 60) {
+            showToast('⚠️ تبقى دقيقة واحدة فقط!', 'error');
+            document.getElementById('timerDisplay').classList.add('timer-danger');
+        }
+        
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            showToast('⏰ انتهى الوقت!', 'error');
+            finishExamAutomatically();
+        }
+    }, 1000);
+}
+
+// ✅ تحديث عرض العداد
+function updateTimerDisplay() {
+    const hours = Math.floor(timeRemaining / 3600);
+    const minutes = Math.floor((timeRemaining % 3600) / 60);
+    const seconds = timeRemaining % 60;
+    
+    const hoursStr = hours.toString().padStart(2, '0');
+    const minutesStr = minutes.toString().padStart(2, '0');
+    const secondsStr = seconds.toString().padStart(2, '0');
+    
+    document.getElementById('timerText').innerText = 
+        `${hoursStr}:${minutesStr}:${secondsStr}`;
+    
+    const timerDisplay = document.getElementById('timerDisplay');
+    if (timeRemaining <= 60) {        timerDisplay.classList.add('timer-danger');
+        timerDisplay.classList.remove('timer-warning');
+    } else if (timeRemaining <= 300) {
+        timerDisplay.classList.add('timer-warning');
+        timerDisplay.classList.remove('timer-danger');
+    } else {
+        timerDisplay.classList.remove('timer-warning', 'timer-danger');
+    }
+}
+
+// ✅ إيقاف العداد
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    document.getElementById('timerContainer').classList.add('hidden');
+}
+
+// ✅ إنهاء الامتحان تلقائياً
+async function finishExamAutomatically() {
+    showToast('⏰ انتهى الوقت! جاري التسليم...', 'error');
+    
+    try {
+        const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email;
+        const grade = localStorage.getItem('studentGrade') || 'غير محدد';
+        let correctCount = 0;
+        let cats = {};
+        
+        questions.forEach((q, i) => {
+            const ok = (studentAnswers[i] === q.correct_index);
+            if (ok) correctCount++;
+            const cat = q.category || 'عام';
+            if (!cats[cat]) cats[cat] = { total: 0, correct: 0 };
+            cats[cat].total++;
+            if (ok) cats[cat].correct++;
+        });
+        
+        const now = new Date();
+        const data = {
+            email: currentUser.email,
+            name: nm,
+            display_name: currentUser.displayName,
+            exam_id: currentExamId,
+            exam_name: examName,
+            score: correctCount,
+            total_questions: questions.length,
+            answers: studentAnswers,
+            categories: cats,
+            used_reset_code: false,            created_at: now,
+            start_time: examStartTime || now,
+            end_time: now,
+            grade_level: grade,
+            time_expired: true
+        };
+        
+        await db.collection('students').doc(currentUser.email + '_' + currentExamId).set(data);
+        
+        currentStep = 4;
+        saveState();
+        stopTimer();
+        
+        setTimeout(() => {
+            showResult(data);
+            showToast('📝 تم تسليم إجابتك تلقائياً', 'info');
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Error auto-submitting:', error);
+        showToast('خطأ في التسليم التلقائي: ' + error.message, 'error');
+    }
+}
+    function startExam() { 
+    document.getElementById('examInfoScreen').classList.add('hidden'); 
+    document.getElementById('examScreen').classList.remove('hidden'); 
+    examStartTime = new Date();
+    currentQuestionIndex = 0;
+    currentStep = 3;
+    saveState();
+    
+    // ✅ بدء العداد التنازلي
+    db.collection('exams').doc(currentExamId).get().then(doc => {
+        if (doc.exists) {
+            const examData = doc.data();
+            const timeLimit = examData.time_limit_minutes || 0;
+            if (timeLimit > 0) {
+                startTimer(timeLimit);
+            }
+        }
+    });
+    
+    renderQuestions(); 
+    renderNavigator();
+    updateNavButtons();
+    updateStepper();
+    showToast('🚀 ابدأ الاختبار! بالتوفيق', 'info');
+}
     
     function renderQuestions() { 
         const c = document.getElementById('questionsContainer'); 
@@ -569,6 +775,10 @@
     }
     async function finishExam() { 
         if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return; 
+        
+        // ✅ إيقاف العداد
+        stopTimer();
+    
         try { 
             const nm = localStorage.getItem('studentName') || currentUser.displayName || currentUser.email; 
             const grade = localStorage.getItem('studentGrade') || 'غير محدد';
