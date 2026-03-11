@@ -303,48 +303,67 @@
     }
 
     async function signInWithGoogle() { 
-        const provider = new firebase.auth.GoogleAuthProvider(); 
-        try { await auth.signInWithRedirect(provider); } 
-        catch (error) { showToast('خطأ في تسجيل الدخول: ' + error.message, 'error'); } 
+    try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({
+            prompt: 'select_account'
+        });
+        
+        // ✅ استخدام signInWithPopup بدلاً من redirect
+        const result = await auth.signInWithPopup(provider);
+        
+        if (result.user) {
+            currentUser = result.user;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('nameInputSection').classList.remove('hidden');
+            showToast('تم تسجيل الدخول بنجاح!', 'success');
+            updateStepper();
+        }
+    } catch (error) {
+        console.error('Error signing in:', error);
+        showToast('خطأ في تسجيل الدخول: ' + error.message, 'error');
     }
+}
     
     auth.onAuthStateChanged(async (user) => { 
-        document.getElementById('loadingScreen').classList.add('hidden'); 
-        if (user) { 
-            currentUser = user; 
-            document.getElementById('loginScreen').classList.remove('hidden'); 
-            document.getElementById('nameInputSection').classList.remove('hidden'); 
-            showToast('تم تسجيل الدخول بنجاح!', 'success');
-            const hasState = restoreState();
-            if (hasState) {
-                if (currentStep === 2) {                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('examSelectScreen').classList.remove('hidden');
-                    loadExamsList();
-                } else if (currentStep === 3) {
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('examScreen').classList.remove('hidden');
-                    await loadExamData(currentExamId);
-                } else if (currentStep === 4) {
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('resultScreen').classList.remove('hidden');
-                }
-            }
-            updateStepper();
-        } else { 
-            document.getElementById('loginScreen').classList.remove('hidden'); 
-            document.getElementById('nameInputSection').classList.add('hidden'); 
-        } 
-    });
+    document.getElementById('loadingScreen').classList.add('hidden'); 
     
-    auth.getRedirectResult().then((result) => { 
-        if (result.user) { 
-            currentUser = result.user; 
-            document.getElementById('loginScreen').classList.remove('hidden'); 
-            document.getElementById('nameInputSection').classList.remove('hidden'); 
-            showToast('تم تسجيل الدخول بنجاح!', 'success');
-        } 
-    }).catch((error) => { showToast('خطأ: ' + error.message, 'error'); });
-
+    if (user) { 
+        currentUser = user;
+        console.log('✅ User logged in:', user.email);
+        
+        // التحقق مما إذا كان الطالب قد أكمل البيانات
+        const savedName = localStorage.getItem('studentName');
+        const savedGrade = localStorage.getItem('studentGrade');
+        
+        if (savedName && savedGrade) {
+            // الطالب أكمل البيانات مسبقاً
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('examSelectScreen').classList.remove('hidden');
+            currentStep = 2;
+            saveState();
+            loadExamsList();
+        } else {
+            // الطالب يحتاج لإدخال البيانات
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('nameInputSection').classList.remove('hidden');
+            
+            // ملء الاسم إذا كان موجوداً في حساب Google
+            if (user.displayName) {
+                document.getElementById('studentName').value = user.displayName;
+            }
+        }
+        updateStepper();
+    } else { 
+        // المستخدم غير مسجل
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('nameInputSection').classList.add('hidden');
+        currentStep = 1;
+        updateStepper();
+    } 
+});
+    
+    
     async function verifyAndStart() { 
         const name = document.getElementById('studentName').value.trim(); 
         const grade = document.getElementById('studentGrade').value;
