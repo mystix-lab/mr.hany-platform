@@ -398,57 +398,64 @@
     }
 
     // ✅ دالة التنقل بين الخطوات
-    async function handleStepClick(stepNum) {
-        console.log('🖱️ النقر على الخطوة:', stepNum);
-        
-        const savedName = localStorage.getItem('studentName');
-        const savedGrade = localStorage.getItem('studentGrade');
-        
-        if (!savedName || !savedGrade) {
-            if (stepNum !== 1) {
-                showToast('⚠️ يجب تسجيل الدخول أولاً', 'warning');
-                return;
-            }
-        }
-        
-        hideAllScreens();
-        
-        switch(stepNum) {
-            case 1:
-                document.getElementById('loginScreen').classList.remove('hidden');
-                currentStep = 1;
-                break;
-            case 2:
-                if (savedName && savedGrade) {
-                    document.getElementById('examSelectScreen').classList.remove('hidden');
-                    currentStep = 2;
-                    loadExamsList();
-                } else {
-                    showToast('⚠️ يجب تسجيل الدخول أولاً', 'warning');
-                    document.getElementById('loginScreen').classList.remove('hidden');
-                }
-                break;
-            case 3:
-                if (currentExamId) {                    const confirmEntry = confirm('⚠️ هل تريد الدخول للامتحان الحالي؟');
-                    if (confirmEntry) {
-                        document.getElementById('examInfoScreen').classList.remove('hidden');
-                        currentStep = 3;
-                        loadExamData(currentExamId);
-                    } else {
-                        document.getElementById('examSelectScreen').classList.remove('hidden');
-                    }
-                } else {
-                    showToast('⚠️ يجب اختيار امتحان أولاً', 'warning');
-                    document.getElementById('examSelectScreen').classList.remove('hidden');
-                }
-                break;
-            case 4:
-                showToast('ℹ️ لا توجد نتيجة بعد', 'info');
-                document.getElementById('examSelectScreen').classList.remove('hidden');
-                break;
-        }
-        updateStepper();
+   async function handleStepClick(stepNum) {
+    console.log('🖱️ النقر على الخطوة:', stepNum);
+    
+    // ✅ منع التنقل تماماً أثناء الامتحان - لا شيء يعمل
+    if (currentStep === 3) {
+        // لا تفعل شيئاً - ارجع فوراً
+        return;
     }
+    
+    const savedName = localStorage.getItem('studentName');
+    const savedGrade = localStorage.getItem('studentGrade');
+    
+    if (!savedName || !savedGrade) {
+        if (stepNum !== 1) {
+            showToast('⚠️ يجب تسجيل الدخول أولاً', 'warning');
+            return;
+        }
+    }
+    
+    hideAllScreens();
+    
+    switch(stepNum) {
+        case 1:
+            document.getElementById('loginScreen').classList.remove('hidden');
+            currentStep = 1;
+            break;
+        case 2:
+            if (savedName && savedGrade) {
+                document.getElementById('examSelectScreen').classList.remove('hidden');
+                currentStep = 2;
+                loadExamsList();
+            } else {
+                showToast('⚠️ يجب تسجيل الدخول أولاً', 'warning');
+                document.getElementById('loginScreen').classList.remove('hidden');
+            }
+            break;
+        case 3:
+            if (currentExamId) {
+                const confirmEntry = confirm('⚠️ هل تريد الدخول للامتحان الحالي؟');
+                if (confirmEntry) {
+                    document.getElementById('examInfoScreen').classList.remove('hidden');
+                    currentStep = 3;
+                    loadExamData(currentExamId);
+                } else {
+                    document.getElementById('examSelectScreen').classList.remove('hidden');
+                }
+            } else {
+                showToast('⚠️ يجب اختيار امتحان أولاً', 'warning');
+                document.getElementById('examSelectScreen').classList.remove('hidden');
+            }
+            break;
+        case 4:
+            showToast('ℹ️ لا توجد نتيجة بعد', 'info');
+            document.getElementById('examSelectScreen').classList.remove('hidden');
+            break;
+    }
+    updateStepper();
+}
 
     function saveState() { 
         const state = { currentStep, currentExamId, selectedExamId, examName, studentAnswers, currentQuestionIndex, timestamp: Date.now() }; 
