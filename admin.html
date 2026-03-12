@@ -4,22 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة الامتحانات | أ. هاني محمد الداودي</title>
-    <!-- ✅ PWA Manifest للأستاذ -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="manifest" href="manifest-admin.json">
-    
-    <!-- ✅ Apple Touch Icon -->
     <link rel="apple-touch-icon" href="icons/icon-admin-192x192.png">
-    
-    <!-- ✅ Theme Color - أخضر للأستاذ -->
     <meta name="theme-color" content="#10b981">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="إدارة الامتحانات">
-    <meta name="msapplication-TileColor" content="#10b981">
-    <meta name="msapplication-TileImage" content="icons/icon-admin-144x144.png">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #8b5cf6; --success: #10b981; --error: #ef4444; --warning: #f59e0b; --info: #06b6d4; --dark: #1e293b; --darker: #0f172a; --accent: #ec4899; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,7 +24,7 @@
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 35px; }
         .card { background: rgba(255,255,255,0.08); backdrop-filter: blur(30px); padding: 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
         .card:hover { transform: translateY(-8px); border-color: rgba(99,102,241,0.4); box-shadow: 0 30px 60px rgba(99,102,241,0.3); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.15); flex-wrap: wrap; gap: 15px; }
         .card-title { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
         .stat-number { font-size: 48px; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .stat-label { color: rgba(255,255,255,0.7); font-size: 15px; margin-top: 8px; font-weight: 600; }
@@ -79,7 +71,7 @@
         .close-modal:hover { transform: rotate(90deg); color: var(--error); }
         .exam-card { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1)); padding: 28px; border-radius: 20px; margin: 15px 0; border: 2px solid rgba(99,102,241,0.4); transition: all 0.3s; position: relative; overflow: hidden; }
         .exam-card:hover { border-color: var(--primary); background: rgba(99,102,241,0.2); transform: translateX(8px); box-shadow: 0 15px 40px rgba(99,102,241,0.3); }
-        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
         .exam-title { font-size: 18px; font-weight: 700; color: #fff; }
         .exam-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
         .exam-actions { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -264,7 +256,13 @@
         
         <div id="tab-questions" class="tab-content">
             <div class="card">
-                <div class="card-header"><div class="card-title">❓ إدارة الأسئلة</div></div>
+                <div class="card-header">
+                    <div class="card-title">❓ إدارة الأسئلة</div>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn btn-danger btn-small" onclick="deleteAllExamQuestions()" style="background:linear-gradient(135deg, #ef4444, #dc2626);">🗑️ حذف جميع الأسئلة</button>
+                        <button class="btn btn-success btn-small" onclick="showAddQuestion()">➕ إضافة سؤال</button>
+                    </div>
+                </div>
                 <div style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,182,212,0.1));padding:25px;border-radius:20px;margin:20px 0;border:2px solid rgba(16,185,129,0.4);">
                     <h3>📥 رفع أسئلة من ملف CSV</h3>
                     <p style="font-size:13px;opacity:0.8;margin:10px 0;">ملف CSV يحتوي على: السؤال,الخيار1,الخيار2,الخيار3,الخيار4,الإجابة (0-3),التصنيف</p>
@@ -283,11 +281,11 @@
         <button onclick="teacherSignOut()" class="btn btn-danger" style="margin-top:30px;width:100%;">🚪 تسجيل الخروج</button>
     </div>
 </div>
-
 <!-- Modals -->
 <div id="examModal" class="hidden modal">
     <div class="modal-content">
-        <div class="modal-header">            <h3 id="examModalTitle">📝 إنشاء امتحان جديد</h3>
+        <div class="modal-header">
+            <h3 id="examModalTitle">📝 إنشاء امتحان جديد</h3>
             <button class="close-modal" onclick="closeExamModal()">×</button>
         </div>
         <input type="hidden" id="editExamId">
@@ -307,8 +305,9 @@
         <textarea id="examDesc" placeholder="وصف الامتحان" rows="3"></textarea>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <input type="number" id="examPassing" placeholder="درجة النجاح (%)" value="50">
-            <input type="number" id="examTime" placeholder="الوقت (دقيقة) - اختياري">
+            <input type="number" id="examTime" placeholder="⏱️ وقت الامتحان (دقيقة)" min="1" max="180">
         </div>
+        <p style="font-size:13px;opacity:0.7;margin-top:5px;">⚠️ اتركه فارغاً لوقت غير محدود</p>
         <button class="btn btn-success" onclick="saveExam()" style="width:100%;">💾 حفظ الامتحان</button>
     </div>
 </div>
@@ -336,7 +335,8 @@
         </div>
         <input type="hidden" id="questionExamId">
         <input type="text" id="qText" placeholder="نص السؤال">
-        <input type="text" id="opt1" placeholder="الخيار الأول">        <input type="text" id="opt2" placeholder="الخيار الثاني">
+        <input type="text" id="opt1" placeholder="الخيار الأول">
+        <input type="text" id="opt2" placeholder="الخيار الثاني">
         <input type="text" id="opt3" placeholder="الخيار الثالث">
         <input type="text" id="opt4" placeholder="الخيار الرابع">
         <select id="qCorrect">
@@ -491,7 +491,7 @@
             subject, 
             description: desc, 
             passing_score: passing, 
-            time_limit_minutes: timeLimit, 
+            time_limit_minutes: timeLimit,
             teacher_email: currentUser.email, 
             reset_code: resetCode, 
             updated_at: new Date().toISOString() 
@@ -505,15 +505,15 @@
             await db.collection('exams').add(examData); 
         }
         
-        showToast(`✅ تم حفظ الامتحان\nكود الإعادة: ${resetCode}`, 'success');
+        showToast(`✅ تم حفظ الامتحان\n${timeLimit ? '⏱️ الوقت: ' + timeLimit + ' دقيقة' : '⏱️ وقت غير محدود'}`, 'success');
         closeExamModal();
         loadExams();
         loadDashboard();
     }
-
     async function loadExams() {
         const container = document.getElementById('examsList');
-        container.innerHTML = '<p style="text-align:center;padding:20px;">جاري التحميل...</p>';        const snapshot = await db.collection('exams').where('teacher_email', '==', currentUser.email).orderBy('created_at', 'desc').get();
+        container.innerHTML = '<p style="text-align:center;padding:20px;">جاري التحميل...</p>';
+        const snapshot = await db.collection('exams').where('teacher_email', '==', currentUser.email).orderBy('created_at', 'desc').get();
         
         if (snapshot.empty) { 
             container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">📭 لا توجد امتحانات</p>'; 
@@ -524,6 +524,10 @@
         snapshot.forEach(doc => {
             const exam = doc.data();
             const statusBadge = exam.is_active ? '<span class="badge badge-success">نشط</span>' : '<span class="badge badge-error">موقف</span>';
+            const timeBadge = exam.time_limit_minutes ? 
+                `<span class="badge badge-warning">⏱️ ${exam.time_limit_minutes} دقيقة</span>` : 
+                `<span class="badge badge-info">⏱️ غير محدود</span>`;
+            
             html += `<div class="exam-card">
                 <div class="exam-header">
                     <div>
@@ -535,7 +539,7 @@
                 <div class="exam-meta">
                     <span class="badge badge-warning">🔑 ${exam.reset_code || 'بدون كود'}</span>
                     <span class="badge badge-primary">📊 ${exam.passing_score}%</span>
-                    ${exam.time_limit_minutes ? `<span class="badge badge-warning">⏱️ ${exam.time_limit_minutes}د</span>` : ''}
+                    ${timeBadge}
                     <span class="badge badge-info">📅 ${new Date(exam.created_at?.toDate ? exam.created_at.toDate() : new Date()).toLocaleDateString('ar-EG')}</span>
                 </div>
                 <p style="font-size:14px;opacity:0.8;margin-bottom:20px;">${exam.description || 'لا يوجد وصف'}</p>
@@ -562,7 +566,8 @@
         } catch (error) {
             showToast('خطأ: ' + error.message, 'error');
         }
-    }    
+    }
+    
     async function deleteExam(examId) { 
         if (!confirm('⚠️ هل أنت متأكد؟')) return; 
         await db.collection('questions').where('exam_id', '==', examId).get().then(s => s.forEach(d => d.ref.delete())); 
@@ -777,7 +782,6 @@
         });
         document.getElementById('honorBoard').style.display = 'block';
     }
-    
     function displayGradesChart(students) {
         const percentages = students.map(s => (s.score / s.total_questions) * 100);
         const excellent = percentages.filter(p => p >= 90).length;
@@ -793,7 +797,8 @@
             data: {
                 labels: ['ممتاز (90-100%)', 'جيد جداً (70-89%)', 'جيد (50-69%)', 'ضعيف (<50%)'],
                 datasets: [{
-                    label: 'عدد الطلاب',                    data: [excellent, good, fair, fail],
+                    label: 'عدد الطلاب',
+                    data: [excellent, good, fair, fail],
                     backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#ef4444'],
                     borderColor: ['#059669', '#4f46e5', '#d97706', '#dc2626'],
                     borderWidth: 2
@@ -826,8 +831,7 @@
     }
     
     async function viewStudentDetail(id) {
-        try {
-            currentStudentId = id;
+        try {            currentStudentId = id;
             const doc = await db.collection('students').doc(id).get();
             if (!doc.exists) return;
             
@@ -842,7 +846,8 @@
                 
                 if (s.end_time?.toDate) endTime = s.end_time.toDate();
                 else endTime = new Date(s.end_time);
-                                const diffMs = endTime - startTime;
+                
+                const diffMs = endTime - startTime;
                 const diffMins = Math.floor(diffMs / 60000);
                 const diffSecs = Math.floor((diffMs % 60000) / 1000);
                 durationText = `${diffMins} دقيقة و ${diffSecs} ثانية`;
@@ -875,8 +880,7 @@
                     <p style="opacity:0.6;font-size:13px;margin-top:5px;">📱 ${s.phone || 'غير محدد'} | 📚 ${s.grade_level || 'غير محدد'}</p>
                 </div>
                 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:25px;">
-                    <div style="background:rgba(99,102,241,0.1);padding:20px;border-radius:16px;border:1px solid rgba(99,102,241,0.2);">
-                        <div style="font-size:13px;opacity:0.7;margin-bottom:8px;">📝 الامتحان</div>
+                    <div style="background:rgba(99,102,241,0.1);padding:20px;border-radius:16px;border:1px solid rgba(99,102,241,0.2);">                        <div style="font-size:13px;opacity:0.7;margin-bottom:8px;">📝 الامتحان</div>
                         <div style="font-weight:700;font-size:16px;">${s.exam_name}</div>
                     </div>
                     <div style="background:rgba(16,185,129,0.1);padding:20px;border-radius:16px;border:1px solid rgba(16,185,129,0.2);">
@@ -891,7 +895,8 @@
                         <div style="font-size:13px;opacity:0.7;margin-bottom:8px;">🔄 عدد المحاولات</div>
                         <div style="font-weight:700;font-size:18px;">${attemptsCount} ${attemptsCount === 1 ? 'محاولة' : 'محاولات'}</div>
                     </div>
-                </div>                <h3 style="margin:20px 0 15px;font-size:16px;border-bottom:2px solid rgba(255,255,255,0.1);padding-bottom:10px;">⏰ التفاصيل الزمنية</h3>
+                </div>
+                <h3 style="margin:20px 0 15px;font-size:16px;border-bottom:2px solid rgba(255,255,255,0.1);padding-bottom:10px;">⏰ التفاصيل الزمنية</h3>
                 <div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:16px;margin-bottom:15px;">
                     <div style="display:flex;justify-content:space-between;margin-bottom:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;">
                         <span style="opacity:0.7;">⏱️ المدة المستغرقة:</span>
@@ -924,8 +929,7 @@
         }
     }
     
-    function closeStudentDetail() {
-        document.getElementById('studentDetailModal').classList.add('hidden');
+    function closeStudentDetail() {        document.getElementById('studentDetailModal').classList.add('hidden');
     }
     
     function exportStudentPDF() {
@@ -940,7 +944,8 @@
         let csv = "الاسم,البريد,الهاتف,الصف,الامتحان,الدرجة,النسبة,التاريخ\n";
         document.querySelectorAll('#studentsTable tbody tr').forEach(r => {
             const cells = r.querySelectorAll('td');
-            if (cells.length > 1) {                csv += `${cells[0].innerText},${cells[1].innerText},${cells[2].innerText},${cells[3].innerText},${cells[4].innerText},${cells[5].innerText},${cells[6].innerText}\n`;
+            if (cells.length > 1) {
+                csv += `${cells[0].innerText},${cells[1].innerText},${cells[2].innerText},${cells[3].innerText},${cells[4].innerText},${cells[5].innerText},${cells[6].innerText}\n`;
             }
         });
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -951,33 +956,61 @@
         a.click();
         showToast('✅ تم تصدير النتائج', 'success');
     }
+    
     async function loadResetLogs() {
         const tbody = document.querySelector('#resetsTable tbody');
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">جاري التحميل...</td></tr>';
         
-        const snapshot = await db.collection('examResets').orderBy('used_at', 'desc').limit(100).get();
-        tbody.innerHTML = '';
-        
-        if (snapshot.empty) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;opacity:0.5;">لا توجد سجلات</td></tr>';
-            return;
+        try {
+            const snapshot = await db.collection('examResets')
+                .orderBy('timestamp', 'desc')
+                .limit(100)
+                .get();
+            
+            tbody.innerHTML = '';
+            
+            if (snapshot.empty) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;opacity:0.5;">لا توجد سجلات</td></tr>';
+                return;
+            }
+            
+            for (const doc of snapshot.docs) {
+                const log = doc.data();
+                
+                const studentName = log.student_name || 'غير محدد';
+                const studentPhone = log.student_phone || 'غير محدد';                const studentEmail = log.student_email || '-';
+                const examName = log.exam_name || 'غير معروف';
+                const resetCode = log.reset_code || '-';
+                
+                let dateStr = '-';
+                if (log.used_at || log.timestamp) {
+                    try {
+                        const date = log.used_at?.toDate ? log.used_at.toDate() : 
+                                    log.timestamp?.toDate ? log.timestamp.toDate() : 
+                                    new Date(log.used_at || log.timestamp);
+                        dateStr = date.toLocaleDateString('ar-EG');
+                    } catch (e) {
+                        dateStr = '-';
+                    }
+                }
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-size:14px;">${examName}</td>
+                        <td style="font-weight:700;color:var(--success);font-size:15px;">${studentName}</td>
+                        <td style="font-size:13px;opacity:0.8;">${studentEmail}</td>
+                        <td style="font-size:13px;opacity:0.8;font-family:monospace;">${studentPhone}</td>
+                        <td style="font-family:monospace;color:var(--warning);font-weight:700;">${resetCode}</td>
+                        <td style="font-size:13px;">${dateStr}</td>
+                    </tr>
+                `;
+            }
+            
+        } catch (error) {
+            console.error('❌ خطأ في تحميل سجل الأكواد:', error);
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--error);">خطأ في التحميل</td></tr>`;
         }
-        
-        snapshot.forEach(doc => {
-            const log = doc.data();
-            tbody.innerHTML += `
-                <tr>
-                    <td>${log.exam_name || 'غير معروف'}</td>
-                    <td style="font-weight:700;">${log.student_name || 'غير محدد'}</td>
-                    <td style="font-size:13px;opacity:0.7;">${log.student_email || 'غير محدد'}</td>
-                    <td style="font-size:13px;opacity:0.7;">${log.student_phone || 'غير محدد'}</td>
-                    <td style="font-family:monospace;color:var(--warning);">${log.reset_code}</td>
-                    <td>${log.used_at ? new Date(log.used_at.toDate ? log.used_at.toDate() : new Date(log.used_at)).toLocaleDateString('ar-EG') : '-'}</td>
-                </tr>
-            `;
-        });
     }
-    
     async function loadExamsForQuestionsFilter() {
         const select = document.getElementById('filterExamQuestions');
         if (select.options.length > 1) return;
@@ -1000,7 +1033,8 @@
         document.getElementById('qText').value = '';
         document.getElementById('opt1').value = '';
         document.getElementById('opt2').value = '';
-        document.getElementById('opt3').value = '';        document.getElementById('opt4').value = '';
+        document.getElementById('opt3').value = '';
+        document.getElementById('opt4').value = '';
         document.getElementById('qExp').value = '';
         document.getElementById('questionModal').classList.remove('hidden');
     }
@@ -1026,8 +1060,7 @@
             teacher_email: currentUser.email,
             order_num: Date.now()
         };
-        
-        if (!q.text || !q.options[0]) {
+                if (!q.text || !q.options[0]) {
             showToast('⚠️ املأ السؤال والخيار الأول', 'warning');
             return;
         }
@@ -1049,7 +1082,8 @@
             return;
         }
         if (!fileInput.files[0]) {
-            showToast('⚠️ اختر ملفاً', 'warning');            return;
+            showToast('⚠️ اختر ملفاً', 'warning');
+            return;
         }
         
         statusEl.innerText = '🔄 جاري قراءة الملف...';
@@ -1075,8 +1109,7 @@
                                 q['الخيار2'] || q['option2'],
                                 q['الخيار3'] || q['option3'],
                                 q['الخيار4'] || q['option4']
-                            ],
-                            correct_index: parseInt(q['الإجابة'] || q['correct']) || 0,
+                            ],                            correct_index: parseInt(q['الإجابة'] || q['correct']) || 0,
                             category: q['التصنيف'] || q['category'] || 'عام',
                             explanation: q['الشرح'] || q['explanation'] || '',
                             teacher_email: currentUser.email,
@@ -1098,15 +1131,15 @@
                 statusEl.style.color = 'var(--success)';
                 loadQuestionsForExam();
                 loadDashboard();
-            },            error: function(error) {
+            },
+            error: function(error) {
                 statusEl.innerText = '❌ خطأ: ' + error.message;
                 statusEl.style.color = 'var(--error)';
             }
         });
     }
-    
-    async function loadQuestionsForExam() {
-        const examId = document.getElementById('filterExamQuestions').value;
+    async function loadQuestionsForExam(examIdToLoad = null) {
+        const examId = examIdToLoad || document.getElementById('filterExamQuestions').value;
         const container = document.getElementById('questionsList');
         
         if (!examId) {
@@ -1115,71 +1148,127 @@
         }
         
         container.innerHTML = '<p style="text-align:center;padding:20px;">جاري التحميل...</p>';
-        const snapshot = await db.collection('questions').where('exam_id', '==', examId).get();
         
-        let questions = [];
-        snapshot.forEach(doc => questions.push(doc.data()));
-        questions.sort((a, b) => a.order_num - b.order_num);
+        try {
+            const snapshot = await db.collection('questions').where('exam_id', '==', examId).get();
+            
+            let questions = [];
+            snapshot.forEach(doc => {
+                questions.push({ id: doc.id, ...doc.data() });
+            });
+            questions.sort((a, b) => a.order_num - b.order_num);
+            
+            if (questions.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">لا توجد أسئلة</p>';
+                return;
+            }
+            
+            let html = '';
+            questions.forEach((q, index) => {
+                html += `
+                    <div class="exam-card" id="question-card-${q.id}">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                            <span class="badge badge-primary">سؤال ${index + 1}</span>
+                            <span class="badge badge-info">${q.category || 'عام'}</span>
+                        </div>
+                        <div style="font-weight:700;margin-bottom:15px;">${q.text}</div>
+                        <div style="font-size:14px;opacity:0.8;">
+                            ${q.options.map((opt, j) => `
+                                <div style="padding:5px 0;color:${j === q.correct_index ? 'var(--success)' : ''}">
+                                    ${j + 1}. ${opt} ${j === q.correct_index ? '✅' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${q.explanation ? `
+                            <div style="margin-top:15px;padding:10px;background:rgba(99,102,241,0.2);border-radius:8px;font-size:13px;">
+                                💡 ${q.explanation}
+                            </div>
+                        ` : ''}
+                        <div style="margin-top:15px;display:flex;gap:10px;">
+                            <button class="btn btn-danger btn-small" onclick="deleteQuestion('${q.id}', '${q.exam_id}')">🗑️ حذف</button>
+                        </div>
+                    </div>                `;
+            });
+            container.innerHTML = html;
+            
+        } catch (error) {
+            console.error('❌ خطأ في تحميل الأسئلة:', error);
+            container.innerHTML = '<p style="text-align:center;padding:40px;color:var(--error);">خطأ في تحميل الأسئلة</p>';
+        }
+    }
+    
+    async function deleteQuestion(questionId, examId) {
+        if (!confirm('⚠️ هل أنت متأكد من حذف هذا السؤال؟')) return;
         
-        if (questions.length === 0) {
-            container.innerHTML = '<p style="text-align:center;padding:40px;opacity:0.5;">لا توجد أسئلة</p>';
+        try {
+            await db.collection('questions').doc(questionId).delete();
+            showToast('✅ تم حذف السؤال بنجاح', 'success');
+            
+            if (examId) {
+                loadQuestionsForExam(examId);
+            } else {
+                loadQuestionsForExam();
+            }
+            loadDashboard();
+        } catch (error) {
+            console.error('❌ خطأ في حذف السؤال:', error);
+            showToast('خطأ في حذف السؤال: ' + error.message, 'error');
+        }
+    }
+    
+    async function deleteAllExamQuestions() {
+        const examId = document.getElementById('filterExamQuestions').value;
+        
+        if (!examId) {
+            showToast('⚠️ اختر امتحاناً أولاً', 'warning');
             return;
         }
         
-        let html = '';
-        let i = 0;
-        questions.forEach(q => {
-            html += `
-                <div class="exam-card">
-                    <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
-                        <span class="badge badge-primary">سؤال ${i+1}</span>
-                        <span class="badge badge-info">${q.category}</span>
-                    </div>
-                    <div style="font-weight:700;margin-bottom:15px;">${q.text}</div>
-                    <div style="font-size:14px;opacity:0.8;">
-                        ${q.options.map((o,j) => `
-                            <div style="padding:5px 0;color:${j===q.correct_index?'var(--success)':''}">
-                                ${j+1}. ${o} ${j===q.correct_index?'✅':''}
-                            </div>
-                        `).join('')}
-                    </div>
-                    ${q.explanation ? `
-                        <div style="margin-top:15px;padding:10px;background:rgba(99,102,241,0.2);border-radius:8px;font-size:13px;">
-                            💡 ${q.explanation}
-                        </div>
-                    ` : ''}                    <div style="margin-top:15px;display:flex;gap:10px;">
-                        <button class="btn btn-danger btn-small" onclick="deleteQuestion('${questions[i].id}')">🗑️ حذف</button>
-                    </div>
-                </div>
-            `;
-            i++;
-        });
-        container.innerHTML = html;
-    }
-    
-    async function deleteQuestion(qId) {
-        if (!confirm('⚠️ حذف هذا السؤال؟')) return;
-        await db.collection('questions').doc(qId).delete();
-        showToast('✅ تم الحذف', 'success');
-        loadQuestionsForExam();
-        loadDashboard();
+        try {
+            const snapshot = await db.collection('questions')
+                .where('exam_id', '==', examId)
+                .get();
+            
+            const count = snapshot.size;
+            
+            if (count === 0) {
+                showToast('ℹ️ هذا الامتحان لا يحتوي على أسئلة', 'info');
+                return;
+            }
+            
+            if (!confirm(`⚠️ تحذير: سيتم حذف ${count} سؤال من هذا الامتحان!\n\nهل أنت متأكد؟`)) {                return;
+            }
+            
+            const confirmText = prompt('اكتب "حذف" للتأكيد:');
+            if (confirmText !== 'حذف') {
+                showToast('❌ تم إلغاء العملية', 'error');
+                return;
+            }
+            
+            showToast('🔄 جاري حذف الأسئلة...', 'info');
+            
+            const deletePromises = [];
+            snapshot.forEach(doc => {
+                deletePromises.push(doc.ref.delete());
+            });
+            
+            await Promise.all(deletePromises);
+            
+            showToast(`✅ تم حذف ${count} سؤال بنجاح`, 'success');
+            loadQuestionsForExam();
+            loadDashboard();
+            
+        } catch (error) {
+            console.error('❌ خطأ:', error);
+            showToast('خطأ: ' + error.message, 'error');
+        }
     }
     
     function selectExamForQuestions(examId) {
         document.getElementById('filterExamQuestions').value = examId;
         switchTab('questions');
-        loadQuestionsForExam();
+        loadQuestionsForExam(examId);
     }
 </script>
-<!-- ✅ Register Service Worker -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('✅ Service Worker registered'))
-                    .catch(err => console.log('❌ Service Worker registration failed'));
-            });
-        }
-    </script>
 </body>
 </html>

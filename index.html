@@ -4,25 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الاختبارات | أ. هاني محمد الداودي</title>
-    
-    <!-- ✅ PWA Manifest - ضروري جداً -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
-    
-    <!-- ✅ Apple Touch Icon - للآيفون والآيباد -->
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    
-    <!-- ✅ Theme Color - لون الشريط العلوي -->
     <meta name="theme-color" content="#6366f1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="امتحانات هاني">
-    
-    <!-- ✅ Microsoft Tile -->
-    <meta name="msapplication-TileColor" content="#6366f1">
-    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
-    
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #8b5cf6; --success: #10b981; --error: #ef4444; --warning: #f59e0b; --info: #06b6d4; --dark: #1e1b4b; --darker: #0f172a; --accent: #ec4899; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -90,7 +78,7 @@
         .progress-bar { height: 12px; background: rgba(255,255,255,0.1); border-radius: 15px; margin-bottom: 35px; overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.4); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent)); width: 0%; transition: width 0.6s; box-shadow: 0 0 30px rgba(99,102,241,0.7); }
         .loader { width: 70px; height: 70px; border: 5px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 50px auto; box-shadow: 0 0 40px rgba(99,102,241,0.6); }
-        @keyframes spin { 100% { transform: rotate(360deg); }}
+        @keyframes spin { 100% { transform: rotate(360deg); } }
         .analysis-item { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-radius: 18px; padding: 22px; margin: 14px 0; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.15); }
         .analysis-item:hover { background: rgba(255,255,255,0.12); transform: translateX(8px); border-color: rgba(99,102,241,0.4); }
         .mini-progress { width: 140px; height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
@@ -220,10 +208,17 @@
     <div id="examInfoScreen" class="glass-card hidden">
         <h2 id="examTitleDisplay" class="text-center" style="margin-bottom:20px;font-size:28px;"></h2>
         <p class="text-center" style="color:rgba(255,255,255,0.75);margin-bottom:30px;font-size:18px;">عدد الأسئلة: <span id="totalQuestionsCount" style="color:var(--primary);font-weight:700;font-size:22px;"></span></p>
+        <div id="examTimeDisplay" style="background:rgba(245,158,11,0.2);border:2px solid rgba(245,158,11,0.5);padding:20px;border-radius:18px;margin-bottom:20px;text-align:center;"></div>
         <div style="background:rgba(245,158,11,0.2);border:2px solid rgba(245,158,11,0.5);padding:25px;border-radius:18px;margin-bottom:30px;">⚠️ <strong>تنبيه:</strong> لديك محاولة واحدة فقط.</div>
         <button class="btn btn-primary" onclick="startExam()">🚀 بدء الاختبار</button>
     </div>
     <div id="examScreen" class="hidden">
+        <!-- ✅ شريط الوقت -->
+        <div id="timerBar" style="background:linear-gradient(90deg, var(--success), var(--warning), var(--error));padding:15px;border-radius:16px;margin-bottom:20px;text-align:center;box-shadow:0 5px 20px rgba(0,0,0,0.3);">
+            <div style="font-size:14px;opacity:0.9;margin-bottom:5px;">⏱️ الوقت المتبقي</div>
+            <div id="timerDisplay" style="font-size:42px;font-weight:900;font-family:monospace;letter-spacing:3px;">00:00:00</div>
+        </div>
+        
         <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
         <div class="question-navigator" id="questionNavigator"></div>
         <div id="questionsContainer"></div>
@@ -298,6 +293,7 @@
     let currentExamId = null, selectedExamId = null, selectedExamData = null, examStartTime = null, currentQuestionIndex = 0;
     let currentStep = 1;
     let examStatusCheckInterval = null;
+    let examTimer = null, timeRemaining = 0, timeLimitMinutes = 0, timerWarningShown = false;
 
     // ✅ الكود الصحيح لشاشة الصلاة والتحميل
     window.addEventListener('load', function() {
@@ -335,8 +331,8 @@
             
             setTimeout(() => {
                 console.log('🔽 إخفاء شاشة الصلاة');
-                clearInterval(countdownInterval);
-                                if (introScreen) {
+                clearInterval(countdownInterval);                
+                if (introScreen) {
                     introScreen.style.transition = 'opacity 0.5s ease';
                     introScreen.style.opacity = '0';
                     
@@ -384,8 +380,8 @@
                 currentStep = 2;
                 updateStepper();
                 loadExamsList();
-            }
-        } else {            console.log('🎓 إظهار شاشة التسجيل');
+            }        } else {
+            console.log('🎓 إظهار شاشة التسجيل');
             document.getElementById('loginScreen').classList.remove('hidden');
             currentStep = 1;
             updateStepper();
@@ -433,8 +429,8 @@
                 }
                 break;
             case 3:
-                if (currentExamId) {
-                    const confirmEntry = confirm('⚠️ هل تريد الدخول للامتحان الحالي؟');                    if (confirmEntry) {
+                if (currentExamId) {                    const confirmEntry = confirm('⚠️ هل تريد الدخول للامتحان الحالي؟');
+                    if (confirmEntry) {
                         document.getElementById('examInfoScreen').classList.remove('hidden');
                         currentStep = 3;
                         loadExamData(currentExamId);
@@ -482,8 +478,8 @@
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
-        toast.innerHTML = `<span style="font-size:24px;">${icons[type]}</span><span>${message}</span>`;        container.appendChild(toast);
+        const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };        toast.innerHTML = `<span style="font-size:24px;">${icons[type]}</span><span>${message}</span>`;
+        container.appendChild(toast);
         setTimeout(() => { toast.remove(); }, 3000);
     }
 
@@ -531,11 +527,71 @@
             saveState();
             loadExamsList();
             showToast('✅ تم تسجيل الدخول بنجاح!', 'success');
-            
-        } catch (error) {            console.error('❌ خطأ في التحقق:', error);
+                    } catch (error) {
+            console.error('❌ خطأ في التحقق:', error);
             showToast('خطأ في التحقق: ' + error.message, 'error');
         }
     }
+    // ✅ دوال المؤقت الزمني
+    function startTimer(minutes) {
+        if (!minutes || minutes <= 0) {
+            document.getElementById('timerBar').style.display = 'none';
+            return;
+        }
+        
+        timeLimitMinutes = minutes;
+        timeRemaining = minutes * 60;
+        timerWarningShown = false;
+        
+        document.getElementById('timerBar').style.display = 'block';
+        updateTimerDisplay();
+        
+        examTimer = setInterval(() => {
+            timeRemaining--;
+            updateTimerDisplay();
+            
+            if (timeRemaining <= 300 && !timerWarningShown) {
+                showToast('⚠️ باقي 5 دقائق على انتهاء الوقت!', 'warning');
+                timerWarningShown = true;
+            }
+            
+            if (timeRemaining <= 60) {
+                showToast('🚨 دقيقة واحدة متبقية!', 'error');
+            }
+            
+            if (timeRemaining <= 0) {
+                clearInterval(examTimer);
+                showToast('⏰ انتهى الوقت! سيتم تسليم إجابتك تلقائياً', 'error');
+                setTimeout(() => {
+                    finishExam(true);
+                }, 3000);
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const hours = Math.floor(timeRemaining / 3600);
+        const minutes = Math.floor((timeRemaining % 3600) / 60);
+        const seconds = timeRemaining % 60;
+        
+        const display = document.getElementById('timerDisplay');
+        display.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeRemaining <= 60) {
+            display.style.color = '#ef4444';
+        } else if (timeRemaining <= 300) {
+            display.style.color = '#f59e0b';
+        } else {            display.style.color = '#10b981';
+        }
+    }
+
+    function stopTimer() {
+        if (examTimer) {
+            clearInterval(examTimer);
+            examTimer = null;
+        }
+    }
+
     async function loadExamsList() { 
         try { 
             console.log('📋 جاري تحميل الامتحانات...');
@@ -574,8 +630,7 @@
                 const card = document.createElement('div'); 
                 card.className = 'exam-card'; 
                 card.style.cursor = 'pointer'; 
-                card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:8px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p><div style="display:flex;gap:8px;"><span class="badge badge-primary">${exam.grade_level}</span><span class="badge badge-info">${exam.subject}</span></div></div><span style="font-size:24px;">➡️</span></div>`; 
-                container.appendChild(card); 
+                card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><div><h3 style="margin-bottom:8px;">${exam.name}</h3><p style="font-size:14px;opacity:0.7;margin-bottom:10px;">${exam.description || ''}</p><div style="display:flex;gap:8px;"><span class="badge badge-primary">${exam.grade_level}</span><span class="badge badge-info">${exam.subject}</span>${exam.time_limit_minutes ? `<span class="badge badge-warning">⏱️ ${exam.time_limit_minutes}د</span>` : ''}</div></div><span style="font-size:24px;">➡️</span></div>`;                 container.appendChild(card); 
                 card.addEventListener('click', () => selectExam(doc.id, exam)); 
             }); 
             
@@ -585,7 +640,8 @@
         } 
     }
 
-    async function selectExam(examId, exam) {         try { 
+    async function selectExam(examId, exam) { 
+        try { 
             console.log('📋 اختيار الامتحان:', examId);
             
             const examDoc = await db.collection('exams').doc(examId).get({ source: 'server' });
@@ -623,43 +679,90 @@
     async function verifyResetCode() { 
         const code = document.getElementById('resetCodeInput').value.trim().toUpperCase(); 
         if (code.length !== 8) { showToast('⚠️ الكود يجب أن يكون 8 أحرف', 'warning'); return; } 
-        try { 
+                try { 
             const examDoc = await db.collection('exams').doc(selectedExamId).get({ source: 'server' }); 
             const exam = examDoc.data(); 
-            if (!exam || exam.reset_code !== code) { showToast('❌ كود الإعادة غير صحيح', 'error'); return; } 
+            
+            if (!exam || exam.reset_code !== code) { 
+                showToast('❌ كود الإعادة غير صحيح', 'error'); 
+                return; 
+            } 
+            
             const studentEmail = localStorage.getItem('studentEmail');
+            const studentName = localStorage.getItem('studentName');
+            const studentPhone = localStorage.getItem('studentPhone');
+            const studentGrade = localStorage.getItem('studentGrade');
+            
+            console.log('📝 بيانات الطالب:', { email: studentEmail, name: studentName, phone: studentPhone, grade: studentGrade });
+            
             await db.collection('students').doc(`${studentEmail}_${selectedExamId}`).delete(); 
-            await db.collection('examResets').add({ exam_id: selectedExamId, exam_name: exam.name, student_email: studentEmail, reset_code: code, used_at: new Date().toISOString() }); 
-            showToast('✅ تم التحقق!', 'success'); 
+            
+            await db.collection('examResets').add({ 
+                exam_id: selectedExamId, 
+                exam_name: exam.name, 
+                student_email: studentEmail,
+                student_name: studentName || 'غير محدد',
+                student_phone: studentPhone || 'غير محدد',
+                student_grade: studentGrade || 'غير محدد',
+                reset_code: code, 
+                used_at: new Date(),
+                timestamp: Date.now()
+            }); 
+            
+            console.log('✅ تم حفظ سجل الإعادة بنجاح');
+            showToast('✅ تم التحقق! يمكنك الآن أداء الامتحان', 'success'); 
             document.getElementById('resetCodeScreen').classList.add('hidden'); 
             currentExamId = selectedExamId; 
             await loadExamData(selectedExamId); 
-        } catch (error) { showToast('خطأ: ' + error.message, 'error'); }     }
+            
+        } catch (error) { 
+            console.error('❌ خطأ في verifyResetCode:', error);
+            showToast('خطأ: ' + error.message, 'error'); 
+        } 
+    }
 
     function backToExams() { 
         hideAllScreens();
         document.getElementById('examSelectScreen').classList.remove('hidden'); 
         document.getElementById('resetCodeInput').value = ''; 
     }
-
     async function loadExamData(examId) { 
         try { 
             const examDoc = await db.collection('exams').doc(examId).get({ source: 'server' });
             if (!examDoc.exists) { showToast('❌ الامتحان غير موجود', 'error'); return; }
-            examName = examDoc.data().name; 
+            
+            const examData = examDoc.data();
+            examName = examData.name;
+            timeLimitMinutes = examData.time_limit_minutes || 0;
+            
             document.getElementById('examNameDisplay').innerText = examName; 
             document.getElementById('examTitleDisplay').innerText = examName; 
+            
             const snapshot = await db.collection('questions').where('exam_id', '==', examId).get({ source: 'server' });
             questions = []; 
             snapshot.forEach(doc => questions.push(doc.data())); 
             questions.sort((a, b) => a.order_num - b.order_num);
             document.getElementById('totalQuestionsCount').innerText = questions.length; 
+            
             const studentEmail = localStorage.getItem('studentEmail');
             const doc = await db.collection('students').doc(`${studentEmail}_${examId}`).get(); 
+            
             if (doc.exists) { showResult(doc.data()); } 
             else { 
                 hideAllScreens();
                 document.getElementById('examInfoScreen').classList.remove('hidden'); 
+                
+                if (timeLimitMinutes > 0) {
+                    document.getElementById('examTimeDisplay').innerHTML = `
+                        <div style="font-size:14px;opacity:0.9;margin-bottom:5px;">⏱️ وقت الامتحان</div>
+                        <div style="font-size:32px;font-weight:900;color:var(--warning);">${timeLimitMinutes} دقيقة</div>
+                    `;
+                } else {
+                    document.getElementById('examTimeDisplay').innerHTML = `
+                        <div style="font-size:14px;opacity:0.9;margin-bottom:5px;">⏱️ وقت الامتحان</div>
+                        <div style="font-size:32px;font-weight:900;color:var(--success);">غير محدود</div>
+                    `;
+                }
             }
             showToast(`تم تحميل ${questions.length} سؤال`, 'success');
         } catch (e) { showToast("خطأ: " + e.message, 'error'); } 
@@ -672,10 +775,14 @@
         currentQuestionIndex = 0;
         currentStep = 3;
         saveState();
-        renderQuestions(); 
-        renderNavigator();
+        renderQuestions();         renderNavigator();
         updateNavButtons();
         updateStepper();
+        
+        if (timeLimitMinutes > 0) {
+            startTimer(timeLimitMinutes);
+        }
+        
         showToast('🚀 ابدأ الاختبار!', 'info');
     }
     
@@ -683,7 +790,8 @@
         const c = document.getElementById('questionsContainer'); 
         c.innerHTML = ''; 
         questions.forEach((q, i) => { 
-            const card = document.createElement('div');             card.className = 'question-card'; 
+            const card = document.createElement('div'); 
+            card.className = 'question-card'; 
             card.id = `question-${i}`;
             card.style.display = i === currentQuestionIndex ? 'block' : 'none';
             card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}</div><div id="opt-${i}">${q.options.map((o,j)=>`<div class="option-3d" data-letter="${String.fromCharCode(65+j)}" onclick="selectOption(${i},${j},this)"><span>${o}</span></div>`).join('')}</div>`; 
@@ -717,7 +825,6 @@
 
     function previousQuestion() { if (currentQuestionIndex > 0) goToQuestion(currentQuestionIndex - 1); }
     function nextQuestion() { if (currentQuestionIndex < questions.length - 1) goToQuestion(currentQuestionIndex + 1); }
-
     function updateNavButtons() {
         document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
         document.getElementById('nextBtn').disabled = currentQuestionIndex === questions.length - 1;
@@ -732,7 +839,8 @@
 
     function highlightSelectedOption(qIndex, oIndex) {
         const p = document.getElementById(`opt-${qIndex}`);
-        if (p) {            const all = p.querySelectorAll('.option-3d');
+        if (p) {
+            const all = p.querySelectorAll('.option-3d');
             all.forEach((o, i) => { if (i === oIndex) o.classList.add('selected'); else o.classList.remove('selected'); });
         }
     }
@@ -750,8 +858,11 @@
         if (Object.keys(studentAnswers).length === questions.length) showToast('✅ أكملت جميع الأسئلة!', 'success');
     }
 
-    async function finishExam() { 
-        if (!confirm("هل أنت متأكد من تسليم الاختبار؟")) return;
+    async function finishExam(autoSubmit = false) { 
+        if (!autoSubmit && !confirm("هل أنت متأكد من تسليم الاختبار؟")) return;
+        
+        stopTimer();
+        
         try { 
             const studentName = localStorage.getItem('studentName');
             const studentEmail = localStorage.getItem('studentEmail');
@@ -762,8 +873,7 @@
             if (!studentName || !studentEmail || !studentPhone) {
                 showToast('❌ خطأ: بيانات الطالب غير مكتملة', 'error');
                 return;
-            }
-            
+            }            
             let correctCount = 0; 
             let cats = {}; 
             questions.forEach((q, i) => { 
@@ -781,7 +891,8 @@
                 email: studentEmail,
                 phone: studentPhone,
                 display_name: studentName,
-                grade_level: studentGrade,                student_id: studentId,
+                grade_level: studentGrade,
+                student_id: studentId,
                 exam_id: currentExamId, 
                 exam_name: examName, 
                 score: correctCount, 
@@ -791,13 +902,17 @@
                 used_reset_code: false, 
                 created_at: now, 
                 start_time: examStartTime || now, 
-                end_time: now
+                end_time: now,
+                time_limit: timeLimitMinutes,
+                auto_submitted: autoSubmit,
+                time_spent_seconds: timeLimitMinutes > 0 ? (timeLimitMinutes * 60) - timeRemaining : null
             }; 
             
             const docId = `${studentEmail}_${currentExamId}`;
             console.log('💾 حفظ النتيجة:', docId);
             await db.collection('students').doc(docId).set(data); 
-            showToast('✅ تم التسليم بنجاح!', 'success');
+            
+            showToast(autoSubmit ? '⏰ انتهى الوقت - تم التسليم تلقائياً' : '✅ تم التسليم بنجاح!', 'success');
             currentStep = 4; 
             saveState(); 
             setTimeout(() => showResult(data), 500);
@@ -807,8 +922,7 @@
     }
 
     function showResult(data) { 
-        hideAllScreens();
-        document.getElementById('resultScreen').classList.remove('hidden'); 
+        hideAllScreens();        document.getElementById('resultScreen').classList.remove('hidden'); 
         const p = Math.round((data.score / data.total_questions) * 100); 
         document.getElementById('finalScore').innerText = '%' + p; 
         const circumference = 2 * Math.PI * 90;
@@ -830,7 +944,8 @@
             for (const [c, s] of Object.entries(data.categories)) { 
                 const x = Math.round((s.correct / s.total) * 100); 
                 const col = x >= 70 ? 'var(--success)' : (x >= 50 ? 'var(--warning)' : 'var(--error)'); 
-                h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`;             } 
+                h += `<div class="analysis-item"><span style="font-weight:700;">${c}</span><div class="mini-progress"><div class="mini-fill" style="width:${x}%;background:${col}"></div></div><span style="color:${col};font-weight:700;">${x}%</span></div>`; 
+            } 
             document.getElementById('analysisContainer').innerHTML = h; 
         } 
         updateStepper();
@@ -856,8 +971,7 @@
                 else if (j === userAns && !isCorrect) { className += ' incorrect'; icon = ' ❌'; }
                 optionsHTML += `<div class="${className}" style="cursor:default;"><span>${opt}</span><span style="margin-right:10px;">${String.fromCharCode(65+j)}${icon}</span></div>`;
             });
-            card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}<span style="float:left;color:${isCorrect?'var(--success)':'var(--error)'};font-size:24px;">${isCorrect?'✅':'❌'}</span></div><div>${optionsHTML}</div>`;
-            container.appendChild(card);
+            card.innerHTML = `<div style="margin-bottom:15px;font-weight:700;font-size:20px;">${i+1}. ${q.text}<span style="float:left;color:${isCorrect?'var(--success)':'var(--error)'};font-size:24px;">${isCorrect?'✅':'❌'}</span></div><div>${optionsHTML}</div>`;            container.appendChild(card);
         });
     }
     
@@ -865,16 +979,15 @@
         hideAllScreens();
         document.getElementById('resultScreen').classList.remove('hidden');
     }
+
+    // ✅ تسجيل Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('✅ Service Worker registered'))
+                .catch(err => console.log('❌ Service Worker registration failed'));
+        });
+    }
 </script>
-<!-- ✅ Register Service Worker -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('✅ Service Worker registered'))
-                    .catch(err => console.log('❌ Service Worker registration failed'));
-            });
-        }
-    </script>
 </body>
 </html>
