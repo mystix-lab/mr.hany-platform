@@ -2,18 +2,21 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>منصة الاختبارات | أ. هاني محمد الداودي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="امتحانات هاني">
     <style>
         :root { --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #8b5cf6; --success: #10b981; --error: #ef4444; --warning: #f59e0b; --info: #06b6d4; --dark: #1e1b4b; --darker: #0f172a; --accent: #ec4899; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 30%, #312e81 70%, #1e3a8a 100%); min-height: 100vh; color: #fff; padding: 20px; position: relative; overflow-x: hidden; }
         body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 50%, rgba(99,102,241,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139,92,246,0.15) 0%, transparent 50%); pointer-events: none; z-index: 0; }
         .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
@@ -29,7 +32,8 @@
         .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
         .input-3d { width: 100%; padding: 18px; border: 2px solid rgba(255,255,255,0.15); border-radius: 18px; background: rgba(255,255,255,0.08); color: #fff; font-family: 'Cairo'; margin-top: 18px; transition: all 0.3s; font-size: 16px; }
         .input-3d::placeholder { color: rgba(255,255,255,0.4); }
-        .input-3d:focus { outline: none; border-color: var(--primary); background: rgba(255,255,255,0.12); box-shadow: 0 0 30px rgba(99,102,241,0.4); }
+        .input-3d:focus { outline: none; border-color: var(--primary); background: rgba(255,255,255,0.12); box-shadow: 0 0 0 4px rgba(99,102,241,0.18), 0 0 30px rgba(99,102,241,0.35); }
+        .input-3d.error-input { border-color: var(--error) !important; box-shadow: 0 0 0 4px rgba(239,68,68,0.15); }
         .hidden { display: none !important; }
         /* شاشة الصلاة على النبي ﷺ */
         .intro-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; animation: fadeIn 0.5s ease; }
@@ -51,7 +55,7 @@
         .question-card:hover { border-color: rgba(99,102,241,0.4); box-shadow: 0 15px 40px rgba(99,102,241,0.2); }
         .option-3d { padding: 20px 24px; background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border: 2px solid rgba(255,255,255,0.15); border-radius: 18px; margin: 14px 0; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }
         .option-3d::before { content: attr(data-letter); width: 40px; height: 40px; background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.3)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; transition: all 0.3s; }
-        .option-3d:hover { border-color: var(--primary); background: rgba(99,102,241,0.2); transform: translateX(8px); }
+        .option-3d:hover { border-color: var(--primary); background: rgba(99,102,241,0.2); transform: translateX(-6px); }
         .option-3d.selected { border-color: var(--primary); background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2)); box-shadow: 0 8px 30px rgba(99,102,241,0.5); }
         .option-3d.selected::before { background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 4px 15px rgba(99,102,241,0.5); }
         .option-3d.correct { border-color: var(--success); background: rgba(16,185,129,0.2); }
@@ -171,16 +175,16 @@
         </div>
     </div>
     
-    <div id="loadingScreen" class="glass-card text-center"><div class="loader"></div><p style="font-size:18px;margin-top:20px;">جاري تهيئة المنصة...</p></div>
+    <div id="loadingScreen" class="glass-card text-center" role="status" aria-live="polite"><div class="loader"></div><p style="font-size:18px;margin-top:20px;">جاري تهيئة المنصة...</p></div>
     
     <div id="loginScreen" class="glass-card hidden">
         <h2 class="text-center" style="margin-bottom:25px;font-size:28px;">🎓 تسجيل دخول الطالب</h2>
         <div style="background:rgba(245,158,11,0.1);padding:20px;border-radius:16px;margin-bottom:25px;border:1px solid rgba(245,158,11,0.3);">
             <p style="text-align:center;font-size:14px;opacity:0.9;">⚠️ تحذير: البيانات الكاذبة ستؤدي إلى استبعادك<br>🔒 سيتم التحقق من بريدك ورقم هاتفك</p>
         </div>
-        <input type="text" id="studentName" class="input-3d" placeholder="👤 الاسم الثلاثي (كما في شهادة الميلاد)">
-        <input type="email" id="studentEmail" class="input-3d" placeholder="📧 البريد الإلكتروني (سيُستخدم للتحقق)" style="margin-top:18px;">
-        <input type="tel" id="studentPhone" class="input-3d" placeholder="📱 رقم الهاتف (11 رقم) - مهم جداً" style="margin-top:18px;direction:ltr;text-align:right;">
+        <input type="text" id="studentName" class="input-3d" placeholder="👤 الاسم الثلاثي (كما في شهادة الميلاد)" autocomplete="name" maxlength="80">
+        <input type="email" id="studentEmail" class="input-3d" placeholder="📧 البريد الإلكتروني (سيُستخدم للتحقق)" autocomplete="email" maxlength="100" style="margin-top:18px;">
+        <input type="tel" id="studentPhone" class="input-3d" placeholder="📱 رقم الهاتف (11 رقم) - مهم جداً" inputmode="numeric" maxlength="11" style="margin-top:18px;direction:ltr;text-align:right;">
         <select id="studentGrade" class="input-3d" style="margin-top:18px;">
             <option value="">📚 اختر صفك الدراسي</option>
             <option value="اولى ثانوي">أولى ثانوي</option>
@@ -285,7 +289,16 @@
         <p style="font-size:12px;opacity:0.5;">تم التطوير بكل ❤️</p>
     </div>
 </div>
-<div id="toastContainer" class="toast-container"></div>
+
+    <!-- تحذير مغادرة الامتحان -->
+    <div id="cheatOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:99999;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px;backdrop-filter:blur(10px);">
+        <div style="font-size:80px;margin-bottom:24px;">⚠️</div>
+        <h2 style="font-size:28px;font-weight:900;color:var(--error);margin-bottom:14px;">تحذير!</h2>
+        <p style="font-size:17px;max-width:500px;line-height:2;margin-bottom:30px;opacity:0.9;">تم اكتشاف مغادرة نافذة الامتحان.<br>تحذير رقم <strong id="cheatCount">1</strong> من أصل 3. عند التجاوز سيتم التسليم تلقائياً.</p>
+        <button onclick="closeCheatWarning()" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;padding:15px 45px;border-radius:16px;font-family:Cairo;font-size:16px;font-weight:700;cursor:pointer;">العودة للامتحان</button>
+    </div>
+
+<div id="toastContainer" class="toast-container" aria-live="assertive" aria-atomic="false"></div>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -496,7 +509,7 @@
         const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
         toast.innerHTML = `<span style="font-size:24px;">${icons[type]}</span><span>${message}</span>`;
         container.appendChild(toast);
-        setTimeout(() => { toast.remove(); }, 3000);
+        setTimeout(() => { toast.style.animation = 'fadeOut 0.4s forwards'; setTimeout(() => toast.remove(), 400); }, 2800);
     }
 
     function updateStepper() {
@@ -511,9 +524,9 @@
 
     // ✅ دالة تسجيل دخول آمنة - تسمح باستخدام نفس البيانات لامتحانات مختلفة
     async function studentLogin() {
-        const name = document.getElementById('studentName').value.trim();
-        const email = document.getElementById('studentEmail').value.trim().toLowerCase();
-        const phone = document.getElementById('studentPhone').value.trim();
+        const name = sanitize(document.getElementById('studentName').value);
+        const email = sanitize(document.getElementById('studentEmail').value).toLowerCase();
+        const phone = sanitize(document.getElementById('studentPhone').value).replace(/\s/g, '');
         const grade = document.getElementById('studentGrade').value;
         
         console.log('📝 بيانات التسجيل:', { name, email, phone, grade });
@@ -566,12 +579,11 @@
             timeRemaining--;
             updateTimerDisplay();
             
-            if (timeRemaining <= 300 && !timerWarningShown) {
-                showToast('⚠️ باقي 5 دقائق على انتهاء الوقت!', 'warning');
-                timerWarningShown = true;
+            if (timeRemaining === 300) {
+                showToast('⚠️ تبقّى 5 دقائق على انتهاء الوقت!', 'warning');
             }
             
-            if (timeRemaining <= 60) {
+            if (timeRemaining === 60) {
                 showToast('🚨 دقيقة واحدة متبقية!', 'error');
             }
             
@@ -861,6 +873,7 @@
             examName: examName
         }));
         
+        enableAntiCheat();
         showToast('🚀 ابدأ الاختبار!', 'info');    }
     
     function renderQuestions() { 
@@ -968,6 +981,8 @@
         
         stopTimer();
         examFinished = true;
+        disableAntiCheat();
+        closeCheatWarning();
         
         try { 
             const studentName = localStorage.getItem('studentName');
@@ -1122,6 +1137,59 @@
         const container = document.getElementById('passageContainer');
         container.classList.add('hidden');
         currentPassage = null;
+    }
+
+
+    /* ══ دوال الأمان ══ */
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function sanitize(str) {
+        return String(str || '').replace(/[<>"'`]/g, '').trim();
+    }
+
+    /* ══ مكافحة الغش ══ */
+    let cheatWarnings = 0, antiCheatEnabled = false;
+
+    function enableAntiCheat() {
+        antiCheatEnabled = true;
+        cheatWarnings = 0;
+        document.addEventListener('visibilitychange', onVisChange);
+        window.addEventListener('blur', onWinBlur);
+        document.addEventListener('contextmenu', onCtxMenu);
+    }
+
+    function disableAntiCheat() {
+        antiCheatEnabled = false;
+        document.removeEventListener('visibilitychange', onVisChange);
+        window.removeEventListener('blur', onWinBlur);
+        document.removeEventListener('contextmenu', onCtxMenu);
+    }
+
+    function onVisChange()  { if (antiCheatEnabled && !examFinished && document.visibilityState === 'hidden') triggerCheat(); }
+    function onWinBlur()    { if (antiCheatEnabled && !examFinished) triggerCheat(); }
+    function onCtxMenu(e)   { if (antiCheatEnabled && !examFinished) e.preventDefault(); }
+
+    function triggerCheat() {
+        cheatWarnings++;
+        document.getElementById('cheatCount').textContent = cheatWarnings;
+        document.getElementById('cheatOverlay').style.display = 'flex';
+        showToast('⚠️ تحذير ' + cheatWarnings + '/3: لا تغادر نافذة الامتحان!', 'error');
+        if (cheatWarnings >= 3) {
+            showToast('🚨 سيتم تسليم امتحانك تلقائياً', 'error');
+            setTimeout(() => finishExam(true), 2500);
+        }
+    }
+
+    function closeCheatWarning() {
+        document.getElementById('cheatOverlay').style.display = 'none';
     }
 
     // ✅ تسجيل Service Worker
